@@ -1,0 +1,13 @@
+[20-Mar-2018 07:21:57 America/Chicago] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home1/silvesa6/public_html/stock/src/Classes/PHPExcel/Writer/Excel2007/Worksheet.php on line 1064
+[20-Mar-2018 08:58:41 America/Chicago] PHP Warning:  mysqli_fetch_array() expects parameter 2 to be integer, string given in /home1/silvesa6/public_html/stock/src/scripts/getD.php on line 9
+[20-Mar-2018 09:00:59 America/Chicago] PHP Warning:  mysqli_fetch_array() expects parameter 2 to be integer, string given in /home1/silvesa6/public_html/stock/src/scripts/getD.php on line 9
+[22-Mar-2018 11:20:59 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function fetch_assoc() on boolean in /home1/silvesa6/public_html/stock/src/scripts/getData.php:41
+Stack trace:
+#0 {main}
+  thrown in /home1/silvesa6/public_html/stock/src/scripts/getData.php on line 41
+[05-Dec-2018 22:58:38 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home1/silvesa6/public_html/stock/src/Classes/PHPExcel/CachedObjectStorage/CacheBase.php on line 177
+[05-Dec-2018 22:58:39 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 32768 bytes) in Unknown on line 0
+[05-Dec-2018 23:20:09 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home1/silvesa6/public_html/stock/src/Classes/PHPExcel/CachedObjectStorage/CacheBase.php on line 177
+[05-Dec-2018 23:20:09 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 32768 bytes) in Unknown on line 0
+[12-Dec-2018 10:54:25 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home1/silvesa6/public_html/stock/src/Classes/PHPExcel/CachedObjectStorage/CacheBase.php on line 177
+[12-Dec-2018 10:54:25 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 32768 bytes) in Unknown on line 0

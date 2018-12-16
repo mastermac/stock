@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# This script assumes you have ssh access to a remote server
+# Both databases are backed up to sql files in the same directory
+# this script is executed from.
+# Usage: 
+#   1. Make sure this file is executable with `chmod +x mysqlsync`
+#   2. Set the credentials for the variables at the top
+#      (Remember, no spaces around the '=' sign)
+#   3. Run it from a directory where you'd like the backup files to go:
+#      `./mysqlsync`
+#
+# You may also rename this file which makes it easier per project.
+
+# SSH credentials
+SSH_USER=silvesa6
+SSH_SERVER=silvercityonline.com
+
+# Remote DB credentials
+REMOTE_USER=silvesa6_master
+REMOTE_PASS=Mastermac@007
+REMOTE_HOST=localhost
+REMOTE_DB=silvesa6_silverapp
+
+# Local DB credential
+LOCAL_USER=root
+LOCAL_PASS=
+LOCAL_HOST=localhost
+LOCAL_DB=silverapp
+
+NOW=$(date +"%Y%m%d-%H%M")
+REMOTE_FILE="remote-$NOW-$REMOTE_DB.sql"
+LOCAL_FILE="local-$NOW-$LOCAL_DB.sql"
+
+echo "Dumping remote database to $REMOTE_FILE"
+eval "ssh $SSH_USER@$SSH_SERVER 'mysqldump -h $REMOTE_HOST -u$REMOTE_USER -p$REMOTE_PASS $REMOTE_DB' > $REMOTE_FILE"
+
+echo "Dumping local database to $LOCAL_FILE"
+eval "mysqldump -h $LOCAL_HOST -u$LOCAL_USER -p$LOCAL_PASS $LOCAL_DB > $LOCAL_FILE"
+
+echo "Importing remote database into local database"
+eval "mysql -h $LOCAL_HOST -u$LOCAL_USER -p$LOCAL_PASS $LOCAL_DB < $REMOTE_FILE"
+
+echo "Done!"

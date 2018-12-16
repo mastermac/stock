@@ -1,0 +1,45 @@
+{
+    "name"       : "hoa/cache",
+    "description": "The Hoa\\Cache library.",
+    "type"       : "library",
+    "keywords"   : ["library", "cache", "apc", "eaccelerator", "memcache",
+                    "sqlite", "xcache", "zendplatform", "memoize"],
+    "homepage"   : "https://hoa-project.net/",
+    "license"    : "BSD-3-Clause",
+    "authors"    : [
+        {
+            "name" : "Ivan Enderlin",
+            "email": "ivan.enderlin@hoa-project.net"
+        },
+        {
+            "name"    : "Hoa community",
+            "homepage": "https://hoa-project.net/"
+        }
+    ],
+    "support": {
+        "email" : "support@hoa-project.net",
+        "irc"   : "irc://chat.freenode.net/hoaproject",
+        "forum" : "https://users.hoa-project.net/",
+        "docs"  : "https://central.hoa-project.net/Documentation/Library/Cache",
+        "source": "https://central.hoa-project.net/Resource/Library/Cache"
+    },
+    "require": {
+        "hoa/consistency": "~1.0",
+        "hoa/exception"  : "~1.0",
+        "hoa/file"       : "~0.0",
+        "hoa/zformat"    : "~1.0"
+    },
+    "require-dev": {
+        "hoa/test": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hoa\\Cache\\": "."
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    }
+}

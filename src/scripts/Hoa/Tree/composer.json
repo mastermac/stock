@@ -1,0 +1,40 @@
+{
+    "name"       : "hoa/tree",
+    "description": "The Hoa\\Tree library.",
+    "type"       : "library",
+    "keywords"   : ["library", "tree", "node"],
+    "homepage"   : "https://hoa-project.net/",
+    "license"    : "BSD-3-Clause",
+    "authors"    : [
+        {
+            "name" : "Ivan Enderlin",
+            "email": "ivan.enderlin@hoa-project.net"
+        },
+        {
+            "name"    : "Hoa community",
+            "homepage": "https://hoa-project.net/"
+        }
+    ],
+    "support": {
+        "email" : "support@hoa-project.net",
+        "irc"   : "irc://chat.freenode.net/hoaproject",
+        "forum" : "https://users.hoa-project.net/",
+        "docs"  : "https://central.hoa-project.net/Documentation/Library/Tree",
+        "source": "https://central.hoa-project.net/Resource/Library/Tree"
+    },
+    "require": {
+        "hoa/consistency": "~1.0",
+        "hoa/exception"  : "~1.0",
+        "hoa/visitor"    : "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hoa\\Tree\\": "."
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    }
+}
