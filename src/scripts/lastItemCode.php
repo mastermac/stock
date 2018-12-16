@@ -42,14 +42,14 @@ while ($row = $result->fetch_assoc())
    	$color="";
    	while ($row1 = $result1->fetch_assoc())
    	{
-   		$num=substr($row1["itemNo"],$subl);
+		$num=substr($row1["itemNo"],$subl);
    		if($_SESSION["series"]=="" && strlen(onlyNum(substr($num,0,1)))==0)
-	   		array_push($arr,onlyNum($num));
+	   		array_push($arr,onlyDeciNum($num));
 	   	else if($_SESSION["series"]!="")
-	   		array_push($arr,onlyNum($num));
+	   		array_push($arr,onlyDeciNum($num));
    	}
-   	rsort($arr);
-//   	print_r($arr);
+	rsort($arr);
+	//print_r($arr);
 	$mysqli2=getConn();
 	$maxitno="";
    	$s2="SELECT itemNo from product where".$cond." itemNo not like '%-%' and itemNo like '" . $srch.$arr[0]."' and styleCode=".$row['styleCode']." order by dt desc, sno desc LIMIT 1";

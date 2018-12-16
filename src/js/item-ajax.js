@@ -149,14 +149,24 @@ function performSpecialSearch(id){
     fuse = new Fuse(pdCopy, opt); 
     var tmpArray=new Array();
     var iterativeValue;
+    var notFound="";
     var c=0;
     for(var i=0;i<res.length;i++){
     	iterativeValue=fuse.search(res[i]);
     	if(iterativeValue.length>0){
     		tmpArray[c++]=iterativeValue[0];
-    	}
+        }
+        else{
+            notFound+=res[i]+", ";
+        }
     }
     pdCopy= tmpArray;
+    if(notFound.length>0)
+    {
+        toastr.error(notFound, 'Some ItemCodes Not Found!', {
+            timeOut: 10000
+        });
+    }
 }
 
     
@@ -985,6 +995,8 @@ function performSpecialSearch(id){
         manageData();
     });
     $("#excelExport").click(function(e) {
+        var r = confirm("Are you sure you want to export this data into Excel?");
+        if (r == true) {
         $('.ajax-loader').css("visibility", "visible");
         s_dt = window.start;
         e_dt = window.end;
@@ -1014,6 +1026,7 @@ function performSpecialSearch(id){
             $('.ajax-loader').css("visibility", "hidden");
             window.open('src/scripts/export.xlsx');
         });
+        }
     });
     $("#pdfExport").click(function(e) {
         $('.ajax-loader').css("visibility", "visible");
