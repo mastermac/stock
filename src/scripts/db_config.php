@@ -4,6 +4,8 @@
 function getConn(){
    if($_SERVER['DOCUMENT_ROOT']=="C:/wamp/www")
       $mysqli = new mysqli("localhost", "root", "", "silverapp");
+   else if($_SERVER['DOCUMENT_ROOT']=="C:/wamp64/www")
+      $mysqli = new mysqli("localhost", "root", "", "silverapp");
    else
       $mysqli = new mysqli("localhost", "silvesa6_master", "Mastermac@007", "silvesa6_silverapp");
    return $mysqli;
