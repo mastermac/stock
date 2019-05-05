@@ -41,7 +41,7 @@ $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc())
 {
 
-   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['itemNo'])->setCellValue('B' . $sno, $row['itemPic'])->setCellValue('C' . $sno, $row['description'])->setCellValue('D' . $sno, $row['ringSize'])->setCellValue('E' . $sno, $row['grossWt'])->setCellValue('F' . $sno, $row['diaWt'])->setCellValue('G' . $sno, $row['cstoneWt'])->setCellValue('H' . $sno, $row['goldWt'])->setCellValue('I' . $sno, $row['noOfDia'])->setCellValue('J' . $sno, '$'.$row['sellPrice'])->setCellValue('K' . $sno, "1")->setCellValue('L' . $sno, $row['vendorCode']);
+   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['itemNo'])->setCellValue('B' . $sno, $row['itemPic'])->setCellValue('C' . $sno, $row['description'])->setCellValue('D' . $sno, $row['ringSize'])->setCellValue('E' . $sno, $row['grossWt'])->setCellValue('F' . $sno, $row['diaWt'])->setCellValue('G' . $sno, $row['cstoneWt'])->setCellValue('H' . $sno, $row['goldWt'])->setCellValue('I' . $sno, $row['noOfDia'])->setCellValue('J' . $sno, $row['sellPrice'])->setCellValue('K' . $sno, "1")->setCellValue('L' . $sno, $row['vendorCode']);
    $sno++;
 }
 
@@ -59,7 +59,7 @@ $sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc())
 {
-   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, '$'.$row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode']);
+   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, $row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode']);
    $objDrawing = new PHPExcel_Worksheet_Drawing();
    $objDrawing->setName('test_img');
    $objDrawing->setDescription('test_img');
