@@ -37,126 +37,143 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
       $lineError = "";
       $date = date('Y/m/d H:i:s');
       $blankLine=0;
-      for ($row = 2; $row <= $highestRow; $row++)
-      {
-         $previousData="";
+      $NoDashInItemFile=true;
+      for($row = 2; $row <= $highestRow; $row++){
          $rowData = $sheet->rangeToArray('A' . $row . ':' . 'N' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
-         $date = date('Y/m/d H:i:s');
-         if($_POST['src']=="importForm")
+         if(strpos($data[2],'-')!==false && (clean($data[13])=='586' || clean($data[13])=='756' || clean($data[13])=='6'))
          {
-            if($data[2]=='' && clean($data[11])=='0')
-            {
-            $blankLine++;
-            if($blankLine>20)
-               break;
-            continue;
-            }
-            $blankLine=0;
-         
-            $sql = "INSERT INTO product VALUES (null,
-               '" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "',
-               '','" . $data[4] . "','" . getStyleCodeVal(clean($data[13])) . "','" . clean($data[6]) . "',
-               '" . clean($data[7]) . "','" . clean($data[8]) . "',
-               '" . clean($data[9]) . "','" . clean($data[10]) . "',
-               '" . clean($data[11]) . "','" . clean($data[12]) . "',
-               '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."',''
-               ) ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[13])) . "', grossWt='" . clean($data[6]) . "',diaWt='" . clean($data[7]) . "',cstoneWt='" . clean($data[8]) . "',goldWt='" . clean($data[9]) . "',noOfDia='" . clean($data[10]) . "',sellPrice='" . clean($data[11]) . "',curStock='" . clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "' ;";            
+            $NoDashInItemFile=false;
+            break;
          }
-         elseif($_POST['src']=="updateForm")
+      }
+      if($NoDashInItemFile){
+         for ($row = 2; $row <= $highestRow; $row++)
          {
-            if(trim($data[2])==""){
-            $blankLine++;
-            if($blankLine>10)
-               break;
-            continue;
-            }
-            $blankLine=0;
-         
-            $buildQuery="";
-               $buildQuery="UPDATE product SET";
-               if(!isEmpty($data[0]))
-                  $buildQuery=$buildQuery." vendor='".vendorCheck($data[0])."',";
-               if(!isBlank($data[1]))
-                  $buildQuery=$buildQuery." vendorCode='".trim($data[1])."',";
-               if(!trim($data[4])=="")
-                  $buildQuery=$buildQuery." description='".trim($data[4])."',";
-               if(!isEmpty($data[6]))
-                  $buildQuery=$buildQuery." grossWt='".clean($data[6])."',";
-               if(!isEmpty($data[7]))
-                  $buildQuery=$buildQuery." diaWt='".clean($data[7])."',";
-               if(!isEmpty($data[8]))
-                  $buildQuery=$buildQuery." cstoneWt='".clean($data[8])."',";
-               if(!isEmpty($data[9]))
-                  $buildQuery=$buildQuery." goldWt='".clean($data[9])."',";
-               if(!isEmpty($data[10]))
-                  $buildQuery=$buildQuery." noOfDia='".clean($data[10])."',";
-               if(!isEmpty($data[11]))
-                  $buildQuery=$buildQuery." sellPrice='".clean($data[11])."',";
-               if(!isEmpty($data[12]))
-                  $buildQuery=$buildQuery." curStock='".clean($data[12])."',";
-               if(!isEmpty($data[5]))
-                  $buildQuery=$buildQuery." ringSize='".clean($data[5])."',";
-               if(!isEmpty($data[13]))
+            $previousData="";
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'N' . $row, NULL, TRUE, FALSE);
+            $data = $rowData[0];
+            $date = date('Y/m/d H:i:s');
+            if($_POST['src']=="importForm")
+            {
+               if($data[2]=='' && clean($data[11])=='0')
                {
-                  $buildQuery=$buildQuery." itemTypeCode='".getStyleCodeVal($data[13])."',";
-                  $buildQuery=$buildQuery." styleCode='".clean($data[13])."',";
-               } 
-               if (substr($buildQuery, -1)==","){
-                  $sql=substr($buildQuery, 0, -1)." WHERE itemNo='".$data[2]."' ;";
+               $blankLine++;
+               if($blankLine>20)
+                  break;
+               continue;
                }
-               else
-                  continue;
-         }
-         $previousData="";
-         $tempData=getCurrentData($data[2]);
-         if(count($tempData)>2)
-            $previousData=implode("#",$tempData);
-         $mysqli=getConn();      
-         $result = $mysqli->query($sql);
-         $affected=mysqli_affected_rows($mysqli);
-         //echo $affected."\r\n";
-         if ($affected >= 1)
-         {
-            if($_POST['src']=="updateForm"){
-               $updateEntries++;
-               writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
-              continue;
+               $blankLine=0;
+            
+               $sql = "INSERT INTO product VALUES (null,
+                  '" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "',
+                  '','" . $data[4] . "','" . getStyleCodeVal(clean($data[13])) . "','" . clean($data[6]) . "',
+                  '" . clean($data[7]) . "','" . clean($data[8]) . "',
+                  '" . clean($data[9]) . "','" . clean($data[10]) . "',
+                  '" . clean($data[11]) . "','" . clean($data[12]) . "',
+                  '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."',''
+                  ) ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[13])) . "', grossWt='" . clean($data[6]) . "',diaWt='" . clean($data[7]) . "',cstoneWt='" . clean($data[8]) . "',goldWt='" . clean($data[9]) . "',noOfDia='" . clean($data[10]) . "',sellPrice='" . clean($data[11]) . "',curStock='" . clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "' ;";            
             }
-
-            $mysqli1 = getConn();
-            $sqlTotal = "Select * from product where itemNo like '" . $data[2] . "';";
-            $result1 = mysqli_query($mysqli1, $sqlTotal);
-            $totRows = mysqli_num_rows($result1);
-            if ($totRows == 1 && $affected==2){
-              $updateEntries++;
-              writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
-            } 
-            elseif ($totRows == 1 && $affected==1) {
-               $successEntries++;
-               $previousData="";
-               writelog(7,"success:1,prevData:".$previousData.",newData:".implode("#",getCurrentData($data[2]))); 
-            }
-            elseif($totRows == 0)
+            elseif($_POST['src']=="updateForm")
             {
+               if(trim($data[2])==""){
+               $blankLine++;
+               if($blankLine>10)
+                  break;
+               continue;
+               }
+               $blankLine=0;
+            
+               $buildQuery="";
+                  $buildQuery="UPDATE product SET";
+                  if(!isEmpty($data[0]))
+                     $buildQuery=$buildQuery." vendor='".vendorCheck($data[0])."',";
+                  if(!isBlank($data[1]))
+                     $buildQuery=$buildQuery." vendorCode='".trim($data[1])."',";
+                  if(!trim($data[4])=="")
+                     $buildQuery=$buildQuery." description='".trim($data[4])."',";
+                  if(!isEmpty($data[6]))
+                     $buildQuery=$buildQuery." grossWt='".clean($data[6])."',";
+                  if(!isEmpty($data[7]))
+                     $buildQuery=$buildQuery." diaWt='".clean($data[7])."',";
+                  if(!isEmpty($data[8]))
+                     $buildQuery=$buildQuery." cstoneWt='".clean($data[8])."',";
+                  if(!isEmpty($data[9]))
+                     $buildQuery=$buildQuery." goldWt='".clean($data[9])."',";
+                  if(!isEmpty($data[10]))
+                     $buildQuery=$buildQuery." noOfDia='".clean($data[10])."',";
+                  if(!isEmpty($data[11]))
+                     $buildQuery=$buildQuery." sellPrice='".clean($data[11])."',";
+                  if(!isEmpty($data[12]))
+                     $buildQuery=$buildQuery." curStock='".clean($data[12])."',";
+                  if(!isEmpty($data[5]))
+                     $buildQuery=$buildQuery." ringSize='".clean($data[5])."',";
+                  if(!isEmpty($data[13]))
+                  {
+                     $buildQuery=$buildQuery." itemTypeCode='".getStyleCodeVal($data[13])."',";
+                     $buildQuery=$buildQuery." styleCode='".clean($data[13])."',";
+                  } 
+                  if (substr($buildQuery, -1)==","){
+                     $sql=substr($buildQuery, 0, -1)." WHERE itemNo='".$data[2]."' ;";
+                  }
+                  else
+                     continue;
+            }
+            $previousData="";
+            $tempData=getCurrentData($data[2]);
+            if(count($tempData)>2)
+               $previousData=implode("#",$tempData);
+            $mysqli=getConn();      
+            $result = $mysqli->query($sql);
+            $affected=mysqli_affected_rows($mysqli);
+            //echo $affected."\r\n";
+            if ($affected >= 1)
+            {
+               if($_POST['src']=="updateForm"){
+                  $updateEntries++;
+                  writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
+                 continue;
+               }
+   
+               $mysqli1 = getConn();
+               $sqlTotal = "Select * from product where itemNo like '" . $data[2] . "';";
+               $result1 = mysqli_query($mysqli1, $sqlTotal);
+               $totRows = mysqli_num_rows($result1);
+               if ($totRows == 1 && $affected==2){
+                 $updateEntries++;
+                 writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
+               } 
+               elseif ($totRows == 1 && $affected==1) {
+                  $successEntries++;
+                  $previousData="";
+                  writelog(7,"success:1,prevData:".$previousData.",newData:".implode("#",getCurrentData($data[2]))); 
+               }
+               elseif($totRows == 0)
+               {
+                  $lineError = $lineError . $row . ", ";
+                  writelog(7,"success:0,prevData:".$previousData.",newData:".implode('#', $data)); 
+               }
+            }
+            else {
                $lineError = $lineError . $row . ", ";
                writelog(7,"success:0,prevData:".$previousData.",newData:".implode('#', $data)); 
             }
          }
-         else {
-            $lineError = $lineError . $row . ", ";
-            writelog(7,"success:0,prevData:".$previousData.",newData:".implode('#', $data)); 
+         if ($lineError == "")
+         {
+            $output['success'] = 1;
+            $output['msg'] = "The File has been successfully uploaded!";
          }
-      }
-      if ($lineError == "")
-      {
-         $output['success'] = 1;
-         $output['msg'] = "The File has been successfully uploaded!";
+         else
+         {
+            $output['success'] = 0;
+            $output['msg'] = 'Entries in line ' . $lineError . ' have error!';
+         }
       }
       else
       {
          $output['success'] = 0;
-         $output['msg'] = 'Entries in line ' . $lineError . ' have error!';
+         $output['msg'] = 'Some Ring ItemCode have DASH [-]. Remove Them and reupload file...';
       }
    
    }
