@@ -2,3 +2,4 @@ pics/
 /.vscode
 /.vs
 /src/import/
+src/scripts/export.xlsx

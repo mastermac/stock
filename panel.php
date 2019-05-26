@@ -141,6 +141,7 @@ table.floatThead-table {
               <option value="1000">1000</option>
             </select>
           </div>
+          <button type="button" class="btn btn-outline-info" id="undo" name="undo" disabled>Undo</button>
           <button type="button" class="btn btn-outline-info" id="logout" name="logout">Log Out</button>
         </div>
         </div>

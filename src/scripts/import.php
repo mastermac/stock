@@ -39,27 +39,29 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
       $blankLine=0;
       for ($row = 2; $row <= $highestRow; $row++)
       {
+         $previousData="";
          $rowData = $sheet->rangeToArray('A' . $row . ':' . 'N' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
          $date = date('Y/m/d H:i:s');
-         if($_POST['src']=="importForm"){
-         if($data[2]=='' && clean($data[11])=='0')
+         if($_POST['src']=="importForm")
          {
+            if($data[2]=='' && clean($data[11])=='0')
+            {
             $blankLine++;
             if($blankLine>20)
                break;
             continue;
-         }
-         $blankLine=0;
+            }
+            $blankLine=0;
          
-         $sql = "INSERT INTO product VALUES (null,
-      '" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "',
-      '','" . $data[4] . "','" . getStyleCodeVal(clean($data[13])) . "','" . clean($data[6]) . "',
-      '" . clean($data[7]) . "','" . clean($data[8]) . "',
-      '" . clean($data[9]) . "','" . clean($data[10]) . "',
-      '" . clean($data[11]) . "','" . clean($data[12]) . "',
-      '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."',''
-      ) ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[13])) . "', grossWt='" . clean($data[6]) . "',diaWt='" . clean($data[7]) . "',cstoneWt='" . clean($data[8]) . "',goldWt='" . clean($data[9]) . "',noOfDia='" . clean($data[10]) . "',sellPrice='" . clean($data[11]) . "',curStock='" . clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "' ;";            
+            $sql = "INSERT INTO product VALUES (null,
+               '" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "',
+               '','" . $data[4] . "','" . getStyleCodeVal(clean($data[13])) . "','" . clean($data[6]) . "',
+               '" . clean($data[7]) . "','" . clean($data[8]) . "',
+               '" . clean($data[9]) . "','" . clean($data[10]) . "',
+               '" . clean($data[11]) . "','" . clean($data[12]) . "',
+               '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."',''
+               ) ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[13])) . "', grossWt='" . clean($data[6]) . "',diaWt='" . clean($data[7]) . "',cstoneWt='" . clean($data[8]) . "',goldWt='" . clean($data[9]) . "',noOfDia='" . clean($data[10]) . "',sellPrice='" . clean($data[11]) . "',curStock='" . clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "' ;";            
          }
          elseif($_POST['src']=="updateForm")
          {
@@ -106,8 +108,11 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
                else
                   continue;
          }
+         $previousData="";
+         $tempData=getCurrentData($data[2]);
+         if(count($tempData)>2)
+            $previousData=implode("#",$tempData);
          $mysqli=getConn();      
-         //echo $sql."\r\n";
          $result = $mysqli->query($sql);
          $affected=mysqli_affected_rows($mysqli);
          //echo $affected."\r\n";
@@ -115,7 +120,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
          {
             if($_POST['src']=="updateForm"){
                $updateEntries++;
-              writelog(7,"success:2,data:".implode(',', $data)); 
+               writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
               continue;
             }
 
@@ -125,21 +130,22 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
             $totRows = mysqli_num_rows($result1);
             if ($totRows == 1 && $affected==2){
               $updateEntries++;
-              writelog(7,"success:2,data:".implode(',', $data)); 
+              writelog(7,"success:2,prevData:".$previousData.",newData:".implode('#', $data)); 
             } 
             elseif ($totRows == 1 && $affected==1) {
                $successEntries++;
-               writelog(7,"success:1,data:".implode(',', $data)); 
+               $previousData="";
+               writelog(7,"success:1,prevData:".$previousData.",newData:".implode("#",getCurrentData($data[2]))); 
             }
             elseif($totRows == 0)
             {
                $lineError = $lineError . $row . ", ";
-               writelog(7,"success:0,data:".implode(',', $data)); 
+               writelog(7,"success:0,prevData:".$previousData.",newData:".implode('#', $data)); 
             }
          }
          else {
             $lineError = $lineError . $row . ", ";
-            writelog(7,"success:0,data:".implode(',', $data)); 
+            writelog(7,"success:0,prevData:".$previousData.",newData:".implode('#', $data)); 
          }
       }
       if ($lineError == "")
@@ -168,5 +174,6 @@ else
 
 $output['impact'] = $successEntries;
 $output['update'] = $updateEntries;
+$output['total'] = $row-2;
 echo json_encode($output);
 ?>

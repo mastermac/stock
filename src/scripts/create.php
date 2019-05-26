@@ -18,13 +18,13 @@ $sql     = "INSERT INTO product VALUES ( NULL,
 $logsql="";
 $mysqli=getConn();
 $result  = $mysqli->query($sql);
+$newData=implode("#",getCurrentData($post['itemId']));
+
 $sql     = "SELECT * FROM product where itemNo='" . $post['itemId'] . "' and vendor='" . $post['vendor'] . "' and vendorCode='" . $post['vendorCode'] . "' and description='" . $post['description'] . "' and itemTypeCode='" . $post['itemTypeCode'] . "' and grossWt='" . clean($post['grossWt']) . "' and diaWt='" . clean($post['diaWt']) . "' and  cstoneWt = '" . clean($post['cstoneWt']) . "' and goldWt='" . clean($post['goldWt']) . "' and noOfDia='" . clean($post['noOfDia']) . "' and sellPrice='" . clean($post['sellPrice']) . "' and curStock= '" . clean($post['curStock']) . "' and ringSize='" . $post['ringSize'] . "' and userid='" . $session . "' and styleCode='" . clean($post['styleCode']) . "';";
 $result  = $mysqli->query($sql);
-while ($row = $result->fetch_assoc())
-  $logsql=implode(',', $row);
 $totRows = mysqli_num_rows($result);
 if ($totRows == 1) {
-    writeLog(3, $logsql);
+    writeLog(3, $newData);
     if (!empty($_FILES['itemPic']['name'])) {
         $target_dir    = $_SERVER['DOCUMENT_ROOT'] . "/stock/pics/";
         $imageFileType = pathinfo(basename($_FILES["itemPic"]["name"]), PATHINFO_EXTENSION);
@@ -51,9 +51,8 @@ if ($totRows == 1) {
         $tmp = imagecreatetruecolor(500, 500);
         imagecopyresampled($tmp, $src, 0, 0, 0, 0, 500, 500, $width, $height);
         imagejpeg($tmp, $dst . ".JPG",80);
-                imagedestroy($tmp);
+        imagedestroy($tmp);
         imagedestroy($src);
-
     }
     $res['success']=1;
     echo json_encode($res);

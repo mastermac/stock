@@ -24,8 +24,9 @@ if($_GET["itemNoExt"]!=""){
 	$itemStr=implode("','", $itemArr);
 
 	$itemCon=" itemNo in ('" . $itemStr . "') and";
-
 }
+if($_GET['source']=="edit")
+	$itemCon=" itemNo = '" . $_GET["itemNo"] . "' and";
 if($_GET['styleCode']!="")
 	$cond=" and styleCode = '" . $_GET["styleCode"] . "'";
 if($_GET['curStock']!="")

@@ -92,12 +92,23 @@ function writeLog($action,$data)
          break;
       case 6: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",sql:".$data."}";
          break;
-      case 7: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",sql:".$data."}";
-         break;         
+      case 7: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",".$data."}";
+         break;
+      default: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",".$data."}";
+        break;
    }
    $sql="INSERT INTO logs (userid,action,details,dt) VALUES ('".$userid."','".$action."','".$details."','".$dt."');";
    $mysqli = getConn();
    $result = $mysqli->query($sql);
 }
-
+function getCurrentData($id){
+   $sql="Select * from product where itemNo='".$id."';";
+   $mysqli = getConn();
+   $result = $mysqli->query($sql);
+   while ($row = $result->fetch_assoc())
+   {
+      return $row;
+   }
+   return '#';
+}
 ?>

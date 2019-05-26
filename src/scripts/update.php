@@ -34,15 +34,11 @@ if (!empty($_FILES['edit_itemPic']['name']))
    imagecopyresampled($tmp, $src, 0, 0, 0, 0, $width, $height, $width, $height);
    imagejpeg($tmp, $dst . ".JPG");
 }
-$prevData="";
+$previousData="";
 $newData="";
-$sql = "SELECT * FROM product WHERE itemNo = '".$post['edit_id']."'";
 $mysqli=getConn();
-$result = $mysqli->query($sql);
-while ($row = $result->fetch_assoc())
-{
-   $prevData=implode(',', $row);
-}
+$previousData=implode("#",getCurrentData($post['edit_id']));
+
 $usertype="";
 if ($_SESSION['usertype'] == 1) $usertype = " and userid='" . $_SESSION['userid']."'";
 $sql = "UPDATE product SET comments='".$post['edit_comments']."', itemNo='" . $post['edit_itemId'] . "', vendor='" . strtoupper($post['edit_vendor']) . "', vendorCode='" . vendorCheck($post['edit_vendorCode']) . "', description='" . $post['edit_description'] . "', itemTypeCode='" . getStyleCodeVal($post['edit_styleCode']) . "', grossWt='" . clean($post['edit_grossWt']) . "',diaWt='" . clean($post['edit_diaWt']) . "',cstoneWt='" . clean($post['edit_cstoneWt']) . "',goldWt='" . clean($post['edit_goldWt']) . "',noOfDia='" . clean($post['edit_noOfDia']) . "',sellPrice='" . clean($post['edit_sellPrice']) . "',curStock='" . clean($post['edit_curStock']) . "',ringSize='" . $post['edit_ringSize'] . "',styleCode='" . clean($post['edit_styleCode']) . "' where itemNo='" . $post['edit_id'] . "' ".$usertype;
@@ -53,8 +49,8 @@ $result1 = mysqli_query($mysqli1, $sqlTotal);
 $totRows = mysqli_num_rows($result1);
 if ($totRows == 1) {
 while ($row = $result1->fetch_assoc())
-   $newData=implode(',', $row);
-   writelog(4, "prevData:".$prevData.",newData:".$newData);
+   $newData=implode('#', $row);
+   writelog(4, "success:2,prevData:".$previousData.",newData:".$newData);
    echo "1";
 }
 else echo "0";
