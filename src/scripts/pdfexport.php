@@ -93,6 +93,7 @@ $pdf->SetY(25);
 $itemCon=" itemNo like '%" . $_GET["itemNo"] . "%' and";
 $usertype = '';
 $dtcon="";
+$sql="";
 if ($_SESSION['usertype'] == 1) $usertype = ' and userid=' . $_SESSION['userid'];
 $cond="";
 if($_GET['styleCode']!="")
@@ -109,33 +110,22 @@ if($_GET["itemNoExt"]!=""){
 
    $itemCon=" itemNo in ('" . $itemStr . "') and";
 
-$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon . " Order By itemNo LIMIT " . $_GET["perPage"];
+$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon;
+if($_GET["customerDesigns"]=="false")
+    $sql = $sql." AND itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%'";
+
+$sql = $sql . " Order By itemNo LIMIT " . $_GET["perPage"];    
+
 $pdf->ImprovedTable($header,$sql);
 
 }
 elseif ($_GET["itemNoExt"]=="") {
-$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon . " Order By itemNo LIMIT " . $_GET["perPage"];
-$pdf->ImprovedTable($header,$sql);
+$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon ;
+if($_GET["customerDesigns"]=="false")
+    $sql = $sql." AND itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%'";
 
-// $result = $mysqli->query($sql);
-// while ($row = $result->fetch_assoc())
-// {
-//    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, '$'.$row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode']);
-//    $objDrawing = new PHPExcel_Worksheet_Drawing();
-//    $objDrawing->setName('test_img');
-//    $objDrawing->setDescription('test_img');
-//    if (file_exists('../../pics/' . $row['itemNo'] . '.JPG')) $objDrawing->setPath('../../pics/' . $row['itemNo'] . '.JPG');
-//    else $objDrawing->setPath('../../pics/noImage.jpeg');
-//    $objDrawing->setCoordinates('D' . $sno);
-//    $objDrawing->setOffsetX(5);
-//    $objDrawing->setOffsetY(5);
-//    $objDrawing->setWidth(100);
-//    $objDrawing->setHeight(100);
-//    $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-//    $objPHPExcel->getActiveSheet()->getRowDimension($sno)->setRowHeight(82.5);
-//    $objPHPExcel->getActiveSheet()->getStyle('D')->getAlignment()->setWrapText(true);
-//    $sno++;
-// }
+$sql = $sql . " Order By itemNo LIMIT " . $_GET["perPage"];    
+$pdf->ImprovedTable($header,$sql);
 }
 $filename=uniqid().".pdf";
 $pdf->Output($filename,'F');

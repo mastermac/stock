@@ -1043,6 +1043,8 @@ function performSpecialSearch(id){
         }
     });
     $("#pdfExport").click(function(e) {
+        var customerDesigns=true;
+        customerDesigns = confirm("Do you want to include Customer Specific Designs?\n\nPress OK -> YES    OR    Cancel -> NO");
         $('.ajax-loader').css("visibility", "visible");
         s_dt = window.start;
         e_dt = window.end;
@@ -1067,7 +1069,8 @@ function performSpecialSearch(id){
                 styleCode: getVal('styleCode'),
                 sdt: s_dt,
                 edt: e_dt,
-                itemNoExt: getVal('itemIdExt')
+                itemNoExt: getVal('itemIdExt'),
+                customerDesigns: customerDesigns
             }
         }).done(function(data) {
             var resp = JSON.parse(JSON.stringify(data));
