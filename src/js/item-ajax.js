@@ -152,7 +152,7 @@ function performSpecialSearch(id){
     var iterativeValue;
     var notFound="";
     var c=0;
-    for(var i=0;i<res.length;i++){
+    for(var i=res.length-1;i>=0;i--){
     	iterativeValue=fuse.search(res[i]);
     	if(iterativeValue.length>0){
     		tmpArray[c++]=iterativeValue[0];
@@ -1050,6 +1050,7 @@ function performSpecialSearch(id){
             dataType: 'json',
             url: url + 'src/scripts/pdfexport.php',
             data: {
+                perPage: perPage,
                 page: page,
                 itemNo: getVal('itemId'),
                 vendor: getVal('vendor'),
@@ -1069,8 +1070,9 @@ function performSpecialSearch(id){
                 itemNoExt: getVal('itemIdExt')
             }
         }).done(function(data) {
+            var resp = JSON.parse(JSON.stringify(data));
+            window.open('src/scripts/'+resp['filename']);
             $('.ajax-loader').css("visibility", "hidden");
-            window.open('src/scripts/test.pdf');
         });
     });
     
