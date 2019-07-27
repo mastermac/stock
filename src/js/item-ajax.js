@@ -245,7 +245,8 @@ function performSpecialSearch(id){
         }
     }
     $('#s_daterange').daterangepicker({
-        autoUpdateInput: false,
+        startDate: moment().subtract(29, 'days'),
+        endDate: moment(),
         ranges: {
             'Today': [moment(), moment()],
             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -425,7 +426,7 @@ function performSpecialSearch(id){
             if (typeof value.sno != 'undefined') {
                 rows = rows + '<tr>';
                 rows = rows + '<td>' + ((page - 1) * perPage + sno++) + '</td>';
-                rows = rows + '<td>' + value.itemNo + '</td>';
+                rows = rows + '<td onclick="openProductHistory(\''+value.itemNo+'\');">' + value.itemNo + '</td>';
                 rows = rows + '<td style="text-align: right;">' + value.vendor + '</td>';
                 rows = rows + '<td>' + value.vendorCode + '</td>';
                 rows = rows + '<td><a data-fancybox="gallery" href="pics/' + value.itemNo + '.JPG" data-caption="' + value.itemNo + '"><img class="lazy" src="pics/' + value.itemNo + '.JPG" onerror="this.src=\'pics/noImage.jpeg\';" alt="" border=3 height=75 width=75></img></a></td>';
@@ -1166,3 +1167,55 @@ function performSpecialSearch(id){
     });
 });
 
+function openProductHistory(id){
+    $('.ajax-loader').css("visibility", "visible");
+    $.ajax({
+        dataType: 'json',
+        url: url + 'src/scripts/getHistoryData.php',
+        data: {
+            itemNo: id
+        }
+    }).done(function(data) {
+        $('.ajax-loader').css("visibility", "hidden");
+        $('#productHistoryModalName').text("Product History Of "+id);
+
+        bindProductHistory(data.data);
+    });
+
+}
+
+function bindProductHistory(data){
+
+    var rows = '';
+    sno = 1;
+    $.each(data, function(key, value) {
+        if (typeof value.sno != 'undefined') {
+            rows = rows + '<tr>';
+            rows = rows + '<td>' + sno++ + '</td>';
+            rows = rows + '<td>' + value.action + '</td>';
+            rows = rows + '<td>' + value.timestamp + '</td>';
+
+            rows = rows + '<td>' + value.itemNo + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.vendor + '</td>';
+            rows = rows + '<td>' + value.vendorCode + '</td>';
+            rows = rows + '<td>' + value.description + '</td>';
+            rows = rows + '<td>' + value.itemTypeCode + '</td>';
+            rows = rows + '<td>' + value.ringSize + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.grossWt + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.diaWt + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.cstoneWt + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.goldWt + '</td>';
+            rows = rows + '<td style="text-align: center;">' + value.noOfDia + '</td>';
+            rows = rows + '<td style="text-align: right;">$' + value.sellPrice + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.curStock + '</td>';
+            rows = rows + '</tr>';
+        }
+        else
+         return false; 
+    });
+    $("#productHistoryDataTable").html(rows);
+
+    $('#productHistoryModal').modal({
+        show: true
+    });     
+}

@@ -204,7 +204,7 @@ table.floatThead-table {
         </div>
         <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
           <label for="itemId">Date:</label>
-          <input type="text" class="form-control searchField" id="s_daterange" id="s_daterange" style="padding: .375rem .15rem;"  value="01/01/2015 - 01/31/2015" />
+          <input type="text" class="form-control searchField" id="s_daterange" id="s_daterange" autocomplete="false" style="padding: .375rem .15rem;"  value="01/01/2015 - 01/31/2015" />
         </div>
         <div class="form-group col-md-11 extention" style="min-width: 94.5%;max-width: 94.5%;padding-left: 15px;padding-right: 5px;">
           <label for="itemIdExt">Enter Multiple Item IDs here separated by <b>comma ,</b></label>
@@ -385,6 +385,50 @@ table.floatThead-table {
   </div>
 </div>
 <!-- Add Vendor -->
+
+<!-- Product History -->
+<div class="modal fade" id="productHistoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" style="max-width: 90%" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productHistoryModalName">Product History</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-responsive table-sm table-bordered table-hover table-striped"  width="100%" cellspacing="0"  id="vendorTable">
+        <thead>
+          <tr>
+            <th data-column-id="vendorTableSNo" style="width: 60px;">S.No.</th>
+            <th data-column-id="vendorTableSNo" style="width: 70px;">Type</th>
+            <th data-column-id="vendorTableSNo" style="width: 180px;">Date-Time</th>
+            <th data-column-id="vendorTableID" data-identifier="true" class="text-center" style="width: 100px;">Item No</th>
+            <th data-column-id="vendorTableName" class="text-center" style="width: 70px;">V Id</th>
+            <th data-column-id="vendorTableCount" class="text-center" style="width: 70px;text-align: right;">VCode</th>
+            <th data-column-id="vendorTableEmail" class="text-center" style="width: 250px;">Description</th>
+            <th data-column-id="vendorTablePwd" class="text-center" style="width: 220px;">Item Type</th>
+            <th data-column-id="vendorTableType" class="text-center" style="width: 100px;">Size</th>
+            <th data-column-id="vendorTableSeries" class="text-center" style="width:70px;">G.W.</th>
+            <th data-column-id="vendorTableExport" class="text-center" style="width: 70px;">Dia</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Cstone</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Gold</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Dia</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Price</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Stock</th>
+          </tr>
+        </thead>
+        <tbody id="productHistoryDataTable">
+        </tbody>
+      </table>
+        <ul id="pagination1" class="pagination"></ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Product History -->
+
 
 <!-- Last Codes -->
 <div class="modal fade" id="nextCodes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
