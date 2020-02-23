@@ -362,10 +362,10 @@ table.floatThead-table {
         <table class="table table-responsive table-sm table-bordered table-hover table-striped"  width="100%" cellspacing="0"  id="vendorTable">
         <thead>
           <tr>
-            <th data-column-id="vendorTableSNo" style="width: 60px;">S.No.</th>
-            <th data-column-id="vendorTableID" data-identifier="true" class="text-center" style="width: 70px;">ID</th>
-            <th data-column-id="vendorTableName" class="text-center" style="width: 210px;">Name</th>
-            <th data-column-id="vendorTableCount" class="text-center" style="width: 70px;text-align: right;">Products</th>
+            <th onclick="sortTable(0, 'vendorTable', true)" data-column-id="vendorTableSNo" style="width: 80px;">S.No.</th>
+            <th onclick="sortTable(1, 'vendorTable', true)" data-column-id="vendorTableID" data-identifier="true" class="text-center" style="width: 70px;">ID</th>
+            <th onclick="sortTable(2, 'vendorTable')" data-column-id="vendorTableName" class="text-center" style="width: 210px;">Name</th>
+            <th onclick="sortTable(3, 'vendorTable', true)" data-column-id="vendorTableCount" class="text-center" style="width: 100px;text-align: right;">Products</th>
             <th data-column-id="vendorTableEmail" class="text-center" style="width: 210px;">Email</th>
             <th data-column-id="vendorTablePwd" class="text-center" style="width: 150px;">Password</th>
             <th data-column-id="vendorTableType" class="text-center" style="width: 100px;">Type</th>
