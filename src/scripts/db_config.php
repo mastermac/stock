@@ -1,8 +1,9 @@
 <?php
 //$mysqli = new mysqli("localhost", "silvesa6_master", "Mastermac@007", "silvesa6_silverapp");
-
 function getConn(){
-   if($_SERVER['DOCUMENT_ROOT']=="C:/wamp/www")
+   if(gethostname()=="W10CWPBLH2")
+      $mysqli = new mysqli("localhost", "root", "smhs", "silverapp");
+   else if($_SERVER['DOCUMENT_ROOT']=="C:/wamp/www")
       $mysqli = new mysqli("localhost", "root", "", "silverapp");
    else if($_SERVER['DOCUMENT_ROOT']=="C:/wamp64/www")
       $mysqli = new mysqli("localhost", "root", "", "silverapp");

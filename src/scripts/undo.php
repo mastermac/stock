@@ -80,6 +80,9 @@ function revertImportUpdate($prevData,$origin){
     // echo $sql;
     $mysqli=getConn();      
     $result = $mysqli->query($sql);
+    $sql="UPDATE producthistory as p, (Select id from producthistory where sno=" . substr($prevData[0],9)." Order By timestamp desc limit 1) as i SET p.action='UNDO' where p.id=i.id";
+    // echo $sql;
+    $result = $mysqli->query($sql);
     writelog($origin,implode("#",$prevData));
 }
 ?>
