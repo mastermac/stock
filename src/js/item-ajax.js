@@ -585,6 +585,7 @@ function performSpecialSearch(id){
             $("#edit_ringSize").val(data.data[0].ringSize);
             $("#edit_styleCode").val(data.data[0].styleCode);
             $("#edit_comments").val(data.data[0].comments);
+            $("#edit_mu").val(data.data[0].mu);
         });
     });
     $("body").on("click", ".edit-vendor", function() {

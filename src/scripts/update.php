@@ -41,10 +41,20 @@ $previousData=implode("#",getCurrentData($post['edit_id']));
 
 $usertype="";
 if ($_SESSION['usertype'] == 1) $usertype = " and userid='" . $_SESSION['userid']."'";
-$sql = "UPDATE product SET comments='".$post['edit_comments']."', itemNo='" . $post['edit_itemId'] . "', vendor='" . strtoupper($post['edit_vendor']) . "', vendorCode='" . vendorCheck($post['edit_vendorCode']) . "', description='" . $post['edit_description'] . "', itemTypeCode='" . getStyleCodeVal($post['edit_styleCode']) . "', grossWt='" . clean($post['edit_grossWt']) . "',diaWt='" . clean($post['edit_diaWt']) . "',cstoneWt='" . clean($post['edit_cstoneWt']) . "',goldWt='" . clean($post['edit_goldWt']) . "',noOfDia='" . clean($post['edit_noOfDia']) . "',sellPrice='" . clean($post['edit_sellPrice']) . "',curStock='" . clean($post['edit_curStock']) . "',ringSize='" . $post['edit_ringSize'] . "',styleCode='" . clean($post['edit_styleCode']) . "' where itemNo='" . $post['edit_id'] . "' ".$usertype;
+$sql = "UPDATE product SET comments='".$post['edit_comments']."', itemNo='" . $post['edit_itemId'] . "', vendor='" . strtoupper($post['edit_vendor']) . "', 
+      vendorCode='" . vendorCheck($post['edit_vendorCode']) . "', description='" . $post['edit_description'] . "', itemTypeCode='" . 
+      getStyleCodeVal($post['edit_styleCode']) . "', grossWt='" . clean($post['edit_grossWt']) . "',diaWt='" . clean($post['edit_diaWt']) . "',
+      cstoneWt='" . clean($post['edit_cstoneWt']) . "',goldWt='" . clean($post['edit_goldWt']) . "',noOfDia='" . clean($post['edit_noOfDia']) . "',
+      sellPrice='" . clean($post['edit_sellPrice']) . "',curStock='" . clean($post['edit_curStock']) . "',ringSize='" . $post['edit_ringSize'] . "',
+      styleCode='" . clean($post['edit_styleCode']) . "', mu='".$post['edit_mu']."' where itemNo='" . $post['edit_id'] . "' ".$usertype;
 $result = $mysqli->query($sql);
 $mysqli1 = getConn();
-$sqlTotal = "Select * from product where itemNo='" . $post['edit_itemId'] . "' and vendor='" . strtoupper($post['edit_vendor']) . "' and vendorCode='" . vendorCheck($post['edit_vendorCode']) . "' and description='" . $post['edit_description'] . "' and itemTypeCode='" . getStyleCodeVal($post['edit_styleCode']) . "' and grossWt='" . clean($post['edit_grossWt']) . "' and diaWt='" . clean($post['edit_diaWt']) . "' and cstoneWt='" . clean($post['edit_cstoneWt']) . "' and goldWt='" . clean($post['edit_goldWt']) . "' and noOfDia='" . clean($post['edit_noOfDia']) . "' and sellPrice='" . clean($post['edit_sellPrice']) . "' and curStock='" . clean($post['edit_curStock']) . "' and ringSize='" . $post['edit_ringSize'] . "' and styleCode='" . clean($post['edit_styleCode']) . "';";
+$sqlTotal = "Select * from product where itemNo='" . $post['edit_itemId'] . "' and vendor='" . strtoupper($post['edit_vendor']) . "' and vendorCode='" . 
+            vendorCheck($post['edit_vendorCode']) . "' and description='" . $post['edit_description'] . "' and itemTypeCode='" . 
+            getStyleCodeVal($post['edit_styleCode']) . "' and grossWt='" . clean($post['edit_grossWt']) . "' and diaWt='" . clean($post['edit_diaWt']) . 
+            "' and cstoneWt='" . clean($post['edit_cstoneWt']) . "' and goldWt='" . clean($post['edit_goldWt']) . "' and noOfDia='" . clean($post['edit_noOfDia']) .
+             "' and sellPrice='" . clean($post['edit_sellPrice']) . "' and curStock='" . clean($post['edit_curStock']) . "' and ringSize='" . 
+             $post['edit_ringSize'] . "' and styleCode='" . clean($post['edit_styleCode']) . "' and mu='".$post['edit_mu']."';";
 $result1 = mysqli_query($mysqli1, $sqlTotal);
 $totRows = mysqli_num_rows($result1);
 if ($totRows == 1) {
