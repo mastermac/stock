@@ -71,7 +71,7 @@ function revertInsert($prevData,$origin){
 }
 
 function revertImportUpdate($prevData,$origin){
-    $sql = "UPDATE product SET comments='".$prevData[19]."', itemNo='" . $prevData[1] . "', vendor='" . $prevData[2] . 
+    $sql = "UPDATE product SET comments='".$prevData[19]."', mu='".$prevData[20]."' itemNo='" . $prevData[1] . "', vendor='" . $prevData[2] . 
            "', vendorCode='" . vendorCheck($prevData[3]) . "', description='" . $prevData[5] . "', itemTypeCode='" . 
            $prevData[6] . "', grossWt='" . $prevData[7] . "',diaWt='" . $prevData[8] . 
            "',cstoneWt='" . $prevData[9] . "',goldWt='" . $prevData[10] . "',noOfDia='" . $prevData[11] . 
