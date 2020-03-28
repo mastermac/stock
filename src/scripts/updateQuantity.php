@@ -30,9 +30,9 @@ for($i=0;$i<$NumRows;$i++){
     }
     if(count($stock)==2){
         $itemCodes=$itemCodes."'".trim($stock[0])."',";
-        $Query[]="UPDATE product SET curstock='".trim($stock[1])."' WHERE itemNo='".trim($stock[0])."'";
+        $Query[]="UPDATE product SET curstock='".trim($stock[1])."' WHERE itemNo='".trim($stock[0])."' and curstock!='".trim($stock[1])."'";
         // $UpdateLogQuery[]="UPDATE producthistory SET action='API-update' where curstock='".$stock[1]."' and itemNo='".$stock[0]."'";
-        $UpdateLogQuery[]="UPDATE producthistory as p, (Select id from producthistory where itemNo='".trim($stock[0])."' and curstock='".trim($stock[1])."' Order By timestamp desc limit 1) as i SET p.action='API-update' where p.id=i.id";
+        $UpdateLogQuery[]="UPDATE producthistory as p, (Select id from producthistory where itemNo='".trim($stock[0])."' and curstock='".trim($stock[1])."' Order By timestamp desc limit 1) as i SET p.action='API-update' where p.id=i.id and DATE(p.timestamp)='".date("Y-m-d")."'";
         $syncedItems++;
     }
     else
