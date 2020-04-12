@@ -416,6 +416,8 @@ table.floatThead-table {
             <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Dia</th>
             <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Price</th>
             <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Stock</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">MU</th>
+            <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Cost</th>
           </tr>
         </thead>
         <tbody id="productHistoryDataTable">

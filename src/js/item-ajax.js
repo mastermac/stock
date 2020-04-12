@@ -1210,6 +1210,8 @@ function bindProductHistory(data){
             rows = rows + '<td style="text-align: center;">' + value.noOfDia + '</td>';
             rows = rows + '<td style="text-align: right;">$' + value.sellPrice + '</td>';
             rows = rows + '<td style="text-align: right;">' + value.curStock + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.mu+"" + '</td>';
+            rows = rows + '<td style="text-align: right;">' + value.costPrice+"" + '</td>';
             rows = rows + '</tr>';
         }
         else
