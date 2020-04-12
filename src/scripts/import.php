@@ -39,7 +39,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
       $blankLine=0;
       $NoDashInItemFile=true;
       for($row = 2; $row <= $highestRow; $row++){
-         $rowData = $sheet->rangeToArray('A' . $row . ':' . 'N' . $row, NULL, TRUE, FALSE);
+         $rowData = $sheet->rangeToArray('A' . $row . ':' . 'Q' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
          if(strpos($data[2],'-')!==false && (clean($data[13])=='586' || clean($data[13])=='756' || clean($data[13])=='6'))
          {
@@ -51,7 +51,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
          for ($row = 2; $row <= $highestRow; $row++)
          {
             $previousData="";
-            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'P' . $row, NULL, TRUE, FALSE);
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'Q' . $row, NULL, TRUE, FALSE);
             $data = $rowData[0];
             $date = date('Y/m/d H:i:s');
             if($_POST['src']=="importForm")
@@ -68,11 +68,11 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
                $sql = "INSERT INTO product VALUES (null,'" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "',
                   '','" . $data[4] . "','" . getStyleCodeVal(clean($data[13])) . "','" . clean($data[6]) . "','" . clean($data[7]) . "','" . clean($data[8]) . "',
                   '" . clean($data[9]) . "','" . clean($data[10]) . "','" . clean($data[11]) . "','" . clean($data[12]) . "',
-                  '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."','".$data[14]."','".$data[15]."'
+                  '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[13]) . ",'".$date."','".$data[14]."','".$data[15]."','".clean($data[16])."'
                   ) ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', 
                   itemTypeCode='" . getStyleCodeVal(clean($data[13])) . "', grossWt='" . clean($data[6]) . "',diaWt='" . clean($data[7]) . "',cstoneWt='" . 
                   clean($data[8]) . "',goldWt='" . clean($data[9]) . "',noOfDia='" . clean($data[10]) . "',sellPrice='" . clean($data[11]) . "',curStock='" . 
-                  clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "', comments='".$data[14]."', mu='".$data[15]."' ;";            
+                  clean($data[12]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[13]) . "', comments='".$data[14]."', mu='".$data[15]."', costPrice='".clean($data[16])."' ;";            
             }
             elseif($_POST['src']=="updateForm")
             {
@@ -117,6 +117,8 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls' )
                      $buildQuery=$buildQuery." comments='".$data[14]."',";
                   if(!isEmpty($data[15]))
                      $buildQuery=$buildQuery." mu='".$data[15]."',";
+                     if(!isEmpty($data[16]))
+                     $buildQuery=$buildQuery." costPrice='".clean($data[16])."',";
                   if (substr($buildQuery, -1)==","){
                      $sql=substr($buildQuery, 0, -1)." WHERE itemNo='".$data[2]."' ;";
                   }

@@ -572,13 +572,17 @@ table.floatThead-table {
                     <input type="number" readonly class="form-control" id="styleCode" name="styleCode" required="" />
                                           
                   </div>
-                  <div class="form-group col-md-10">
+                  <div class="form-group col-md-8">
                     <label for="comments" class="control-label">Comments</label>
                     <textarea class="form-control" id="comments" name="comments" row="2"></textarea>
                   </div>
                   <div class="form-group col-md-2">
                     <label for="mu" class="control-label">MU</label>
                     <input type="text" class="form-control" id="mu" name="mu"/>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="costPrice" class="control-label">Cost Price</label>
+                    <input type="text" class="form-control" id="costPrice" name="costPrice"/>
                   </div>
 
                 </div>
@@ -669,13 +673,17 @@ table.floatThead-table {
                   <label for="edit_styleCode" class="control-label">Style Code</label>
                   <input type="number" readonly class="form-control" id="edit_styleCode" name="edit_styleCode" required />
                 </div>
-                <div class="form-group col-md-10">
+                <div class="form-group col-md-8">
                     <label for="edit_comments" class="control-label">Comments</label>
                     <textarea class="form-control" id="edit_comments" name="edit_comments" row="2"></textarea>
                 </div>
                 <div class="form-group col-md-2">
                     <label for="edit_mu" class="control-label">MU</label>
                     <input type="text" class="form-control" id="edit_mu" name="edit_mu"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="edit_costPrice" class="control-label">Cost Price</label>
+                    <input type="text" class="form-control" id="edit_costPrice" name="edit_costPrice"/>
                 </div>
 
               </div>

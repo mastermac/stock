@@ -26,7 +26,7 @@ $style = array(
   );
 
   $objPHPExcel->getActiveSheet()->getDefaultStyle()->applyFromArray($style);
-$objPHPExcel->getActiveSheet()->getStyle("A1:P1")->getFont()->setBold(true);
+$objPHPExcel->getActiveSheet()->getStyle("A1:Q1")->getFont()->setBold(true);
 $mysqli=getConn();      
 $sno = 2;
 
@@ -62,12 +62,12 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(45);
 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(7.5);
 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
 
-   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'gross Wt')->setCellValue('H1', 'dia Wt')->setCellValue('I1', 'cstone Wt')->setCellValue('J1', 'gold Wt')->setCellValue('K1', 'No. of Dia')->setCellValue('L1', 'Sell Price')->setCellValue('M1', 'Qty')->setCellValue('N1', 'Style Code')->setCellValue('O1', 'Comments')->setCellValue('P1', 'MU');
+   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'gross Wt')->setCellValue('H1', 'dia Wt')->setCellValue('I1', 'cstone Wt')->setCellValue('J1', 'gold Wt')->setCellValue('K1', 'No. of Dia')->setCellValue('L1', 'Sell Price')->setCellValue('M1', 'Qty')->setCellValue('N1', 'Style Code')->setCellValue('O1', 'Comments')->setCellValue('P1', 'MU')->setCellValue('Q1', 'Cost Price');
 $sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon . " Order By itemNo";
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc())
 {
-   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, $row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode'])->setCellValue('O' . $sno, $row['comments'])->setCellValue('P' . $sno, $row['mu']);
+   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, $row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode'])->setCellValue('O' . $sno, $row['comments'])->setCellValue('P' . $sno, $row['mu'])->setCellValue('Q' . $sno, $row['costPrice']);
    $objDrawing = new PHPExcel_Worksheet_Drawing();
    $objDrawing->setName('test_img');
    $objDrawing->setDescription('test_img');

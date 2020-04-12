@@ -586,6 +586,7 @@ function performSpecialSearch(id){
             $("#edit_styleCode").val(data.data[0].styleCode);
             $("#edit_comments").val(data.data[0].comments);
             $("#edit_mu").val(data.data[0].mu);
+            $("#edit_costPrice").val(data.data[0].costPrice);
         });
     });
     $("body").on("click", ".edit-vendor", function() {

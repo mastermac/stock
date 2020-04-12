@@ -46,7 +46,7 @@ $sql = "UPDATE product SET comments='".$post['edit_comments']."', itemNo='" . $p
       getStyleCodeVal($post['edit_styleCode']) . "', grossWt='" . clean($post['edit_grossWt']) . "',diaWt='" . clean($post['edit_diaWt']) . "',
       cstoneWt='" . clean($post['edit_cstoneWt']) . "',goldWt='" . clean($post['edit_goldWt']) . "',noOfDia='" . clean($post['edit_noOfDia']) . "',
       sellPrice='" . clean($post['edit_sellPrice']) . "',curStock='" . clean($post['edit_curStock']) . "',ringSize='" . $post['edit_ringSize'] . "',
-      styleCode='" . clean($post['edit_styleCode']) . "', mu='".$post['edit_mu']."' where itemNo='" . $post['edit_id'] . "' ".$usertype;
+      styleCode='" . clean($post['edit_styleCode']) . "', mu='".$post['edit_mu']."', costPrice='".$post['edit_costPrice']."' where itemNo='" . $post['edit_id'] . "' ".$usertype;
 $result = $mysqli->query($sql);
 $mysqli1 = getConn();
 $sqlTotal = "Select * from product where itemNo='" . $post['edit_itemId'] . "' and vendor='" . strtoupper($post['edit_vendor']) . "' and vendorCode='" . 

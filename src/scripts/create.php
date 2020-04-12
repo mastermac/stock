@@ -12,7 +12,7 @@ $sql     = "INSERT INTO product VALUES ( NULL,
   '" . clean($post['cstoneWt']) . "','" . clean($post['goldWt']) . "',
   '" . clean($post['noOfDia']) . "','" . clean($post['sellPrice']) . "',
   '" . clean($post['curStock']) . "','" . $post['ringSize'] . "',
-  '','" . $session . "','" . clean($post['styleCode']) . "','".$date."','".$post['comments']."','".$post['mu']."'
+  '','" . $session . "','" . clean($post['styleCode']) . "','".$date."','".$post['comments']."','".$post['mu']."','".$post['costPrice']."'
   )";
   //echo $sql;
 $logsql="";
