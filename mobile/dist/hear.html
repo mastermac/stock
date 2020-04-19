@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>MySales | HeaR</title>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.3.0/css/all.css" rel="stylesheet">
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <style>
+        .select-wrapper input.select-dropdown {
+            margin: 0;
+            height: 32px;
+            font-size: 4vw;
+            border-bottom: none;
+            color: black 0.9;
+            font-weight: 300;
+        }
+
+        .select-wrapper span.caret {
+            top: .3rem;
+            font-size: 3.4vw;
+            color: black;
+        }
+
+        .dropdown-content li>a,
+        .dropdown-content li>span {
+            font-size: 3.5vw;
+            color: #0076CE;
+            font-weight: 500;
+        }
+
+        .dropdown-primary .dropdown-content li.active,
+        .dropdown-primary .dropdown-content li a,
+        .dropdown-primary .dropdown-content li span:hover {
+            background-color: #0076CE !important;
+        }
+
+        .md-form label.active {
+            color: #0076CE;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .file-field .btn-primary {
+            background-color: #0076CE !important;
+        }
+        .green{
+            background-color:#6EA204 !important;
+        }
+        .blue{
+            background-color: #0076CE !important;
+        }
+        .element-disabled{
+            opacity: 0.4;
+        }
+        .element-enabled{
+            opacity: 1;
+        }
+        .toast-info {
+            background-color: #00447C !important;
+        }
+        .toast-success{
+            background-color: #6EA204 !important;
+        }
+        /* .mdb-select{
+            border-bottom: 1px solid #ced4da;
+        } */
+
+        .caret{
+            display: none;
+        }
+
+        .mdb-select, .md-form textarea.md-textarea{
+            border-bottom: 1px solid #eee;
+        }
+        .md-form{
+            margin-bottom: 2.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <form class="md-form" method="POST" enctype="multipart/form-data" action="" id="hearForm" style="margin-top: 2rem;">
+            <input type="hidden" id="secureKey" name="secureKey" value="">
+            <input type="hidden" id="capturedImage" name="capturedImage" value="">
+            <input type="hidden" id="capturedImageName" name="capturedImageName" value="">
+            <input type="hidden" id="choosenImage" name="choosenImage" value="">
+            <input type="hidden" id="choosenImageName" name="choosenImageName" value="">
+            <input type="hidden" id="userName" name="userName" value="">
+            <input type="hidden" id="userEmail" name="userEmail" value="">
+            <input type="hidden" id="userBadgeId" name="userBadgeId" value="">
+            <div class="md-form">
+                <label class="mdb-main-label primary active">Region <span style="color: red;">*</span></label>
+                <select class="mdb-select md-form colorful-select dropdown-primary" id="region" name="region"
+                    onchange="onRegionChange(this);">
+                    <option value="" disabled selected>Select Your Region</option>
+                    <option value="APJC">APJC</option>
+                    <option value="EMEA">EMEA</option>
+                    <option value="LATAM">LATAM</option>
+                    <option value="NA">NA</option>
+                </select>
+            </div>
+            <div class="md-form">
+                <label class="mdb-main-label primary active element-disabled" id="countryLabel">Country/Subregion <span
+                        style="color: red;">*</span></label>
+                <select class="mdb-select md-form colorful-select dropdown-primary" disabled id="country" name="country" onchange="validateInputs();"
+                    searchable="Search here..">
+                    <option value="" disabled selected>Select Your Country/Subregion</option>
+                </select>
+            </div>
+            <div class="md-form">
+                <label class="mdb-main-label primary active element-disabled" id="issueTitleLabel">Issue Title <span style="color: red;">*</span></label>
+                <select class="mdb-select md-form colorful-select dropdown-primary" disabled id="issueTitle" name="issueTitle"
+                    searchable="Search here.." onchange="onIssueTitleChange(this);">
+                    <option value="" disabled selected>Select Your Issue Title</option>
+                </select>
+            </div>
+
+            <div class="md-form" id="toolsImpactedDiv" style="display: none;">
+                <label class="mdb-main-label primary active">Tools Impacted <span style="color: red;">*</span></label>
+                <select class="mdb-select md-form colorful-select dropdown-primary" id="toolsImpacted" name="toolsImpacted"
+                    searchable="Search here.." onchange="validateInputs();">
+                    <option value="" disabled selected>Select Your Tools Impacted</option>
+                </select>
+            </div>
+            <div class="md-form">
+                <label for="issueDescription" id="issueDescriptionLabel">Issue Description <span style="color: red;">*</span></label>
+                <textarea class="form-control md-textarea" id="issueDescription" name="issueDescription" placeholder="" style="font-size: 4vw;" onkeyup="validateInputs();"></textarea>
+            </div>
+            <div>
+                <button class="btn btn-block my-4 waves-effect z-depth-1 blue element-disabled" type="button" style="border-radius: 6px;"
+                id="submitHearForm" name="submitHearForm" onclick="submitHear();">Send</button>
+            </div>
+        </form>
+        <div class="fixed-action-btn" style="bottom: 80px; right: 15px;">
+            <a href="https://openGallary" class="btn-floating green">
+              <i class="fal fa-paperclip"></i>
+            </a>
+        </div>
+        <div class="fixed-action-btn" style="bottom: 15px; right: 15px;">
+            <a href="https://openCamera" class="btn-floating green">
+              <i class="fal fa-camera"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/mdb.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.mdb-select').materialSelect();
+            $("#issueDescriptionLabel").addClass("active");
+        });
+        var region = country = issueTitle = toolImpacted = issueDescription =capturedImageName=choosenImageName= "";
+        var disableSubmitButton=true;
+        var hasChanged=false;
+        var countryDictionary = {
+            "APJC": "Asia Emerging Markets (AEM),ANZ,China,Hong Kong,India,Japan,Korea,South Asia,Taiwan",
+            "EMEA": "CEE – Czech Republic,CEE – Poland,CEE – Rest of CEE,CEE – Slovakia,France,Germany,Ireland,META,Russia,South Africa,UK/Ireland,WER – Austria,WER – Belgium,WER – Denmark,WER – Finland,WER – Italy,WER – Luxemburg,WER – Netherlands,WER – Norway,WER – Portugal,WER – Spain",
+            "LATAM": "Andean,Brazil Balanced Accounts,Brazil Data Center Heavy Accounts,Mexico,NOLA Named Accounts,NOLA Regional Accounts,Venezuela",
+            "NA": "Alliances,Commercial Acquisition,Commercial Canada,Commercial Central,Commercial East,Commercial Medium Business,Commercial West,Enterprise Canada,Enterprise Central,Enterprise NorthEast,Enterprise West"
+        };
+        var issueTitleDictionary = {
+            "APJC": "Tools Access & Support,TA Assistance/Changes,SCSC Order Status and Ship Date,Order Processing,Deal Governance,Reporting Reconciliation / MyBMS Issues,Onboarding/Training,SFDC / Salesforce Lightning,Pre-Quote Contract Questions/Issues,Quote Assistance,Shipping/Expedite,RMA,Other",
+            "EMEA": "Tools Access & Support,TA Assistance/Changes,Order Processing,Deal Governance,Reporting Reconciliation / MyBMS Issues,Onboarding/Training,SFDC / Salesforce Lightning,Pre-Quote Contract Questions/Issues,Quote Assistance,Shipping/Expedite,RMA,Other",
+            "LATAM": "Tools Access & Support,TA Assistance/Changes,Order Processing,Deal Governance,Reporting Reconciliation / MyBMS Issues,Onboarding/Training,SFDC / Salesforce Lightning,Pre-Quote Contract Questions/Issues,Quote Assistance,Shipping/Expedite,RMA,Other",
+            "NA": "Tools Access & Support,TA Assistance/Changes,Order Processing,Deal Governance,Reporting Reconciliation / MyBMS Issues,Onboarding/Training,SFDC / Salesforce Lightning,Pre-Quote Contract Questions/Issues,Quote Assistance,Shipping/Expedite,RMA,Other"
+        };
+        var toolImpactedDictionary = {
+            "APJC": "CITRIX,DAM / GOAL / Goal Lite,Dell.com,GCM,Gii / Gii OSC / OMEGA,MySales Mobile Apps,ORL,Other,SFDC / Salesforce,Smartprice",
+            "EMEA": "CITRIX,DAM / GOAL / Goal Lite,Dell.com,GCM,Gii / Gii OSC / OMEGA,MySales Mobile Apps,ORL,Other,SFDC / Salesforce,Smartprice,AMDV,Gii,Omega,Order Broker,OSC",
+            "LATAM": "CITRIX,DAM / GOAL / Goal Lite,Dell.com,GCM,Gii / Gii OSC / OMEGA,MySales Mobile Apps,ORL,Other,SFDC / Salesforce,Smartprice",
+            "NA": "CITRIX,DAM / GOAL / Goal Lite,Dell.com,GCM,Gii / Gii OSC / OMEGA,MySales Mobile Apps,ORL,Other,SFDC / Salesforce,Smartprice"
+        };
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-bottom-full-width",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "500",
+            "timeOut": "7000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        function onRegionChange(selectedObject) {
+            if (region != selectedObject.value) {
+                region = selectedObject.value;
+                country = issueTitle = toolImpacted = "";
+
+                resetSelections($('#country'), region, "Country/Subregion", countryDictionary);
+                resetSelections($('#issueTitle'), region, "Issue Title", issueTitleDictionary);
+                resetSelections($('#toolsImpacted'), region, "Tools Impacted", toolImpactedDictionary);
+
+                $('#country').prop('disabled', false);
+                $('#issueTitle').prop('disabled', false);
+                $("#issueTitleLabel").removeClass("element-disabled");
+                $("#issueTitleLabel").addClass("element-enabled");
+                $("#countryLabel").removeClass("element-disabled");
+                $("#countryLabel").addClass("element-enabled");
+
+                $('#toolsImpactedDiv').css("display", "none");
+                validateInputs();
+            }
+        }
+
+        function resetSelections(selectObject, region, type, objectDictionary) {
+            selectObject.find('option').remove().end();
+            var objectList = objectDictionary[region].split(",");
+            selectObject.append('<option value="" disabled selected>Select Your ' + type + '</option>')
+
+            for (var i = 0; i < objectList.length; i++)
+                selectObject.append('<option value="' + objectList[i] + '">' + objectList[i] + '</option>');
+
+            selectObject.val('');
+        }
+
+        function onIssueTitleChange(selectedObject) {
+            if (issueTitle != selectedObject.value) {
+                issueTitle = selectedObject.value;
+                toolImpacted = "";
+                if (issueTitle == "Tools Access & Support")
+                    $('#toolsImpactedDiv').css("display", "block");
+                else
+                    $('#toolsImpactedDiv').css("display", "none");
+                validateInputs();
+            }
+        }
+
+        function validateInputs(showErrorMessage=false){
+            reassignLocalValues();
+            var errorMessage="";
+            
+            disableSubmitButton=false;
+            if (!region || !country || !issueTitle || (issueTitle == "Tools Access & Support" && !toolsImpacted) || !issueDescription){
+                errorMessage="Please fill all the mandatory fields marked by * before submitting the request";
+                disableSubmitButton=true;
+            }            
+            
+            if(disableSubmitButton){
+                if($("#submitHearForm").hasClass("element-enabled"))
+                    $("#submitHearForm").removeClass("element-enabled");
+                if(!$("#submitHearForm").hasClass("element-disabled"))
+                    $("#submitHearForm").addClass("element-disabled");
+            }
+            else{
+                if($("#submitHearForm").hasClass("element-disabled"))
+                    $("#submitHearForm").removeClass("element-disabled");
+                if(!$("#submitHearForm").hasClass("element-enabled"))
+                    $("#submitHearForm").addClass("element-enabled");
+            }
+            if(showErrorMessage && errorMessage!="")
+                toastr["error"](errorMessage);
+        }
+        function reassignLocalValues(){
+            region = $("#region").val();
+            country = $("#country").val();
+            issueTitle = $("#issueTitle").val();
+            toolsImpacted = $("#toolsImpacted").val();
+            issueDescription = $("#issueDescription").val();
+            capturedImageName = $("#capturedImageName").val();
+            choosenImageName = $("#choosenImageName").val();
+        }
+        function askForConfirmation(){
+            reassignLocalValues();
+            if(region || country || issueTitle || (issueTitle && issueTitle == "Tools Access & Support" &&
+                    toolImpacted ) || issueDescription || capturedImageName || choosenImageName)
+                hasChanged=true;
+            return hasChanged;
+        }
+        function assignCapturedImage(fromCamera, filename="",data=""){
+            if(fromCamera){
+                $('#capturedImage').val(data);
+                $('#capturedImageName').val(filename);                
+                $('#choosenImage').val("");
+                $('#choosenImageName').val("");                
+            }
+            else{
+                $('#capturedImage').val("");
+                $('#capturedImageName').val("");
+                $('#choosenImage').val(data);
+                $('#choosenImageName').val(filename);                
+            }
+            reassignLocalValues();
+        }
+        function assignUserDetails(username,badgeid,email,key){
+            $('#userName').val(username);
+            $('#userBadgeId').val(badgeid);                
+            $('#userEmail').val(email);
+            $('#secureKey').val(key);
+        }
+        function submitHear() {
+            validateInputs(true);
+            if(!disableSubmitButton){
+                toastr["info"]("Form will be submitted in a while");
+                var formData = new FormData($('#hearForm')[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: rootUri+config[env].HelpARep,
+                    enctype: 'multipart/form-data',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function(response){
+                        toastr.clear();
+                        resetForm();
+                        toastr["success"]("An Email has been sent to the support team with input details...");
+                        trackEvent("Help A Rep","successful");
+                    },
+                    error: function(jqXHR, exception){
+                        toastr.clear();
+                        toastr["error"]("An error occured. Please Try again later...");
+                        trackEvent("Help A Rep","unsuccessful");
+                    }
+                });
+            }
+        }
+        function resetForm(){
+            $('#choosenImage').val("");
+            $('#choosenImageName').val("");                
+            $('#capturedImage').val("");
+            $('#capturedImageName').val("");
+            $("#issueDescription").val("");
+            $("#region").val("");
+            $("#country").val("");
+            $("#issueTitle").val("");
+            $("#toolsImpacted").val("");
+            $('#toolsImpactedDiv').css("display", "none");
+
+            $('#country').prop('disabled', true);
+            $('#issueTitle').prop('disabled', true);
+            $("#issueTitleLabel").removeClass("element-enabled");
+            $("#issueTitleLabel").addClass("element-disabled");
+            $("#countryLabel").removeClass("element-enabled");
+            $("#countryLabel").addClass("element-disabled");
+
+            validateInputs();
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "mobile-stock-panel",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "js-compile-plugins": "babel --presets env js/src/ --out-dir js/dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.dell.com/seller/SolutionSelling/MySales/mysalesmanager-common-app.git"
+  },
+  "author": "Shubham_Gupta5",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-preset-env": "^1.6.1",
+    "browser-sync": "^2.26.7",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-minify": "^2.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^3.2.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.3.3"
+  },
+  "description": "This is the common repository of MySales Manager View which contains common css js theme files"
+}

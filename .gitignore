@@ -4,3 +4,4 @@ pics/
 /src/import/
 src/scripts/export.xlsx
 src/scripts/export.xlsx
+mobile/node_modules

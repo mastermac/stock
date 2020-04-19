@@ -1,0 +1,24 @@
+{
+  "ARR": {
+    "ProfileData": "api/attainment/getsalesrep?salespersonId=",
+    "Qna": "api/attainment/getattainment",
+    "AttainmentData": "api/attainment/attainmentdata",
+    "LoadAccountWidgetData": "api/account/dashboardaccountlist",
+    "GetTeamAccounts": "api/account/teamaccountcard",
+    "GetTeamAE": "api/account/teamaccountcard",
+    "GetAccountDetails": "api/account/accountlist",
+    "LoadOpportunityWidgetData": "api/opportunity/dashboardopportunitylist",
+    "GetTeamAEForOpportunity": "api/opportunity/teamopportunitycard",
+    "GetPipelineData": "api/opportunity/opportunitypipeline",
+    "GetTeamAccountsForOpportunity": "api/opportunity/teamopportunitycard",
+    "InitializeHeaderDefaultData": "api/user/userprofile",
+    "GetOpportunityDetails": "api/opportunity/opportunitylist",
+    "HeaderAccountSearch": "api/account/searchaccountbyname",
+    "HeaderOpportunitySearch": "api/opportunity/searchopportunitybyname",
+    "AddFeedback": "api/log/feedback",
+    "GetAEOpportunityDetails": "api/opportunity/detail",
+    "getlobList": "api/opportunity/getproductlist",
+    "GetManagerType": "api/user/isl1l2manager",
+    "HelpARep": "api/user/sendhearmail"
+  }
+}

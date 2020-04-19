@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Funnel Chart Sample</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        .col-xs-7 {
+            text-align: center;
+        }
+
+        .pad1 {
+            padding-left: 45px;
+        }
+
+        .pad2 {
+            text-align: left;
+        }
+
+        .pad3 {
+            line-height: 0%;
+        }
+
+        table {
+            background: url("funnel.png");
+            background-size: 100% 100%;
+        }
+
+        .graphrow {
+            color: white;
+            height: 36px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            padding-top: 15px;
+        }
+
+        .g1 {
+            background-image: url('img/row-1-col-1.jpg');
+        }
+
+        .g2 {
+            background-image: url('img/row-2-col-1.jpg');
+        }
+
+        .g3 {
+            background-image: url('img/row-3-col-1.jpg');
+        }
+
+        .g4 {
+            background-image: url('img/row-4-col-1.jpg');
+        }
+
+        .g5 {
+            background-image: url('img/row-5-col-1.jpg');
+        }
+
+        .g6 {
+            background-image: url('img/row-6-col-1.jpg');
+        }
+    </style>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+</head>
+<body>
+    <div class="container-fluid">
+
+        <div class="row graphrow g1">
+            <div class="col-xs-2"> </div>
+            <div class="col-xs-7 center">Plan (<span id="plan_span"></span>)</div>
+            <div class="col-xs-3 left" id="plan">60</div>
+        </div>
+        <div class="row graphrow g2">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7 center">Discover (<span id="discover_span"></span>)</div>
+            <div class="col-xs-3 left" id="discover">30</div>
+        </div>
+        <div class="row graphrow g3">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7 center">Qualify (<span id="qualify_span"></span>)</div>
+            <div class="col-xs-3 left" id="qualify">30</div>
+        </div>
+        <div class="row graphrow g4">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7 center">Propose (<span id="propose_span"></span>)</div>
+            <div class="col-xs-3 left" id="propose">30</div>
+        </div>
+        <div class="row graphrow g5">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7 center">Commit (<span id="commit_span"></span>)</div>
+            <div class="col-xs-3 left" id="commit">30</div>
+        </div>
+        <div class="row graphrow g6">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-7 center">Win (<span id="win_span"></span>)</div>
+            <div class="col-xs-3 left" id="win">30</div>
+        </div>
+    </div>
+
+    <!-- <table  style="width:100%;height:230px;color: white;">
+        <tr class="pad3">
+    <td class="pad1" style="padding-top: 50px;">Plan (<span id="plan_span"></span>)</td>
+            <td class="pad2" style="padding-top: 50px;" id="plan">10</td>
+        </tr>
+        <tr class="pad3">
+            <td class="pad1" style="padding-top: 10px;">Discover (<span id="discover_span"></span>)</td>
+            <td class="pad2" style="padding-top: 10px;" id="discover">20</td>
+        </tr>
+        <tr class="pad3">
+            <td class="pad1" style="padding-top: 10px;">Qualify (<span id="qualify_span"></span>)</td>
+            <td class="pad2" style="padding-top: 10px;" id="qualify">30</td>
+        </tr>
+        <tr class="pad3">
+            <td class="pad1">Propose (<span id="propose_span"></span>)</td>
+            <td class="pad2" id="propose">40</td>
+        </tr>
+        <tr class="pad3">
+            <td class="pad1">Commit (<span id="commit_span"></span>)</td>
+            <td class="pad2" id="commit">50</td>
+        </tr>
+        <tr class="pad3">
+            <td class="pad1" style="padding-bottom: 20px;">Win (<span id="win_span"></span>)</td>
+            <td class="pad2" style="padding-bottom: 20px;" id="win">60</td>
+        </tr>
+
+    </table> -->
+    <!-- <div id="funnel" class="gauge"></div> -->
+    </div>
+    <script>
+            document.addEventListener("DOMContentLoaded", showfunnel);
+            function showfunnel() {
+                var url = window.location.href;
+                var regex = /[?&]([^=#]+)=([^&#]*)/g,
+                    params = {},
+                    match;
+                while (match = regex.exec(url)) {
+                    params[match[1]] = match[2];
+                }
+		var splitArray=params['Plan'].split(';');
+                document.getElementById('plan_span').innerHTML = splitArray[0];
+                document.getElementById('plan').innerHTML = "$"+splitArray[1];
+
+		splitArray=params['Discover'].split(';');
+                document.getElementById('discover_span').innerHTML = splitArray[0];
+                document.getElementById('discover').innerHTML = "$"+splitArray[1];
+
+		splitArray=params['Qualify'].split(';');
+                document.getElementById('qualify_span').innerHTML = splitArray[0];
+                document.getElementById('qualify').innerHTML = "$"+splitArray[1];
+
+		splitArray=params['Propose'].split(';');
+                document.getElementById('propose_span').innerHTML = splitArray[0];
+                document.getElementById('propose').innerHTML = "$"+splitArray[1];
+
+		splitArray=params['Commit'].split(';');
+                document.getElementById('commit_span').innerHTML = splitArray[0];
+                document.getElementById('commit').innerHTML = "$"+splitArray[1];
+
+		splitArray=params['Win'].split(';');
+                document.getElementById('win_span').innerHTML = splitArray[0];
+                document.getElementById('win').innerHTML = "$"+splitArray[1];
+            }
+    </script>
+</body>
+</html>

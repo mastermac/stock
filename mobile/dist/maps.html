@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>MySales | Maps</title>
+
+    <script src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"></script>
+
+    <style>
+        a:link,
+        a:visited {
+            color: #2aaef5;
+            outline: none;
+            text-decoration: none;
+        }
+
+        .landmark {
+            width: 250px;
+            padding: 7px 0 0 0;
+            background: rgba(247, 247, 247, 0.75);
+            border-radius: 5px;
+            box-shadow: 10px 10px 50px rgba(0, 0, 0, 0.29);
+            font-family: Helvetica, Arial, sans-serif;
+            -webkit-transform-origin: 0 10px;
+            transform-origin: 0 10px;
+        }
+
+        .landmark h1 {
+            margin-top: 0;
+            padding: 5px 15px;
+            background: #2aaef5;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .landmark section {
+            padding: 0 15px 5px;
+            font-size: 14px;
+        }
+
+        .landmark section p {
+            margin: 5px 0;
+        }
+
+        .landmark:after {
+            content: "";
+            position: absolute;
+            top: 7px;
+            left: -13px;
+            width: 0;
+            height: 0;
+            margin-bottom: -13px;
+            border-right: 13px solid #2aaef5;
+            border-top: 13px solid rgba(0, 0, 0, 0);
+            border-bottom: 13px solid rgba(0, 0, 0, 0);
+        }
+
+        @-webkit-keyframes scale-and-fadein {
+            0% {
+                -webkit-transform: scale(0.2);
+                opacity: 0;
+            }
+
+            100% {
+                -webkit-transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scale-and-fadein {
+            0% {
+                transform: scale(0.2);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+
+</head>
+
+<body style="margin: 0px;">
+    <div id="map"></div>
+
+    <script>
+
+        function resize() {
+            var heights = window.innerHeight;
+            document.getElementById("map").style.height = heights + "px";
+        }
+        resize();
+        window.onresize = function () {
+            resize();
+        };
+        var markers = [];
+        var url = new URL(window.location.href);
+        var lang = url.searchParams.get("lang");
+        var Latitude=Number(url.searchParams.get("lat"));
+        var Longitude=Number(url.searchParams.get("long"));
+        if(lang==null)
+            lang="en";
+        if(Latitude==null){
+            Latitude=12.894280;
+            Longitude=77.657219;
+        }
+            
+        var fromXamarinApp=false;
+        mapkit.init({
+            authorizationCallback: function (done) {
+                done("eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ilg3OVRUWjZRODUifQ.eyJpYXQiOjE1ODMxMzg3MjguMCwiZXhwIjoxNjQ2MjEwNzg4LjAsImlzcyI6IlVMTTNCSFFZMjMifQ.KOWn0rt9pA2ZzDTYMnHdBtyuu4JoI6O30MWrqjWDD3EH97XM_1LO-lUMN1-TlH33VNqwFRvDzKkBgcZwUVg6oQ");
+            },
+            language: lang
+        });
+        var MarkerAnnotation = mapkit.MarkerAnnotation, clickAnnotation;
+        // Landmarks data
+        var sanFranciscoLandmarks = [{
+            coordinate: new mapkit.Coordinate(37.7951315, -122.402986),
+            title: "Transamerica Pyramid",
+            phone: "+1-415-983-5420",
+            url: "http://www.transamericapyramidcenter.com/"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.7954201, -122.39352),
+            title: "Ferry Building",
+            phone: "+1 (415) 983-8030",
+            url: "http://www.ferrybuildingmarketplace.com"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.8083396, -122.415727),
+            title: "Fisherman's Wharf",
+            phone: "+1 (415) 673-3530",
+            url: "http://visitfishermanswharf.com"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.8023553, -122.405742),
+            title: "Coit Tower",
+            phone: "+1 (415) 249-0995",
+            url: "http://sfrecpark.org/destination/telegraph-hill-pioneer-park/coit-tower/"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.7552305, -122.452624),
+            title: "Sutro Tower",
+            phone: "+1 (415) 681-8850",
+            url: "http://www.sutrotower.com"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.779267, -122.419269),
+            title: "City Hall",
+            phone: "+1 (415) 701-2311",
+            url: "http://sfgsa.org/index.aspx?page=1085"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.8184493, -122.478409),
+            title: "Golden Gate Bridge",
+            phone: "+1 (415) 921-5858",
+            url: "http://www.goldengatebridge.org"
+        },
+        {
+            coordinate: new mapkit.Coordinate(37.7785538, -122.514035),
+            title: "Cliff House",
+            phone: "+1 (415) 386-3330",
+            url: "http://www.cliffhouse.com/"
+        }
+        ];
+
+        // Landmark annotation callout delegate
+        var CALLOUT_OFFSET = new DOMPoint(-148, -78);
+        var landmarkAnnotationCallout = {
+            calloutElementForAnnotation: function (annotation) {
+                if(fromXamarinApp)
+                    return calloutForLandmarkAnnotationForApp(annotation);
+
+                return calloutForLandmarkAnnotation(annotation);
+            },
+
+            calloutAnchorOffsetForAnnotation: function (annotation, element) {
+                return CALLOUT_OFFSET;
+            },
+
+            calloutAppearanceAnimationForAnnotation: function (annotation) {
+                return "scale-and-fadein .4s 0 1 normal cubic-bezier(0.4, 0, 0, 1.5)";
+            }
+        };
+
+
+        var map = new mapkit.Map("map");
+        map.showsCompass = true;
+
+        // Hide the zoom controls.
+        map.showsZoomControl = true;
+        map.showsMapTypeControl = true;
+        map.showsUserLocationControl = false;
+        map.showsPointsOfInterest = true;
+        map.showsScale = true;
+        var userAnnotation = new MarkerAnnotation(new mapkit.Coordinate(Latitude, Longitude), { color: "#6EA204", title: "You", glyphText: "🙂"});//🙂😎♀☺https://www.unicode.org/emoji/charts/emoji-list.html
+        userAnnotation.selected = "true";
+        map.showItems(userAnnotation);
+
+        // Landmark annotation custom callout
+        function calloutForLandmarkAnnotation(annotation) {
+            var div = document.createElement("div");
+            div.className = "landmark";
+
+            var title = div.appendChild(document.createElement("h1"));
+            title.textContent = annotation.landmark.title;
+
+            var section = div.appendChild(document.createElement("section"));
+
+            var phone = section.appendChild(document.createElement("p"));
+            phone.className = "phone";
+            phone.textContent = annotation.landmark.phone;
+
+            var link = section.appendChild(document.createElement("p"));
+            link.className = "homepage";
+            var a = link.appendChild(document.createElement("a"));
+            a.href = annotation.landmark.url;
+            a.textContent = "website";
+
+            return div;
+        }
+        function calloutForLandmarkAnnotationForApp(annotation) {
+            var div = document.createElement("div");
+            div.className = "landmark";
+
+            var title = div.appendChild(document.createElement("h1"));
+            if(annotation.landmark.Name.length>30)
+                title.textContent = annotation.landmark.Name.substring(0,27)+"...";
+            else
+                title.textContent = annotation.landmark.Name;
+
+            title.onclick = function(){
+                window.location.href="https://ViewAccountDetail#"+annotation.landmark.AccountId+":"+annotation.landmark.AffinityId;
+            };
+
+            var section = div.appendChild(document.createElement("section"));
+
+            var phone = section.appendChild(document.createElement("p"));
+            phone.className = "phone";
+            if(annotation.landmark.Address.length>32)
+                phone.textContent = annotation.landmark.Address.substring(0,30)+"...";
+            else
+                phone.textContent = annotation.landmark.Address;
+
+            var link = section.appendChild(document.createElement("p"));
+            link.className = "homepage";
+            var a = link.appendChild(document.createElement("a"));
+            a.href = "https://ViewMapDirection#"+annotation.landmark.Latitude+":"+annotation.landmark.Longitude;
+            a.textContent = "Directions";
+
+            return div;
+        }
+
+        function PlaceAccountMarkers(markerData="") {
+            console.log(markerData);
+            if (markerData.length>0) {
+                fromXamarinApp=true;
+                sanFranciscoLandmarks = JSON.parse(JSON.stringify(markerData));
+                // Landmarks annotations
+                markers = sanFranciscoLandmarks.map(function (landmark) {
+                    var annotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(landmark.Latitude, landmark.Longitude), {
+                        callout: landmarkAnnotationCallout,
+                        color: "#c969e0",
+                    });
+                    annotation.landmark = landmark;
+                    return annotation;
+                });
+            }
+            else {
+                markers = sanFranciscoLandmarks.map(function (landmark) {
+                    var annotation = new mapkit.MarkerAnnotation(landmark.coordinate, {
+                        callout: landmarkAnnotationCallout,
+                        color: "#c969e0",
+                    });
+                    annotation.landmark = landmark;
+                    return annotation;
+                });
+            }
+            map.showItems(markers);
+            RecenterUser();
+        }
+        function RecenterUser() {
+            map._impl.zoomLevel=18;
+            map.setCenterAnimated(new mapkit.Coordinate(Latitude, Longitude));
+        }
+
+        // function PlaceUserMarker(Latitude=12.894280, Longitude=77.657219, Recenter=false) {
+        //     var userAnnotation = new MarkerAnnotation(new mapkit.Coordinate(Latitude, Longitude), { color: "#6EA204", title: "You", glyphText: "🙂"});//🙂😎♀☺https://www.unicode.org/emoji/charts/emoji-list.html
+        //     userAnnotation.selected = "true";
+        //     if(!Recenter)
+        //     {
+        //         markers.push(userAnnotation);
+        //         map.showItems(markers);
+        //     }
+        //     map._impl.zoomLevel=map._impl.zoomLevel+11;
+        //     map.setCenterAnimated(new mapkit.Coordinate(Latitude, Longitude));
+        // }
+    </script>
+</body>
+
+</html>

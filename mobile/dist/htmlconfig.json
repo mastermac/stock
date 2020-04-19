@@ -1,0 +1,16 @@
+{
+  "prod": {
+    "common-app": "../common-ux",
+    "dashboard-app": "../dashboard-ux/",
+    "accounts-app": "../account-ux/",
+    "opportunity-app": "../opportunity-ux/",
+    "attainment-app": "../attainment-ux/"
+  },
+  "dev": {
+    "common-app": "https://mastermac.github.io/mysalesmanager-common-app/",
+    "dashboard-app": "https://mastermac.github.io/mysalesmanager-dashboard-app/",
+    "accounts-app": "https://mastermac.github.io/mysalesmanager-accounts-app/",
+    "opportunity-app": "https://mastermac.github.io/mysalesmanager-opportunity-app/",
+    "attainment-app": "https://mastermac.github.io/mysalesmanager-attainment-app/"
+  }
+}

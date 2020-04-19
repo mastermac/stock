@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>MySales Manager | Header</title>
+    <!-- Font Awesome -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+
+</head>
+
+<body>
+    <div id="header">
+        <!--Navbar-->
+        <nav id="headerSection" class="mb-1 navbar navbar-expand-lg navbar-dark z-depth-1-half animated fadeInDown"
+            style="padding: .25rem 0.5rem; background: linear-gradient(to bottom, #007DB8 0%, #00447c 100%);">
+            <ul class="navbar-nav mr-auto nav-flex-icons">
+                <li class="nav-item" id="headerbackButton">
+                    <span class="nav-link waves-effect waves-light" id="backButton" onclick="backButtonClick()">
+                        <i class="material-icons-round md-light" style="display: block;">arrow_back_ios</i>
+                    </span>
+                </li>
+                <li id="headerImg">
+                    <img src="../common-ux/img/SalesForceDefaultImage.png"
+                        alt="userImage" id="imgProfile" class="imgProfile">
+                </li>
+                <li class="nav-item headerTextSection" id="headerText">
+                    <div id="header_row1" class="headerTextStyle font-weight-bold headerskeletonsLine text-truncate">
+
+                    </div>
+                    <div id="header_row2" class="headerTextStyle small headerskeletonsLine text-truncate">
+
+                    </div>
+                    <div id="header_row31" class="headerTextStyle font-weight-bold">
+
+                    </div>
+                    <div id="header_row32" class="headerTextStyle small">
+
+                    </div>
+                    <div id="myQuota" class="headerTextStyle small" onclick="ManagersDetail(this);"
+                        style="float: none;background-color: #7fa2be;border-radius: 5px;width: 3.4rem;display:none;">
+                        <span class="headerTextStyle small" id="span_myQuota">My Quota</span>
+                    </div>
+                </li>
+                <li style="display:none;" id="liGlobalSearch">
+                    <input type="text" id="txtGlobalSearch" placeholder="Search" class="search-input" />
+                </li>
+                <li id="hamburgerSection" style="float:right">
+                    <div id="divHClearSearchIcon" style="float:left;display:none;" onclick="clearSearchText();">
+                        <a class="nav-link waves-effect waves-light" style="padding: .25rem .5rem;">
+                            <i class="material-icons-round md-light">close</i>
+                        </a>
+                    </div>
+                    <div id="divGlobalSearchIcon" style="float:left" onclick="showsearch();"
+                        data-target="#globalSearchModal">
+                        <span class="nav-link waves-effect waves-light" style="padding: .25rem .5rem;">
+                            <i class="material-icons-round md-light"
+                                style="color: white !important;font-size: 2rem;">search</i>
+                        </span>
+                    </div>
+                    <div style="float:left">
+                        <span class="nav-link waves-effect waves-light navbar-toggler menu-icon"
+                            data-activates="slide-out">
+                            <i class="material-icons-round md-light"
+                                style="display: block;color: white !important;font-size: 2rem;">menu</i>
+                        </span>
+                    </div>
+                    <div style="clear:both;"></div>
+                </li>
+
+            </ul>
+        </nav>
+        <!--/.Navbar-->
+        <!-- Sidebar navigation -->
+        <div class="" style="width: 11rem;">
+            <ul id="slide-out" class="side-nav white darken-5 custom-scrollbar">
+                <li style="background: linear-gradient(to bottom, #007DB8 0%, #00447c 100%);">
+                    <div class="logo-wrapper waves-light" style="height: fit-content;">
+                        <img src="../common-ux/img/dell_emc_logo.png" class="img-fluid"
+                            style="padding: 10% 10px;padding-bottom: 5%;">
+                        <div style="font-weight: 300;">
+                            <center>MySales Ver <span id="version"></span></center>
+                        </div>
+                        <img src="../common-ux/img/profile_icon.png" class="img-fluid"
+                            style=" padding: 2% 80px 4% 80px;">
+                    </div>
+                </li>
+                <li>
+                    <ul class="collapsible collapsible-accordion" style="margin: 0px;">
+                        <li style="height:56px;">
+                            <span class="waves-effect"
+                                style="font-size: large; line-height: 56px;color: #000;font-weight: 500; border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;padding-left: 1rem;height:100%;">
+                                <span id="username"></span>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+                <!--<li>
+        <ul class="collapsible collapsible-accordion" style="margin: 0px;">
+            <li>
+                <a href="#" class="waves-effect" style="padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);">
+                    <i class="fas"><img src="https://mastermac.github.io/mysalesmanager-common-app/img/knowledgeportal.PNG" height="30px" style="padding-right:10px;"></i>
+                    Knowledge Center
+                </a>
+            </li>
+        </ul>
+    </li>-->
+                <li onclick="showFeedbackForm()" class="waves-effect"
+                    style="padding:0.4rem;padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;">
+                    <i class="fas"><img src="../common-ux/img/feedback.PNG"
+                            height="25px" style="padding-right:10px;"></i>
+                    Feedback
+
+                </li>
+                <li onclick="settingsClick()" class="waves-effect"
+                    style="padding:0.4rem;padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;">
+                    <i class="fas"><img src="../common-ux/img/setings.PNG"
+                            height="25px" style="padding-right:10px;"></i>
+                    Settings
+                </li>
+                <li onclick="logoutClick()" class="waves-effect"
+                    style="padding:0.4rem;padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;">
+                    <i class="fas"><img src="../common-ux/img/logout.PNG" height="25px"
+                            style="padding-right:10px;"></i>
+                    Logout
+
+                </li>
+            </ul>
+            <div class="sidenav-bg rgba-blue-strong"></div>
+        </div>
+        <!--/. Sidebar navigation -->
+        <!-- Modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalTitle"
+            aria-hidden="true">
+
+            <!-- Add .modal-dialog-centered to .modal-dialog to vertically center the modal -->
+            <div class="modal-dialog modal-dialog-centered" style="display:flex;justify-content:center; "
+                role="document">
+
+                <div class="modal-content" style="border-radius: 10px;max-width: 320px;">
+                    <div class="modal-body" style="padding: 0rem;" id="feedbackDiv">
+
+                        <div class="modal-content" style="border-radius: 10px;max-width: 320px;">
+                            <div class="modal-body" style="padding: 0rem;" id="feedbackDiv">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <script src="js/mdb.js"></script>
+</body>
+
+</html>

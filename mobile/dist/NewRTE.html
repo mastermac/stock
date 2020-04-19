@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link href="css/bootstrap-rte.min.css" rel="stylesheet">
+  <link href="css/summernote.min.css" rel="stylesheet">
+  <script src="js/jquery-rte.js"></script> 
+  <script>
+    $(document).ready(function() {
+  $.fn.extend({
+            placeCursorAtEnd: function() {
+                // Places the cursor at the end of a contenteditable container (should also work for textarea / input)
+                if (this.length === 0) {
+                    throw new Error("Cannot manipulate an element if there is no element!");
+                }
+                var el = this[0];
+                var range = document.createRange();
+                var sel = window.getSelection();
+                var childLength = el.childNodes.length;
+                if (childLength > 0) {
+                    var lastNode = el.childNodes[childLength - 1];
+                    var lastNodeChildren = lastNode.childNodes.length;
+                    range.setStart(lastNode, lastNodeChildren);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+                return this;
+            }
+        });
+      
+    });
+  </script>
+  <script src="js/bootstrap-rte.js" type="text/javascript"></script> 
+  <script src="js/summernote.js" type="text/javascript"></script>
+  
+</head>
+<body>
+  <div id="summernote"></div>
+  <!-- <button onclick="putContent(html)">Get</button> -->
+  <script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            toolbar: [
+                ['color', ['color']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['misc',['undo','redo']]
+            ],
+            placeholder:" ",
+            height: $(document).height()-350
+        });
+        $('#summernote').summernote('focus');
+    });
+    function getContent() {
+        return $('#summernote').summernote('code');
+    }
+    function putContent(html){
+      $('#summernote').summernote({
+            toolbar: [
+                ['color', ['color']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['misc',['undo','redo']]
+            ],
+            placeholder:"",
+            height: $(document).height()-350
+        });
+      $('#summernote').summernote('code','');
+      $('#summernote').summernote('pasteHTML',html);
+      $('#summernote').summernote('focus');
+    }
+  </script>
+</body>
+</html>

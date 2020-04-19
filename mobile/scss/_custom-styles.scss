@@ -1,0 +1,333 @@
+@import 'custom/_offline.scss';
+@import 'custom/_offline_en.scss';
+@import 'custom/_toastr.scss';
+@import 'custom/_feedback.scss';
+@import 'custom/_pulltorefresh.scss';
+
+// Your custom styles
+/*Header Start*/
+#header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.navStyle {
+    padding: .05rem 0.5rem;
+    background-color: #0076CE;
+    height: 80px;
+}
+
+.headercontainerPadding {
+    position: fixed;
+    top: 8px;
+}
+.imgProfile {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    margin: 5px 10px 5px 5px;
+    border: 1px solid #f2af00;
+}
+
+.headerTextStyle {
+    color: #ffffff !important;
+}
+
+#headerSection {
+    height: 80px;
+}
+
+#header_row1 {
+    padding-top: 5px;
+}
+
+
+#header_row31 {
+    float: left;
+    color: #7ddadb !important
+}
+
+#header_row32 {
+    float: left;
+    padding-left: 5px;
+    padding-top: 4px;
+}
+#hamburgerSection {
+    float: right;
+    /*width: 80px;*/
+    position: fixed;
+    right: 10px;
+}
+/*Header End*/
+
+
+.cut-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.teal-color {
+    color: #40ADAF;
+    font-weight: 500;
+    text-align: right;
+}
+
+.grey-back {
+    background-color: #EEEEEE !important;
+}
+
+
+/*Header skeletons animation Start*/
+
+.headerskeletonsLine {
+    height: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    animation: pulse 1s infinite ease-in-out;
+    -webkit-animation: pulse 1s infinite ease-in-out;
+}
+
+.headerTextSection div:nth-child(1) {
+    min-width: 150px !important;
+}
+
+.headerTextSection div:nth-child(2) {
+    min-width: 120px !important;
+}
+
+@keyframes pulse {
+    0% {
+        /*background-color:rgba(165,165,165,.1);*/
+        background-color: rgba(246, 255, 255, 0.2);
+    }
+
+    50% {
+        background-color: rgba(246, 255, 255, 0.3);
+    }
+
+    100% {
+        /*background-color: rgba(165,165,165,.1);*/
+        background-color: rgba(246, 255, 255, 0.2);
+    }
+}
+
+@-webkit-keyframes pulse {
+    0% {
+        /*background-color:rgba(165,165,165,.1);*/
+        background-color: rgba(246, 255, 255, 0.2);
+    }
+
+    50% {
+        background-color: rgba(246, 255, 255, 0.3);
+    }
+
+    100% {
+        /*background-color: rgba(165,165,165,.1);*/
+        background-color: rgba(246, 255, 255, 0.2);
+    }
+}
+/* STYLES for offline message text alignment*/
+.offline-ui-content {
+    text-align: center;
+    padding-left: 0;
+}
+
+/*Header skeletons animation End*/
+.loader-position {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    /*z-index: 9998;*/
+    height: 100%;
+    width: 100%;
+}
+
+.lock-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+/*Header Search Start*/
+.search-input {
+    border-bottom: 1px solid #689acc;
+    border-top: none;
+    border-right: none;
+    background-color: transparent;
+    border-left: none;
+    width: 90%;
+}
+
+input[id="txtGlobalSearch"]:hover, input[id="txtGlobalSearch"]:focus {
+    outline: none;
+}
+
+input[id="txtGlobalSearch"]::placeholder {
+    color: #689acc;
+}
+
+#divGlobalSearchType .active {
+    opacity: 1;
+    border-bottom: 2px solid #b0abab;
+    border-top: 2px solid #b0abab;
+}
+
+#divGlobalSearchType .inactive {
+    opacity: .4;
+    border: none;
+}
+
+.search-slides {
+    height: 80px;
+    margin-top:20px;
+    //overflow: scroll;
+}
+
+.search-slides::-webkit-scrollbar {
+    display: none
+}
+
+.search-slide {
+    font-size: 13px;
+    height: 35px;
+}
+/*Header Search End*/
+.errormsg {
+    text-align: center;
+}
+/*Opp stage color*/
+.planStageColor {
+    color: #017bbc
+}
+
+.discoverStageColor {
+    color: #014479
+}
+
+.qualifyStageColor {
+    color: #41adaf
+}
+
+.commitStageColor {
+    color: #f2af00
+}
+
+.proposeStageColor {
+    color: #6ea104
+}
+
+.winStageColor {
+    color: #ef6411
+}
+
+.lostStageColor {
+    color: #aaaaaa
+}
+/*Opp stage color*/
+/* Common Code for Preloader */
+.skeletonLine {
+    max-width: 100%;
+    height: .6rem;
+    margin-bottom: 6% !important;
+    margin: .8rem;
+    /* margin-top: 1.5rem; */
+    border-radius: 2%;
+    background-image: linear-gradient(90deg, #eeeeee 0px, rgba(225, 225, 225 , 0) 10rem, #eeeeee 20rem);
+    background-size: 600px;
+    animation: shine-skeletonLine 2s infinite ease-in-out;
+}
+
+@keyframes shine-skeletonLine {
+    0% {
+        background-position: -100px;
+    }
+
+    40%, 100% {
+        background-position: 140px;
+    }
+}
+
+.skeletonavatar {
+    float: left;
+    width: 44px;
+    height: 44px;
+    background-color: #ccc;
+    border-radius: 50%;
+    background-image: linear-gradient(90deg, #F4F4F4 0px, rgba(229, 229, 229, 0.8) 40px, #F4F4F4 80px);
+    background-size: 600px;
+    animation: shine-skeletonavatar 2s infinite ease-out;
+}
+
+@keyframes shine-skeletonavatar {
+    0% {
+        background-position: -32px;
+    }
+
+    40%, 100% {
+        background-position: 208px;
+    }
+}
+
+/*Switch button*/
+/*.setting-group > .setting-btn:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}*/
+.setting-group > .setting-btn:first-child {
+    margin-left: 0;
+}
+
+.setting-group-vertical > .setting-btn, .setting-group > .setting-btn {
+    position: relative;
+    float: left;
+}
+
+.setting-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+
+.switch-default {
+    color: #333;
+    background-color: #EEEEEE;
+    border-color: #EEEEEE;
+}
+
+.switch-active {
+    color: #fff;
+    background-color: #6EA204;
+    border-color: #6EA204;
+}
+
+.setting-group > .setting-btn, .setting-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+/*Switch button*/

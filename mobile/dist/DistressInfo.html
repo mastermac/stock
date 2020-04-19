@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            margin: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p>The Early Warning System is indicating <strong><span id='scoreText'></span></strong> distress with your customer.</p>
+        <p>Detected areas are:</p>
+        <div id='indicators'></div>
+        <p>If you need further assistance with this account, please enter a Help A Customer Request.</p>
+    </div>
+    <script>
+        function ShowDistressInfo() {
+
+            var url = window.location.href;
+            url= decodeURI(url);
+            var regex = /[?&]([^=#]+)=([^&#]*)/g,
+                params = {},
+                match;
+
+            while (match = regex.exec(url)) {
+                params[match[1]] = match[2];
+            }
+
+            var indicators = params['indicators'];
+            var score = params['score'];
+            var indicatorsArray = indicators.split('|');            
+            var distressIndicator = '<ul>';            
+            for (i = 0; i < indicatorsArray.length; i++) {
+                switch (indicatorsArray[i]) {
+                    case 'OTD':
+                        distressIndicator += '<li>On Time Delivery</li>';
+                        break;
+                    case 'Canc':
+                        distressIndicator += '<li>Canceled Orders</li>';
+                        break;
+                    case 'REDD':
+                        distressIndicator += '<li>Redefined Delivery Date</li>';
+                        break;
+                    case 'XLT':
+                        distressIndicator += '<li>Extended Lead Time</li>';
+                        break;
+                    case 'HaC':
+                        distressIndicator += '<li>Help A Customer Requests</li>';
+                        break;
+                    case 'DSAT':
+                        distressIndicator += '<li>DSAT score on CSAT surveys</li>';
+                        break;
+                    case 'SEV1':
+                        distressIndicator += '<li>Severity 1 Service Requests</li>';
+                        break;
+                    case 'E1RM':
+                        distressIndicator += '<li>Severity E1 Service Requests</li>';
+                        break;
+                    case 'COD':
+                        distressIndicator += '<li>Cost of Dissatisfaction </li>';
+                        break;
+                    case 'CHURN':
+                        distressIndicator += '<li>Account Rep Churn</li>';
+                        break;
+                }
+            }
+            var scoreText = document.getElementById("scoreText");
+
+            var color = '';
+            var scoreText = '';
+
+            if (score > 0 && score <= 24) {
+                color = '#e78893';
+                scoreText = 'Low';
+            } else if (score >= 25 && score <= 40) {
+                color = '#da4d5c';
+                scoreText = 'Medium';
+            } else if (score > 40) {
+                color = '#ff0000';
+                scoreText = 'High';
+            }
+
+            document.getElementById("scoreText").innerHTML = scoreText;
+            document.getElementById("scoreText").style.color = color;
+
+            distressIndicator += '</ul>';
+            document.getElementById("indicators").innerHTML = distressIndicator;
+        }
+        document.addEventListener("DOMContentLoaded", ShowDistressInfo);
+    </script>
+</body>
+</html>

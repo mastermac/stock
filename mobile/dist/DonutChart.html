@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        body {
+            text-align: center;
+            padding: 0px;
+            margin: 0px;
+            background-color:#EEEEEE;
+        }
+        /* clearfix */
+
+        .clear:before,
+        .clear:after {
+            content: "";
+            display: table;
+        }
+
+        .clear:after {
+            clear: both;
+        }
+
+        .clear {
+            *zoom: 1.5;
+        }
+
+        .gauge {
+            display: block;
+            float: left;
+            height: 300px;       
+        }
+
+        #g2 {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="g2" class="gauge" ></div>
+    <script src="js/raphael-2.1.4.min.js"></script>
+    <script src="js/justgage.js"></script>
+    <script>
+        function showGraph() {
+            var g1, g2, g3;
+            var url = window.location.href;
+            var regex = /[?&]([^=#]+)=([^&#]*)/g,
+                params = {},
+                match;
+            while (match = regex.exec(url)) {
+                params[match[1]] = match[2];
+            }
+            document.getElementById("g2").style.marginTop = "-"+params['marginTop']+"px";
+            
+            var g2 = new JustGage({
+                                    id: 'g2',
+                                    value: params['value'],
+                                    min: 0,
+                                    max: params['max'],
+                                    symbol: '%',
+                                    pointer: true,
+                                    pointerOptions: {
+                                      toplength: -15,
+                                      bottomlength: 10,
+                                      bottomwidth: 12,
+                                      color: '#8e8e93',
+                                      stroke: '#ffffff',
+                                      stroke_width: 3,
+                                      stroke_linecap: 'round'
+                                    },
+                                    gaugeWidthScale: 0.6,
+                                    counter: true,
+                                    relativeGaugeSize: true,
+                                    donut: true
+                                  });            
+            
+        }
+        document.addEventListener("DOMContentLoaded", showGraph);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Material Design Bootstrap</title>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+</head>
+
+<body id="headerSearchDiv">
+    <header style="height:78px;"></header>
+    <searchmodel></searchmodel>
+    <!-- Start your project here-->
+    <div class="addSkeleton" template="detailsListSkeleton">
+        <div class="container-fluid pl-0 pr-0" id="divSearchList" style="display:none;"></div>
+    </div>
+    <div class="justify-content-center" id="retryDiv" style="margin: 1rem;display:none">
+        <img src='../common-ux/img/error_image01.jpg' style="width:100%">
+        <br />
+        <br />
+        <br />
+        <div class='col-12'>
+            <span style='text-align: center;display: block;font-size:.9rem;'>An Unexpected error has occurred. Please try again. If problem persists, then report the error to MySales Support Team (mysales.mobile.l2@emc.com)</span>
+        </div>
+        <br />
+        <span style='text-align: center;display: block;font-size:.9rem;'><input type="button" class='btn btn-info' value="Retry" onclick="retryHeaderSearch()"></span>
+    </div>
+    <!-- /Start your project here-->
+    <!-- SCRIPTS -->
+    <!-- SCRIPTS -->
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/headersearch.js"></script>
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+
+</body>
+
+</html>

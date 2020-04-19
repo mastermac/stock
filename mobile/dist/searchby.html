@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div class="modal fade" id="globalSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <!-- Add .modal-dialog-centered to .modal-dialog to vertically center the modal -->
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="margin: 2rem;">
+                <div class="modal-body p-0">
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="modal-header border-0 ">
+                                <div class="modal-title" style="font-weight:500;">Select a Search Option</div>
+                            </div>
+                            <div id="divGlobalSearchType" class="container search-slides"  >
+                                <!--<div class="row text-center inactive"><div class="col-12 p-2" style="height:20px;">&nbsp;</div></div>-->
+                                <div onclick="SelectSearchBy();" class="row text-center search-slide active" id="searchAccType" ><div class="col-12 p-2">Accounts</div></div>
+                                <div onclick="SelectSearchBy();" class="row text-center search-slide inactive"  id="searchOppType" ><div class="col-12 p-2">Opportunity</div></div>
+                                <!--<div class="row text-center  inactive"><div class="col-12 p-2" style="height:20px;">&nbsp;</div></div>-->
+                            </div>
+                            <div class="modal-footer border-0" style="font-size:14px;font-weight:500;">
+                                <div class="text-right" style="color:#479D93;padding:1rem;" data-dismiss="modal">CANCEL</div>
+                                <div class="text-right" style="color:#479D93;padding:1rem;" data-dismiss="modal" id="gSearchOK" onclick="changeSearchType();">OK</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
