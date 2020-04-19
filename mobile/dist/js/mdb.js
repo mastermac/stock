@@ -8094,7 +8094,7 @@ function showsearch() {
                         "SearchType": hSearchType,
                         "SearchText": hSearchText,
                     }).then(function () {
-                        window.location.assign("../common-ux/headersearch.html");
+                        window.location.assign("../headersearch.html");
                     });
                 }
                 else {
@@ -8421,12 +8421,7 @@ function initializeHeader() {
         if ((window.location.href).includes("backbutton=false"))
             $('#backButton').hide();
         document.getElementById("version").innerHTML = userState.AppVersion;
-        document.getElementById("username").innerHTML = userState.FirstName + " " + userState.LastName;
-        if (!window.location.pathname.includes("headersearch.html"))
-            InitializeHeaderData();
-        else
-            changeSearchType();
-        AddManagerTypeMsg();
+        document.getElementById("username").innerHTML = userNamephp;
     }
 }
 
@@ -8453,31 +8448,7 @@ function performXamarinAction(url) {
 var rootUri="";
 
 function InitializeApp() {
-    rootUri=window.location.href.substring(0,window.location.href.indexOf("mysales/")+8);
-    if (window.location.href.includes("opportunity-ux")||window.location.href.includes("attainment-ux")||window.location.href.includes("account-ux"))
-     {
-        // pullToRefresh({
-        //     container: document.querySelector('.pull-to-refresh-material'),
-        //     animates: ptrAnimatesMaterial,
-        
-        //     refresh() {
-        //       return new Promise(resolve => {
-        //         DoForceRefresh(false);
-        //       })
-        //     }
-        // });
-    }
-    
-    if (window.location.href.includes("dashboard.html") && window.location.href.includes("fromXamarin=true") && localStorage.getItem("fromXamarin") == null) {
-        console.log("FROM XAMARIN SO WAITING FOR KEYS TO SET");
-        //logToKibana("FROM XAMARIN SO WAITING FOR KEYS TO SET");
-    }
-    else { 
-        console.log("NOT FROM XAMARIN"); 
-        // localforage.setItem('ManagerTokens', '{"SFDCToken":"00D300000006urq!ARUAQCMuwrjFw0Lycx2IpliXlw2IdiRw25OvNN_blbGphrgJPlfzQlpilgxoziGn5nm2EiGQBf9b.lZzeQs7AApVvLZN4Epn","SFDCInstanceUrl":"https://dell.my.salesforce.com/","Layer7Token":"abff3bc4-83ea-48ff-9d68-e07438d1fd76"}');
-        getConfigFile();
-    }
-    
+    getConfigFile();
 }
 
 function StartAppFromXamarin(managerUserState, managerTokens) {
@@ -8534,7 +8505,7 @@ function getConfigFile() {
             getManagerUserState();
         }
         else {
-            $.getJSON("../common-ux/config.json", function (data) {
+            $.getJSON("config.json", function (data) {
                 console.log("Config Data From AJAX");
                 //logToKibana("config data from ajax");
                 localforage.setItem('Configs', JSON.stringify(data));
@@ -8573,7 +8544,7 @@ function getManagerUserState() {
                 LastName: 'Gupta',
                 BadgeNumber: '929839',
                 Environment: 'prod',
-                AppVersion: '3.1.3',
+                AppVersion: '1.0.0',
                 SFDCInstance: 'LDELL',
                 timestamp: new Date().getTime(),
                 IsNotificationEnabled: false,
@@ -8604,7 +8575,7 @@ function getAEUserState() {
                 LastName: 'Gupta',
                 BadgeNumber: '929839',
                 Environment: 'prod',
-                AppVersion: '3.1.3',
+                AppVersion: '0.0.1',
                 SFDCInstance: 'LDELL',
                 timestamp: new Date().getTime()
             };
@@ -8615,35 +8586,7 @@ function getAEUserState() {
 }
 
 function getManagerTokens() {
-    localforage.getItem('ManagerTokens').then(function (value) {
-        if (value != null) {
-            console.log("ManagerTokens Data From Localforage");
-            managerTokens = JSON.parse(value);
-            
-            if (localStorage.getItem("fromXamarin") != null) {
-                var timeElapsed = (new Date().getTime()) - managerTokens.timestamp;
-                if (timeElapsed >= renewTokensTime) {
-                    immediateRefreshRequired = true;
-                    renewTokens(0);
-                }
-                else {
-                    console.log("Time Remaining for renewTokens: " + (renewTokensTime - timeElapsed));
-                    setTimeout(renewTokens, renewTokensTime - timeElapsed,1);
-                }
-            }
-            if (immediateRefreshRequired == false)
-            {
-                console.log("Calling Init");
-                if (window.location.pathname.includes('/headersearch.html'))
-                    InitSearch();
-                else if (window.location.pathname.includes('/settings.html'))
-                    InitSettings();
-                else
-                    Init();
-            }
-        }
-        clearExpiredCache();
-    });
+    Init();
 }
 
 function clearExpiredCache() {
@@ -9015,7 +8958,7 @@ function SetHeaderData(objHeaderData) {
     else if (!HideProfileImg) {
 
         if (!objHeaderData.ImageBytes || objHeaderData.ImageBytes == "null" || objHeaderData.ImageBytes.includes("SalesForceDefaultImage")) {
-            imgProfile.attr("src", "../common-ux/img/SalesForceDefaultImage.png");
+            imgProfile.attr("src", "img/SalesForceDefaultImage.png");
         }
         else {
             imgProfile.attr("src", 'data:image/jpeg;base64,' + objHeaderData.ImageBytes);
@@ -9244,6 +9187,10 @@ function loadSkeleton() {
         }
     });
 }
+function getVal(id) {
+    return document.getElementById('s_' + id)==null?'':document.getElementById('s_' + id).value;
+}
+
 //EOF
 
 var aeAccDetailTemplate = `<div class="card accountListViewCard" style="margin: 0.5rem 0rem;">
@@ -9405,7 +9352,7 @@ var filtertext=`<div class='{row}' onclick='{onclick}' style='margin:8px'>
 var errorMessageTemplate = `<div id='errorLog'>
 <div id='errorImagerow' class='row' style='padding-bottom: 2.5rem;'>
 <div id='errorImagecol' class='col-12'>
-<img style="max-width:100%;position:fixed;" id="theImg" src="../../../../mysalesmanager-common-app/dist/mysales/common-ux/img/error_image01.jpg">
+<img style="max-width:100%;position:fixed;" id="theImg" src="img/error_image01.jpg">
 </div>
 </div>
 <div id='errorImagerow2' class='row' style='position: fixed;padding-top: 16rem;'>
@@ -9553,7 +9500,7 @@ var cardviewRetryTemplate = `
 `;
 
 var retryTemplate = `
-<img src='../common-ux/img/error_image01.jpg' style="width:100%">
+<img src='img/error_image01.jpg' style="width:100%">
 <br />
 <br />
 <br />

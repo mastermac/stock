@@ -62,4 +62,8 @@ function loadSkeleton() {
         }
     });
 }
+function getVal(id) {
+    return document.getElementById('s_' + id)==null?'':document.getElementById('s_' + id).value;
+}
+
 //EOF

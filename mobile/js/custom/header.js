@@ -220,7 +220,7 @@ function SetHeaderData(objHeaderData) {
     else if (!HideProfileImg) {
 
         if (!objHeaderData.ImageBytes || objHeaderData.ImageBytes == "null" || objHeaderData.ImageBytes.includes("SalesForceDefaultImage")) {
-            imgProfile.attr("src", "../common-ux/img/SalesForceDefaultImage.png");
+            imgProfile.attr("src", "img/SalesForceDefaultImage.png");
         }
         else {
             imgProfile.attr("src", 'data:image/jpeg;base64,' + objHeaderData.ImageBytes);

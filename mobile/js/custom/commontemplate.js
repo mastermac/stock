@@ -158,7 +158,7 @@ var filtertext=`<div class='{row}' onclick='{onclick}' style='margin:8px'>
 var errorMessageTemplate = `<div id='errorLog'>
 <div id='errorImagerow' class='row' style='padding-bottom: 2.5rem;'>
 <div id='errorImagecol' class='col-12'>
-<img style="max-width:100%;position:fixed;" id="theImg" src="../../../../mysalesmanager-common-app/dist/mysales/common-ux/img/error_image01.jpg">
+<img style="max-width:100%;position:fixed;" id="theImg" src="img/error_image01.jpg">
 </div>
 </div>
 <div id='errorImagerow2' class='row' style='position: fixed;padding-top: 16rem;'>
@@ -306,7 +306,7 @@ var cardviewRetryTemplate = `
 `;
 
 var retryTemplate = `
-<img src='../common-ux/img/error_image01.jpg' style="width:100%">
+<img src='img/error_image01.jpg' style="width:100%">
 <br />
 <br />
 <br />

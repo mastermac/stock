@@ -65,13 +65,15 @@
       .productTable tr td:nth-child(14), .productTable tr th:nth-child(14) {width:90px;}
       .productTable tr td:nth-child(15), .productTable tr th:nth-child(15) {width:50px;}
       .productTable tr td:nth-child(16), .productTable tr th:nth-child(16) {width:100px;}
-      @media (min-width: 768px)
-_grid.scss:42
+      @media (min-width: 768px){
+        _grid.scss:42
 .col-md-1 {
     -ms-flex: 0 0 8.333333%;
     flex: 0 0 8.333333%;
     max-width: 7.5%;
 }
+
+      }
 .ajax-loader {
   visibility: hidden;
   background-color: rgba(255,255,255,0.7);

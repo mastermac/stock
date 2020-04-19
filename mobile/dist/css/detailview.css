@@ -1,0 +1,24 @@
+#details-tab {
+    background-color: white !important;
+}
+
+#details-tab li {
+    width: 50%;
+}
+
+#details-tab li a {
+    color: black !important;
+    font-weight: bold;
+    border-color: orange;
+}
+
+#details-tab-content {
+    padding: 0rem;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.classic-tabs .nav li:first-child {
+    margin-left: 0px;
+}

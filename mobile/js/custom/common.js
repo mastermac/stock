@@ -83,7 +83,7 @@ function showsearch() {
                         "SearchType": hSearchType,
                         "SearchText": hSearchText,
                     }).then(function () {
-                        window.location.assign("../common-ux/headersearch.html");
+                        window.location.assign("../headersearch.html");
                     });
                 }
                 else {
@@ -410,12 +410,7 @@ function initializeHeader() {
         if ((window.location.href).includes("backbutton=false"))
             $('#backButton').hide();
         document.getElementById("version").innerHTML = userState.AppVersion;
-        document.getElementById("username").innerHTML = userState.FirstName + " " + userState.LastName;
-        if (!window.location.pathname.includes("headersearch.html"))
-            InitializeHeaderData();
-        else
-            changeSearchType();
-        AddManagerTypeMsg();
+        document.getElementById("username").innerHTML = userNamephp;
     }
 }
 
@@ -442,31 +437,7 @@ function performXamarinAction(url) {
 var rootUri="";
 
 function InitializeApp() {
-    rootUri=window.location.href.substring(0,window.location.href.indexOf("mysales/")+8);
-    if (window.location.href.includes("opportunity-ux")||window.location.href.includes("attainment-ux")||window.location.href.includes("account-ux"))
-     {
-        // pullToRefresh({
-        //     container: document.querySelector('.pull-to-refresh-material'),
-        //     animates: ptrAnimatesMaterial,
-        
-        //     refresh() {
-        //       return new Promise(resolve => {
-        //         DoForceRefresh(false);
-        //       })
-        //     }
-        // });
-    }
-    
-    if (window.location.href.includes("dashboard.html") && window.location.href.includes("fromXamarin=true") && localStorage.getItem("fromXamarin") == null) {
-        console.log("FROM XAMARIN SO WAITING FOR KEYS TO SET");
-        //logToKibana("FROM XAMARIN SO WAITING FOR KEYS TO SET");
-    }
-    else { 
-        console.log("NOT FROM XAMARIN"); 
-        // localforage.setItem('ManagerTokens', '{"SFDCToken":"00D300000006urq!ARUAQCMuwrjFw0Lycx2IpliXlw2IdiRw25OvNN_blbGphrgJPlfzQlpilgxoziGn5nm2EiGQBf9b.lZzeQs7AApVvLZN4Epn","SFDCInstanceUrl":"https://dell.my.salesforce.com/","Layer7Token":"abff3bc4-83ea-48ff-9d68-e07438d1fd76"}');
-        getConfigFile();
-    }
-    
+    getConfigFile();
 }
 
 function StartAppFromXamarin(managerUserState, managerTokens) {
@@ -523,7 +494,7 @@ function getConfigFile() {
             getManagerUserState();
         }
         else {
-            $.getJSON("../common-ux/config.json", function (data) {
+            $.getJSON("config.json", function (data) {
                 console.log("Config Data From AJAX");
                 //logToKibana("config data from ajax");
                 localforage.setItem('Configs', JSON.stringify(data));
@@ -562,7 +533,7 @@ function getManagerUserState() {
                 LastName: 'Gupta',
                 BadgeNumber: '929839',
                 Environment: 'prod',
-                AppVersion: '3.1.3',
+                AppVersion: '1.0.0',
                 SFDCInstance: 'LDELL',
                 timestamp: new Date().getTime(),
                 IsNotificationEnabled: false,
@@ -593,7 +564,7 @@ function getAEUserState() {
                 LastName: 'Gupta',
                 BadgeNumber: '929839',
                 Environment: 'prod',
-                AppVersion: '3.1.3',
+                AppVersion: '0.0.1',
                 SFDCInstance: 'LDELL',
                 timestamp: new Date().getTime()
             };
@@ -604,35 +575,7 @@ function getAEUserState() {
 }
 
 function getManagerTokens() {
-    localforage.getItem('ManagerTokens').then(function (value) {
-        if (value != null) {
-            console.log("ManagerTokens Data From Localforage");
-            managerTokens = JSON.parse(value);
-            
-            if (localStorage.getItem("fromXamarin") != null) {
-                var timeElapsed = (new Date().getTime()) - managerTokens.timestamp;
-                if (timeElapsed >= renewTokensTime) {
-                    immediateRefreshRequired = true;
-                    renewTokens(0);
-                }
-                else {
-                    console.log("Time Remaining for renewTokens: " + (renewTokensTime - timeElapsed));
-                    setTimeout(renewTokens, renewTokensTime - timeElapsed,1);
-                }
-            }
-            if (immediateRefreshRequired == false)
-            {
-                console.log("Calling Init");
-                if (window.location.pathname.includes('/headersearch.html'))
-                    InitSearch();
-                else if (window.location.pathname.includes('/settings.html'))
-                    InitSettings();
-                else
-                    Init();
-            }
-        }
-        clearExpiredCache();
-    });
+    Init();
 }
 
 function clearExpiredCache() {
