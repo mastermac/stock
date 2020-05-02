@@ -8420,7 +8420,9 @@ function initializeHeader() {
         var ps = new PerfectScrollbar(sideNavScrollbar);
         if ((window.location.href).includes("backbutton=false"))
             $('#backButton').hide();
+
         document.getElementById("version").innerHTML = userState.AppVersion;
+        document.getElementById("headerText").innerHTML = headerName;
         document.getElementById("username").innerHTML = userNamephp;
     }
 }
@@ -8434,7 +8436,7 @@ var config, env = "ARR", fromXamarin = false;
 var cacheTimeoutTime = 1000 * 60 * 60 * 8, renewTokensTime= 1000 * 60 * 55, quotaCacheTimeoutTime = 1000 * 60 * 60 * 3;
 var immediateRefreshRequired = false;
 var ForceRefresh=false;
-var currentWidget="";
+var currentWidget="", headerName="";
 function createHeader(header) {
     $("header").load(header + " #header", function () {
         initializeHeader();
@@ -8828,84 +8830,6 @@ function logoutClick() {
     });
 }
 
-function submitFeedback(source) {
-    var ratingValue = $("input[name='rating']:checked").val();
-    var feedbackValue= $('#feedbackComments').val();
-    if(ratingValue==undefined){
-        toastr["warning"]("Please select a rating...");
-    }
-    else if(feedbackValue.length==0){
-        toastr["warning"]("Please provide some comments...");
-    }
-    else{
-        var queryParams;
-        if(source=="AE View"){
-            queryParams={
-                Rating: ratingValue,
-                Feedback: feedbackValue,
-                Username: aeUserState.FirstName+" "+aeUserState.LastName,
-                BadgeNumber: aeUserState.BadgeNumber,
-                AppVersion: aeUserState.AppVersion,
-                Instance: aeUserState.SFDCInstance,
-                Source: source,
-                Timestamp: 0
-            };
-        }
-        else{
-            queryParams={
-                Rating: ratingValue,
-                Feedback: feedbackValue,
-                Username: userState.FirstName+" "+userState.LastName,
-                BadgeNumber: userState.BadgeNumber,
-                AppVersion: userState.AppVersion,
-                Instance: userState.SFDCInstance,
-                Source: source,
-                Timestamp: 0
-            };
-        }
-
-        var ajaxCall = fetchAttainmentData(null, config[env].AddFeedback+"?"+$.param(queryParams), true);
-        ajaxCall.done(function(data){
-            if(source=="AE View"){
-                localforage.removeItem('AEUserState');
-                window.location.href = "http://closefeedbackpopuponsuccess#";
-                //toastr["success"]("Thank You for your feedback!");            
-                //setTimeout(function () {  }, 1000); 
-            }else{
-                closeFeedbackForm();
-                toastr["success"]("Thank You for your feedback!");
-            }
-        });
-    }
-}
-
-function closeFeedbackForm(closefrom){
-    if(closefrom=="AE View"){
-        localforage.removeItem('AEUserState');
-        window.location.href = "http://closefeedbackpopup#";
-    }
-    else {
-        $('body').removeClass("lock-scroll");
-        $('#feedbackComments').val('');
-        $("#feedbackCommentsLabel").removeClass("active");
-        $("#feedbackModal .rating > input:checked").prop('checked', false);
-        $('#feedbackModal').modal('hide');
-    }
-} 
-
-function showFeedbackForm() { 
-    feedbackTemplate = feedbackTemplate.replace("{source}","'Manager View'")
-    feedbackTemplate = feedbackTemplate.replace("{closefrom}","'Manager View'")
-    $("#feedbackDiv").html(feedbackTemplate);
-    $("#feedbackModal .rating>label").removeAttr('style');
-    document.getElementById("slide-out").style.transform = "translateX(100%)";
-    $("#sidenav-overlay").remove();
-
-    $('#feedbackModal').modal({
-        backdrop: false
-    });
-}
-
 function backButtonClick() {
     console.log("Back Button Pressed");
     console.log("Current Url: " + window.location.href);
@@ -9107,7 +9031,7 @@ function assignDefaultsIfEmpty() {
     //});
 }
 function NullCheckNA(data) {
-    if (data == null || $.trim(data).length == 0)
+    if (!data)
         return "NA";
     return data;
 }

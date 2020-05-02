@@ -409,7 +409,9 @@ function initializeHeader() {
         var ps = new PerfectScrollbar(sideNavScrollbar);
         if ((window.location.href).includes("backbutton=false"))
             $('#backButton').hide();
+
         document.getElementById("version").innerHTML = userState.AppVersion;
+        document.getElementById("headerText").innerHTML = headerName;
         document.getElementById("username").innerHTML = userNamephp;
     }
 }
@@ -423,7 +425,7 @@ var config, env = "ARR", fromXamarin = false;
 var cacheTimeoutTime = 1000 * 60 * 60 * 8, renewTokensTime= 1000 * 60 * 55, quotaCacheTimeoutTime = 1000 * 60 * 60 * 3;
 var immediateRefreshRequired = false;
 var ForceRefresh=false;
-var currentWidget="";
+var currentWidget="", headerName="";
 function createHeader(header) {
     $("header").load(header + " #header", function () {
         initializeHeader();

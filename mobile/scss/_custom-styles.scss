@@ -36,23 +36,14 @@
 }
 
 #headerSection {
-    height: 80px;
+    height: 60px;
 }
-
-#header_row1 {
-    padding-top: 5px;
-}
-
-
-#header_row31 {
-    float: left;
-    color: #7ddadb !important
-}
-
-#header_row32 {
-    float: left;
-    padding-left: 5px;
-    padding-top: 4px;
+#headerText{
+    line-height: 40px;
+    color: white;
+    font-weight: bolder;
+    font-size: 1.25rem;
+    padding-left: 1rem;
 }
 #hamburgerSection {
     float: right;

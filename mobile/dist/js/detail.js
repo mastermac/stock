@@ -7,6 +7,7 @@ var dataCnt = 0;
 var period = 1;
 var sort = -1;
 function Init() {
+    headerName="Dashboard";
     if(ForceRefresh){
         dataCnt = 0;
         pageoffset = 0;
@@ -267,11 +268,11 @@ function BindOpportunityDetails(data) {
             var usd = "$ ";
             
             sb.append("<div class='card' style='margin: 0.5rem 0rem;'>");
-            sb.append("<div class='card-body' style= 'padding: 1.01rem;'>");
+            sb.append("<div class='card-body' style= 'padding: 0.4rem; padding-right: 1rem;'>");
             sb.append("<div class='row'>");
             sb.append("<div class='col-3'>");
             sb.append('<a data-fancybox="gallery" href="../../pics/'+obj[i].itemNo+'.JPG" data-caption="14YN1730">');
-            sb.append('<img class="lazy" src="../../pics/'+obj[i].itemNo+'.JPG" onerror="this.src=\'../../pics/noImage.jpeg\';" alt="" border="3" height="75" width="75"></a>');
+            sb.append('<img class="lazy img-responsive" src="../../pics/'+obj[i].itemNo+'.JPG" onerror="this.src=\'../../pics/noImage.jpeg\';" alt="" border="3" style="width: 100%;"></a>');
             sb.append("</div>");
 //            <a data-fancybox="gallery" href="pics/14YN1730.JPG" data-caption="14YN1730">
             sb.append("<div class='col-9 pl-0 openFullView'>");
@@ -286,16 +287,16 @@ function BindOpportunityDetails(data) {
             sb.append(
                 "<hr style='margin-top: 1px; margin-bottom: 1px;'>");
             sb.append("<div class='row pt-1' style='font-size:11px;'>");
-            sb.append("<div class='col-3 pr-0'>ItemNo</div>");
+            sb.append("<div class='col-4 pr-0'>ItemNo</div>");
+            sb.append("<div class='col-3'>V ID</div>");
             sb.append("<div class='col-2 pr-0'>Qty</div>");
             sb.append("<div class='col-3 pr-0'>Sell Price</div>");
-            sb.append("<div class='col-4'>Date</div>");
             sb.append("</div >");
             sb.append("<div class='row pb-1' style='font-size:11px;font-weight:bold'>");
-            sb.append("<div class='col-3 pr-0'>"+ obj[i].itemNo + "</div >");
+            sb.append("<div class='col-4 pr-0'>"+ obj[i].itemNo + "</div >");
+            sb.append("<div class='col-3'>" + obj[i].vendor + "</div >");
             sb.append("<div class='col-2 pr-0'>"+ obj[i].curStock + "</div >");
             sb.append("<div class='col-3 pr-0'>" + usd + obj[i].sellPrice + "</div >");
-            sb.append("<div class='col-4'>" + obj[i].dt.substring(0,10) + "</div >");
             sb.append("</div></div></div>");
             sb.append("</div></div>");
         }
@@ -424,18 +425,15 @@ function ShowAEOpportunityDetails(accCard) {
             var OpportunityId = $(accCard).find("#OpportunityId")[0].value;
             //var OpportunityName = $(accCard).find("#OpportunityName")[0].innerHTML;
             localforage.setItem("detailview" + "_ManagerHeaderData", {
-                "ImageBytes": "Hide_Image",
-                "UserName": 'Opportunity Details',
+                "ImageBytes": "",
+                "UserName": 'Item Details',
                 "Designation": "",
                 "CountValue": '',
                 "CountText": "",
-                "BadgeNumber": badgeNumber,
+                "HideProfileImg": true,
                 "OpportunityId": OpportunityId
             }).then(function () {
-                if ($("#opportunityAppLink").val().length > 0)
-                    window.location.href = $("#opportunityAppLink").val() + "detailview.html";
-                else
-                    window.location.href = "detailview.html";
+                window.location.href = "detailview.php";
             });
         } catch (e) {
             console.log(e.message);

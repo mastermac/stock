@@ -35,7 +35,7 @@ function assignDefaultsIfEmpty() {
     //});
 }
 function NullCheckNA(data) {
-    if (data == null || $.trim(data).length == 0)
+    if (!data)
         return "NA";
     return data;
 }

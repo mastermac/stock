@@ -22,25 +22,19 @@
     <div id="header">
         <!--Navbar-->
         <nav id="headerSection" class="mb-1 navbar navbar-expand-lg navbar-dark z-depth-1-half animated fadeInDown"
-            style="padding: .25rem 0.5rem; background: linear-gradient(to bottom, #007DB8 0%, #00447c 100%);">
+            style="padding: .25rem 0.5rem; background: linear-gradient(to right, #007DB8 0%, #00447c 100%);">
             <ul class="navbar-nav mr-auto nav-flex-icons">
                 <li class="nav-item" id="headerbackButton">
-                    <span class="nav-link waves-effect waves-light" id="backButton" onclick="backButtonClick()">
+                    <span class="nav-link waves-effect waves-light" id="backButton" onclick="window.history.back();">
                         <i class="material-icons-round md-light" style="display: block;">arrow_back_ios</i>
                     </span>
                 </li>
-                <li id="headerImg">
+                <!-- <li id="headerImg">
                     <img src="img/SalesForceDefaultImage.png"
                         alt="userImage" id="imgProfile" class="imgProfile">
-                </li>
+                </li> -->
                 <li class="nav-item headerTextSection" id="headerText">
-                    <div id="header_row1" class="headerTextStyle font-weight-bold headerskeletonsLine text-truncate">
-
-                    </div>
-                    <div id="header_row2" class="headerTextStyle small headerskeletonsLine text-truncate">
-
-                    </div>
-                    <div id="header_row31" class="headerTextStyle font-weight-bold">
+                    <!-- <div id="header_row31" class="headerTextStyle font-weight-bold">
 
                     </div>
                     <div id="header_row32" class="headerTextStyle small">
@@ -49,7 +43,7 @@
                     <div id="myQuota" class="headerTextStyle small" onclick="ManagersDetail(this);"
                         style="float: none;background-color: #7fa2be;border-radius: 5px;width: 3.4rem;display:none;">
                         <span class="headerTextStyle small" id="span_myQuota">My Quota</span>
-                    </div>
+                    </div> -->
                 </li>
                 <li style="display:none;" id="liGlobalSearch">
                     <input type="text" id="txtGlobalSearch" placeholder="Search" class="search-input" />
@@ -85,10 +79,10 @@
             <ul id="slide-out" class="side-nav white darken-5 custom-scrollbar">
                 <li style="background: linear-gradient(to bottom, #007DB8 0%, #00447c 100%);">
                     <div class="logo-wrapper waves-light" style="height: fit-content;">
-                        <img src="img/dell_emc_logo.png" class="img-fluid"
+                        <img src="img/newLogo.png" class="img-fluid"
                             style="padding: 10% 10px;padding-bottom: 5%;">
                         <div style="font-weight: 300;">
-                            <center>StockPanel Ver <span id="version"></span></center>
+                            <center>StockPanel ver<span id="version"></span></center>
                         </div>
                         <img src="img/profile_icon.png" class="img-fluid"
                             style=" padding: 2% 80px 4% 80px;">
@@ -114,13 +108,6 @@
             </li>
         </ul>
     </li>-->
-                <li onclick="showFeedbackForm()" class="waves-effect"
-                    style="padding:0.4rem;padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;">
-                    <i class="fas"><img src="img/feedback.PNG"
-                            height="25px" style="padding-right:10px;"></i>
-                    Feedback
-
-                </li>
                 <li onclick="settingsClick()" class="waves-effect"
                     style="padding:0.4rem;padding-left: 15px; font-size: large; font-weight: 400; color: #007DB8;border-bottom: 1px solid rgba(153,153,153,.3);width:100%;display: block;">
                     <i class="fas"><img src="img/setings.PNG"
