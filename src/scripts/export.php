@@ -14,8 +14,18 @@ if ($_SESSION['usertype'] == 1) $usertype = ' and userid=' . $_SESSION['userid']
 $cond="";
 if($_GET['styleCode']!="")
    $cond=" and styleCode = '" . $_GET["styleCode"] . "'";
-if($_GET['curStock']!="")
-   $cond=$cond." and curStock ='" . $_GET["curStock"] . "'";
+if($_GET['curStock']!=""){
+	$stockRange=explode(":",$_GET['curStock']);
+	$cond=$cond." and curStock BETWEEN " . $stockRange[0] . " and ".$stockRange[1];
+}
+if($_GET['sellPrice']!=""){
+	$priceRange=explode(":",$_GET['sellPrice']);
+	$cond=$cond." and sellPrice BETWEEN " . $priceRange[0] . " and ".$priceRange[1];
+}
+if($_GET['grossWt']!=""){
+	$grossWtRange=explode(":",$_GET['grossWt']);
+	$cond=$cond." and grossWt BETWEEN " . $grossWtRange[0] . " and ".$grossWtRange[1];
+}
 if($_GET['sdt']!="0000-00-00")
    $dtcon=" and dt between '".$_GET["sdt"]." 00:00:00' and '".$_GET["edt"]." 23:59:59'";
 $style = array(
@@ -63,7 +73,7 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(7.5);
 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(25);
 
    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'gross Wt')->setCellValue('H1', 'dia Wt')->setCellValue('I1', 'cstone Wt')->setCellValue('J1', 'gold Wt')->setCellValue('K1', 'No. of Dia')->setCellValue('L1', 'Sell Price')->setCellValue('M1', 'Qty')->setCellValue('N1', 'Style Code')->setCellValue('O1', 'Comments')->setCellValue('P1', 'MU')->setCellValue('S1', 'Cost Price');
-$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and grossWt like '%" . $_GET["grossWt"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' and sellPrice like '%" . $_GET["sellPrice"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon . " Order By itemNo";
+$sql = "SELECT * FROM product where ".$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%'".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon . " Order By itemNo";
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc())
 {
