@@ -292,19 +292,19 @@ if ($_SESSION['usertype'] == 1)
            ?>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemId" name="s_itemId"/>
         </div>
-        <div class="form-group col-md-1" style="min-width: 4%;max-width: 4%;padding-left: 5px;padding-right: 5px;">
+        <div class="form-group col-md-1" style="min-width: 6%;max-width: 6%;padding-left: 5px;padding-right: 5px;">
           <label for="vendor">V Id:</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendor" name="s_vendor"/>
         </div>
-        <!-- <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 5px;">
+        <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 5px;padding-right: 5px;">
           <label for="itemId">vCode:</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendorCode" name="s_vendorCode"/>
-        </div> -->
-        <div class="form-group col-md-1" style="min-width: 13%;max-width: 20%;padding-left: 5px;padding-right: 5px;">
+        </div>
+        <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
           <label for="itemId">Description:</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_description" name="s_description"/>
         </div>
-        <div class="form-group col-md-1" style="min-width: 10%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
+        <div class="form-group col-md-1" style="min-width: 10%;max-width: 15%;padding-left: 5px;padding-right: 5px;display:none;">
           <label for="itemId">Item Type:</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemTypeCode" name="s_itemTypeCode"/>
         </div>
@@ -885,27 +885,27 @@ if ($_SESSION['usertype'] == 1)
                 <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_description" name="s_description" />
               </div>
               <div class="w-100"></div> -->
-              <div class="form-group col">
+              <div class="form-group col" style="padding-right: 0px;">
                 <label for="itemId">Dia</label>
                 <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_diaWt" name="s_diaWt" />
               </div>
-              <div class="form-group col">
+              <div class="form-group col" style="padding-right: 0px;">
                 <label for="itemId">cstone</label>
                 <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_cstoneWt" name="s_cstoneWt" />
               </div>
-              <div class="form-group col">
+              <div class="form-group col" style="padding-right: 0px;">
                 <label for="itemId">Gold</label>
                 <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_goldWt" name="s_goldWt" />
-              </div>
-              <div class="w-100"></div>
-              <div class="form-group col">
-                <label for="itemId">vCode:</label>
-                <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_vendorCode" name="s_vendorCode" />
               </div>
               <div class="form-group col">
                 <label for="itemId">Size:</label>
                 <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_ringSize" name="s_ringSize" />
               </div>
+              <div class="w-100"></div>
+              <!-- <div class="form-group col">
+                <label for="itemId">vCode:</label>
+                <input type="text" class="form-control" style="padding: .375rem .15rem;" id="s_vendorCode" name="s_vendorCode" />
+              </div> -->
               <!-- <div class="form-group col">
                 <label for="itemId">Style:</label>
                 <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_styleCode" name="s_styleCode" />

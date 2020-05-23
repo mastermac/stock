@@ -58,11 +58,11 @@ $(document).ready(function () {
         if (hasSomeValue(getVal('itemId')))         performSearch("itemId", "itemNo");
         if (hasSomeValue(getVal('vendor')))         performSearch("vendor", "vendor");
         if (hasSomeValue(getVal('description')))    performSearch("description", "description");
-        if (hasSomeValue(getVal('itemTypeCode')))   performSearch("itemTypeCode", "itemTypeCode");
+        if (hasSomeValue(getVal('vendorCode')))     performSearch("vendorCode", "vendorCode");
         if (hasSomeValue(getVal('styleCode')))      performSearch("styleCode", "styleCode");
         if (hasSomeValue(getVal('itemIdExt')))      performSpecialSearch("itemIdExt");
 
-        // if (hasSomeValue(getVal('vendorCode')))  performSearch("vendorCode", "vendorCode");
+        // if (hasSomeValue(getVal('itemTypeCode')))   performSearch("itemTypeCode", "itemTypeCode");
         // if (hasSomeValue(getVal('grossWt')))        performSearch("grossWt", "grossWt");
         // if (hasSomeValue(getVal('diaWt')))          performSearch("diaWt", "diaWt");
         // if (hasSomeValue(getVal('cstoneWt')))       performSearch("cstoneWt", "cstoneWt");
