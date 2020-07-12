@@ -25,6 +25,21 @@ $(document).ready(function () {
     var fuseResult = null;
     localforage.setDriver([localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]);
     refreshCache(false);
+    if(usertype==2){
+        $(document).bind("contextmenu",function(e){
+            return false;
+              });
+    }
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    hideFieldsForUsers();
+    function hideFieldsForUsers(){
+        if(usertype==1)
+            $(".hide-ug1").css("display","none");
+        if(usertype==2)
+            $(".hide-ug2").css("display","none");
+    }
     function refreshCache(fromServer = true) {
         if (!fromServer) {
             localforage.getItem("pd").then(function (value) {
@@ -49,7 +64,8 @@ $(document).ready(function () {
     }
     function searchCache() {
         $('.ajax-loader').css("visibility", "visible");
-        pdCopy = JSON.parse(pd);
+        console.log(pd.substr(9784824));
+        pdCopy = JSON.parse((pd));
         var e_dt = "";
         var s_dt = "";
         s_dt = window.start;
@@ -105,6 +121,7 @@ $(document).ready(function () {
                 }
             });
             page = current_page;
+            $("#totalData").val(pdCopy.length);
             if (pdCopy.length <= perPage)
                 manageRow(pdCopy);
             else
@@ -300,6 +317,7 @@ $(document).ready(function () {
                     }
                 }
             });
+            $("#totalData").val(data.total);
             if (data.total == 0) $("#myTable > tbody").html("");
             else {
                 manageRow(data.data);
@@ -337,6 +355,7 @@ $(document).ready(function () {
                 source: 'page'
             }
         }).done(function (data) {
+            $("#totalData").val(data.total);
             $('.ajax-loader').css("visibility", "hidden");
             manageRow(data.data);
         });
@@ -436,12 +455,17 @@ $(document).ready(function () {
         vendorsno = 1;
         $.each(data, function (key, value) {
             if (typeof value.vid != 'undefined') {
-                if (value.type == "1") value.type = "Normal";
-                else value.type = "Admin";
-                if (value.canExport == "1") value.canExport = "Yes";
-                else value.canExport = "No";
-                if (value.enabled == "1") value.enabled = "True";
-                else value.enabled = "False";
+                
+                if (value.type == "2") value.type = "Normal";
+                else if (value.type == "1") value.type = "Admin";
+                else value.type = "Super";
+
+                // if (value.canExport == "1") value.canExport = "Yes";
+                // else value.canExport = "No";
+                
+                // if (value.enabled == "1") value.enabled = "True";
+                // else value.enabled = "False";
+                
                 if (value.email == null) value.email = "";
                 if (value.pwd == null) value.pwd = "";
                 rows = rows + '<tr><td>' + ((vendorPage - 1) * vendorperPage + vendorsno++) + '</td>';
@@ -452,8 +476,8 @@ $(document).ready(function () {
                 rows = rows + '<td>' + value.pwd + '</td>';
                 rows = rows + '<td>' + value.type + '</td>';
                 rows = rows + '<td>' + value.series + '</td>';
-                rows = rows + '<td>' + value.canExport + '</td>';
-                rows = rows + '<td>' + value.enabled + '</td>';
+                // rows = rows + '<td>' + value.canExport + '</td>';
+                // rows = rows + '<td>' + value.enabled + '</td>';
                 rows = rows + '<td data-id="' + value.vid + '">';
                 rows = rows + '<button class="btn btn-xs btn-warning edit-vendor"></button> ';
                 rows = rows + '<button class="btn btn-xs btn-danger remove-vendor"></button>';
@@ -569,6 +593,7 @@ $(document).ready(function () {
         });
     });
     $("body").on("click", ".edit-vendor", function () {
+        $('#addVendorForm')[0].reset();
         var id = $(this).parent("td").data('id');
         $('.ajax-loader').css("visibility", "visible");
         $.ajax({
@@ -586,11 +611,15 @@ $(document).ready(function () {
             $("#vendorId").attr('readonly', '');
             $("#vendorName").val(data.data[0].name);
             $("#vendorId").val(data.data[0].code);
+            
             if (data.data[0].enabled == "1") $("#accountActive").attr('checked', 'true');
             else $("#accountActive").removeAttr('checked');
+
             if (data.data[0].canExport == "1") $("#canExport").attr('checked', 'true');
             else $("#canExport").removeAttr('checked');
+            
             if (data.data[0].email == null || data.data[0].pwd == null || data.data[0].email == "" || data.data[0].pwd == "") {
+                $("#newAccount").attr('checked', 'false');
                 $("#newAccount").removeAttr('checked');
                 $(".newUser").hide(500);
                 $("#vendorEmail").val(data.data[0].email);
@@ -1009,6 +1038,10 @@ $(document).ready(function () {
         manageData();
     });
     $("#excelExport").click(function (e) {
+        if(usertype==1 && parseInt($("#totalData").val())>100){
+            alert("Sorry! But you can only export 100 Items...");
+            return;
+        }
         var r = confirm("Are you sure you want to export this data into Excel?");
         if (r == true) {
             $('.ajax-loader').css("visibility", "visible");
@@ -1043,6 +1076,10 @@ $(document).ready(function () {
         }
     });
     $("#pdfExport").click(function (e) {
+        if(usertype==1 && parseInt($("#totalData").val())>100){
+            alert("Sorry! But you can only export 100 Items...");
+            return;
+        }
         var customerDesigns = true;
         customerDesigns = confirm("Do you want to include Customer Specific Designs?\n\nPress OK -> YES    OR    Cancel -> NO");
         $('.ajax-loader').css("visibility", "visible");
@@ -1167,6 +1204,8 @@ $(document).ready(function () {
 });
 
 function openProductHistory(id) {
+    if(usertype!=0)
+        return;
     $('.ajax-loader').css("visibility", "visible");
     $.ajax({
         dataType: 'json',

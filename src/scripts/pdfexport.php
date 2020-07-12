@@ -124,7 +124,7 @@ if($_GET["itemNoExt"]!=""){
         $customerDesignCon = " (itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%') AND ";
 $sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon;
 
-$sql = $sql . " Order By dt desc, sno desc LIMIT " . $_GET["perPage"];    
+$sql = $sql . " Order By dt desc, sno desc";    
 
 $pdf->ImprovedTable($header,$sql);
 
@@ -135,7 +135,7 @@ elseif ($_GET["itemNoExt"]=="") {
         $customerDesignCon = " (itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%') AND ";
 
 $sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon ;
-$sql = $sql . " Order By dt desc, sno desc LIMIT " . $_GET["perPage"];    
+$sql = $sql . " Order By dt desc, sno desc";    
 $pdf->ImprovedTable($header,$sql);
 }
 $filename=uniqid().".pdf";

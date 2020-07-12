@@ -77,6 +77,11 @@ $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue
 $sql = "SELECT * FROM product where " . $itemCon . " vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%'" . $cond . " and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype . $dtcon . " Order By itemNo";
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc()) {
+   if($_SESSION['usertype']!=0)
+   {
+      $row['mu']="";
+      $row['costPrice']="";
+   }
    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['grossWt'])->setCellValue('H' . $sno, $row['diaWt'])->setCellValue('I' . $sno, $row['cstoneWt'])->setCellValue('J' . $sno, $row['goldWt'])->setCellValue('K' . $sno, $row['noOfDia'])->setCellValue('L' . $sno, $row['sellPrice'])->setCellValue('M' . $sno, $row['curStock'])->setCellValue('N' . $sno, $row['styleCode'])->setCellValue('O' . $sno, $row['mu'])->setCellValue('R' . $sno, '1')->setCellValue('S' . $sno, $row['costPrice'])->setCellValue('T' . $sno, $row['comments']);
    $objDrawing = new PHPExcel_Worksheet_Drawing();
    $objDrawing->setName('test_img');

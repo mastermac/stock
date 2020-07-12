@@ -24,6 +24,10 @@ if ($_SESSION['usertype'] == 1)
     .modal-content {
       z-index: 1051;
     }
+    .tooltip-inner {
+    white-space: pre-wrap;
+   }
+    
   </style>
   <script type="text/javascript" src="src/js/jquery.min.js"></script>
   <script src="src/js/jquery-ui.min.js"></script>
@@ -262,11 +266,11 @@ if ($_SESSION['usertype'] == 1)
           <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#importModal">Import Data</button>
           <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#importPics">Upload Pics</button>
           <?php
-          if ($_SESSION['canExport'] == 1)
+          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0||$_SESSION['usertype'] == 1))
             echo '<button type="button" id="excelExport" name="excelExport" class="btn btn-outline-danger">Export</button>';
           ?>
           <?php
-          if ($_SESSION['canExport'] == 1)
+          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0||$_SESSION['usertype'] == 1))
             echo '<button type="button" id="pdfExport" name="pdfExport" class="btn btn-outline-danger">PDF Export</button>';
           ?>
           <button type="button" id="lastCodesButton" name="lastCodesButton" class="btn btn-outline-danger">Last Codes</button>
@@ -286,6 +290,7 @@ if ($_SESSION['usertype'] == 1)
     </div>
     <div >
         <form method="POST" id="filterForm">
+        <input type="hidden" value="0" name="totalData" id="totalData">
           <div class="row">
         <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 15px;padding-right: 5px;">
           <label for="itemId">Item Id&nbsp;</label><?php if($_SESSION['usertype']==0){ echo '<a class="multiId" style="cursor: pointer; color: blue;">( Multi? )</a>'; }
@@ -455,7 +460,7 @@ if ($_SESSION['usertype'] == 1)
                   <label for="vendor" class="control-label">V ID:</label>
                   <input type="text" style="padding: .375rem .15rem;" class="form-control" id="vendorId" name="vendorId" />
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2" style="display: none;">
                   <label for="vendor" class="control-label"></label>
                   <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
                     <input type="checkbox" id="accountActive" name="accountActive" class="custom-control-input" checked>
@@ -463,7 +468,7 @@ if ($_SESSION['usertype'] == 1)
                     <span class="custom-control-description">Make Account Active?</span>
                   </label>
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2" style="display: none;">
                   <label for="vendor" class="control-label"></label>
                   <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
                     <input type="checkbox" id="canExport" name="canExport" class="custom-control-input">
@@ -479,6 +484,7 @@ if ($_SESSION['usertype'] == 1)
                     <span class="custom-control-description">Create an Account?</span>
                   </label>
                 </div>
+                <div class="form-group col-md-4" ></div>
                 <div class="form-group col-md-4 newUser">
                   <label for="itemId">Email:</label>
                   <input type="Email" class="form-control" id="vendorEmail" name="vendorEmail" />
@@ -488,9 +494,10 @@ if ($_SESSION['usertype'] == 1)
                   <input type="Password" class="form-control" id="vendorPwd" name="vendorPwd" />
                 </div>
                 <div class="form-group col-md-3 newUser">
-                  <label for="itemId">User Type:</label>
+                  <label for="vendorType" id="vendorTypeLabel" data-toggle="tooltip" data-placement="top" title="Super: All Open &#010; &#010; Admin: NO on Vendor List, Password Change, Exports upto 100, Cost-MU, History &#010; &#010; Normal: Admin + NO Exports, Right Clicks">User Type (Learn More...)</label>
                   <select class="form-control" id="vendorType" name="vendorType">
-                    <option value="1">Normal User</option>
+                    <option value="2">Normal User</option>
+                    <option value="1">Admin User</option>
                     <option value="0">Super User</option>
                   </select>
                 </div>
@@ -513,8 +520,8 @@ if ($_SESSION['usertype'] == 1)
                   <th data-column-id="vendorTablePwd" class="text-center" style="width: 150px;">Password</th>
                   <th data-column-id="vendorTableType" class="text-center" style="width: 100px;">Type</th>
                   <th data-column-id="vendorTableSeries" class="text-center" style="width:70px;">Series</th>
-                  <th data-column-id="vendorTableExport" class="text-center" style="width: 70px;">Export</th>
-                  <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Enabled</th>
+                  <!-- <th data-column-id="vendorTableExport" class="text-center" style="width: 70px;">Export</th>
+                  <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Enabled</th> -->
                   <th style="width:80px;">Action</th>
                 </tr>
               </thead>
@@ -721,11 +728,11 @@ if ($_SESSION['usertype'] == 1)
                   <label for="comments" class="control-label">Comments</label>
                   <textarea class="form-control" id="comments" name="comments" row="2"></textarea>
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2 hide-ug2 hide-ug1">
                   <label for="mu" class="control-label">MU</label>
                   <input type="text" class="form-control" id="mu" name="mu" />
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2 hide-ug2 hide-ug1">
                   <label for="costPrice" class="control-label">Cost Price</label>
                   <input type="text" class="form-control" id="costPrice" name="costPrice" />
                 </div>
@@ -822,11 +829,11 @@ if ($_SESSION['usertype'] == 1)
                 <label for="edit_comments" class="control-label">Comments</label>
                 <textarea class="form-control" id="edit_comments" name="edit_comments" row="2"></textarea>
               </div>
-              <div class="form-group col-md-2">
+              <div class="form-group col-md-2 hide-ug1 hide-ug2">
                 <label for="edit_mu" class="control-label">MU</label>
                 <input type="text" class="form-control" id="edit_mu" name="edit_mu" />
               </div>
-              <div class="form-group col-md-2">
+              <div class="form-group col-md-2 hide-ug1 hide-ug2">
                 <label for="edit_costPrice" class="control-label">Cost Price</label>
                 <input type="text" class="form-control" id="edit_costPrice" name="edit_costPrice" />
               </div>
