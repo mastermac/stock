@@ -3,7 +3,7 @@ require 'db_config.php';
 session_start();
 $mysqli=getConn();
 $usertype = '';
-if ($_SESSION['usertype'] == 1) $usertype = ' where userid=' . $_SESSION['userid'];
+if ($_SESSION['usertype'] >= 1) $usertype = ' where userid=' . $_SESSION['userid'];
 $sql = "SELECT * from product".$usertype." Order By dt desc, sno desc ";
 //echo $sql;
 $result = $mysqli->query($sql);

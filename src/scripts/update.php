@@ -40,7 +40,7 @@ $mysqli=getConn();
 $previousData=implode("#",getCurrentData($post['edit_id']));
 
 $usertype="";
-if ($_SESSION['usertype'] == 1) $usertype = " and userid='" . $_SESSION['userid']."'";
+if ($_SESSION['usertype'] >= 1) $usertype = " and userid='" . $_SESSION['userid']."'";
 $sql = "UPDATE product SET comments='".$post['edit_comments']."', itemNo='" . $post['edit_itemId'] . "', vendor='" . strtoupper($post['edit_vendor']) . "', 
       vendorCode='" . vendorCheck($post['edit_vendorCode']) . "', description='" . $post['edit_description'] . "', itemTypeCode='" . 
       getStyleCodeVal($post['edit_styleCode']) . "', grossWt='" . clean($post['edit_grossWt']) . "',diaWt='" . clean($post['edit_diaWt']) . "',

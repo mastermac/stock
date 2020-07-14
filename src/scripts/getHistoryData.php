@@ -5,7 +5,7 @@ session_start();
 $mysqli=getConn();
 $usertype = '';
 
-if ($_SESSION['usertype'] == 1) $usertype = ' and userid=' . $_SESSION['userid'];
+if ($_SESSION['usertype'] >= 1) $usertype = ' and userid=' . $_SESSION['userid'];
 
 $sql = "SELECT * FROM producthistory where itemNo='".$_GET["itemNo"]."' ". $usertype . " Order By timestamp desc";
 //echo $sql;

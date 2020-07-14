@@ -10,7 +10,7 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Item Code')->setCellValue('B1', 'Vendor Code');
 $objPHPExcel->getActiveSheet()->getStyle("A1:B1")->getFont()->setBold(true);
-if ($_SESSION['usertype'] == 1) $usertype = ' where userid=' . $_SESSION['userid'];
+if ($_SESSION['usertype'] >= 1) $usertype = ' where userid=' . $_SESSION['userid'];
 else $usertype="";
 $sql = "SELECT * FROM product" . $usertype . " Order By vendor desc;";
 $mysqli=getConn();      

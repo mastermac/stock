@@ -2,7 +2,7 @@
 require 'db_config.php';
 session_start();
 $mysqli=getConn();
-if ($_SESSION['usertype'] == 1) return;
+if ($_SESSION['usertype'] >= 1) return;
 $sql="";
 if(trim($_GET['vid'])!="")
 $sql="SELECT * FROM vendor WHERE vendor.vid='".$_GET['vid']."';";
