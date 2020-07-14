@@ -1038,11 +1038,11 @@ $(document).ready(function () {
         manageData();
     });
     $("#excelExport").click(function (e) {
-        if(usertype==1 && parseInt($("#totalData").val())>100){
-            alert("Sorry! But you can only export 100 Items...");
-            return;
-        }
-        var r = confirm("Are you sure you want to export this data into Excel?");
+        var r=true;
+        if(usertype==1 && parseInt($("#totalData").val())>100)
+            r = confirm("Are you sure you want to export this data into Excel?\nMax 100 Items will be exported...");
+        else
+            r = confirm("Are you sure you want to export this data into Excel?");
         if (r == true) {
             $('.ajax-loader').css("visibility", "visible");
             s_dt = window.start;
@@ -1076,12 +1076,11 @@ $(document).ready(function () {
         }
     });
     $("#pdfExport").click(function (e) {
-        if(usertype==1 && parseInt($("#totalData").val())>100){
-            alert("Sorry! But you can only export 100 Items...");
-            return;
-        }
         var customerDesigns = true;
-        customerDesigns = confirm("Do you want to include Customer Specific Designs?\n\nPress OK -> YES    OR    Cancel -> NO");
+        if(usertype==1 && parseInt($("#totalData").val())>100)
+            customerDesigns = confirm("Do you want to include Customer Specific Designs?\nMax 100 Items will be exported...\nPress OK -> YES    OR    Cancel -> NO");
+        else
+            customerDesigns = confirm("Do you want to include Customer Specific Designs?\n\nPress OK -> YES    OR    Cancel -> NO");
         $('.ajax-loader').css("visibility", "visible");
         s_dt = window.start;
         e_dt = window.end;

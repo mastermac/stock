@@ -10,7 +10,11 @@ $objPHPExcel->getProperties()->setCreator("Silver City Jewels")->setLastModified
 $itemCon = " itemNo like '%" . $_GET["itemNo"] . "%' and";
 $usertype = '';
 $dtcon = "";
-if ($_SESSION['usertype'] == 1) $usertype = ' and userid=' . $_SESSION['userid'];
+$limitCon="";
+if ($_SESSION['usertype'] >= 1){
+   $usertype = ' and userid=' . $_SESSION['userid'];
+   $limitCon = ' LIMIT 100';
+} 
 $cond = "";
 if ($_GET['styleCode'] != "")
    $cond = " and styleCode = '" . $_GET["styleCode"] . "'";
@@ -74,7 +78,7 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(7.5);
 $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(25);
 
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'gross Wt')->setCellValue('H1', 'dia Wt')->setCellValue('I1', 'cstone Wt')->setCellValue('J1', 'gold Wt')->setCellValue('K1', 'No. of Dia')->setCellValue('L1', 'Sell Price')->setCellValue('M1', 'Qty')->setCellValue('N1', 'Style Code')->setCellValue('O1', 'MU')->setCellValue('P1', '')->setCellValue('Q1', '')->setCellValue('R1', 'Enter 1')->setCellValue('S1', 'Cost Price')->setCellValue('T1', 'Comments');
-$sql = "SELECT * FROM product where " . $itemCon . " vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%'" . $cond . " and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype . $dtcon . " Order By itemNo";
+$sql = "SELECT * FROM product where " . $itemCon . " vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%'" . $cond . " and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype . $dtcon . " Order By itemNo".$limitCon;
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc()) {
    if($_SESSION['usertype']!=0)

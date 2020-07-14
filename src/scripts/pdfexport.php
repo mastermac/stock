@@ -94,7 +94,12 @@ $itemCon=" itemNo like '%" . $_GET["itemNo"] . "%' and";
 $usertype = '';
 $dtcon="";
 $sql="";
-if ($_SESSION['usertype'] == 1) $usertype = ' and userid=' . $_SESSION['userid'];
+$limitCon="";
+
+if ($_SESSION['usertype'] >= 1){
+    $usertype = ' and userid=' . $_SESSION['userid'];
+    $limitCon = ' LIMIT 100';
+} 
 $cond="";
 if($_GET['styleCode']!="")
    $cond=" and styleCode = '" . $_GET["styleCode"] . "'";
@@ -122,7 +127,7 @@ if($_GET["itemNoExt"]!=""){
    $customerDesignCon='';
     if($_GET["customerDesigns"]=="false")
         $customerDesignCon = " (itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%') AND ";
-$sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon;
+$sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon.$limitCon;
 
 $sql = $sql . " Order By dt desc, sno desc";    
 
@@ -134,7 +139,7 @@ elseif ($_GET["itemNoExt"]=="") {
     if($_GET["customerDesigns"]=="false")
         $customerDesignCon = " (itemNo like '14%' OR itemNo like '18%' OR itemNo like 'SD%') AND ";
 
-$sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon ;
+$sql = "SELECT * FROM product where ".$customerDesignCon.$itemCon." vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon.$limitCon;
 $sql = $sql . " Order By dt desc, sno desc";    
 $pdf->ImprovedTable($header,$sql);
 }
