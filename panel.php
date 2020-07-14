@@ -5,7 +5,7 @@ if (!isset($_SESSION['userid'])) {
 }
 $usertype = '';
 require('src/scripts/db_config.php');
-if ($_SESSION['usertype'] == 1)
+if ($_SESSION['usertype'] >= 1)
   $usertype = ' and userid=' . $_SESSION['userid'];
 ?>
 <!DOCTYPE html>
@@ -646,7 +646,7 @@ if ($_SESSION['usertype'] == 1)
                   <datalist id="vendorList">
                     <?php
                     $mysqli = getConn();
-                    if ($_SESSION['usertype'] == 1)
+                    if ($_SESSION['usertype'] >= 1)
                       $sql = "SELECT code, name from vendor where vid='" . $_SESSION['userid'] . "' order by code;";
                     else
                       $sql = "SELECT code, name from vendor order by code;";
