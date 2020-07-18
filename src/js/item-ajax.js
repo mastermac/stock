@@ -590,6 +590,8 @@ $(document).ready(function () {
             $("#edit_comments").val(data.data[0].comments);
             $("#edit_mu").val(data.data[0].mu);
             $("#edit_costPrice").val(data.data[0].costPrice);
+            $("#edit_dimensions").val(data.data[0].dimensions);
+            $("#edit_vendorPO").val(data.data[0].vendorPO);
         });
     });
     $("body").on("click", ".edit-vendor", function () {

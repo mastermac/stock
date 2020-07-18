@@ -687,19 +687,19 @@ if ($_SESSION['usertype'] >= 1)
                     ?>
                   </datalist>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="grossWt" class="control-label">Gross Wt</label>
                   <input type="number" step="any" class="form-control" id="grossWt" min="0" value="0" name="grossWt" />
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="diaWt" class="control-label">Dia Wt</label>
                   <input type="number" step="any" class="form-control" id="diaWt" min="0" value="0" name="diaWt" />
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="cstoneWt" class="control-label">cstone Wt</label>
                   <input type="number" step="any" class="form-control" id="cstoneWt" min="0" value="0" name="cstoneWt" />
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="goldWt" class="control-label">Gold Wt</label>
                   <input type="number" step="any" step="any" class="form-control" id="goldWt" min="0" value="0" name="goldWt" />
                 </div>
@@ -715,14 +715,21 @@ if ($_SESSION['usertype'] >= 1)
                   <label for="curStock" class="control-label">Current Stock</label>
                   <input type="number" class="form-control" id="curStock" min="0" name="curStock" value="1" />
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="ringSize" class="control-label">Ring Size</label>
                   <input type="text" class="form-control" id="ringSize" name="ringSize" />
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   <label for="styleCode" class="control-label">Style Code</label>
                   <input type="number" readonly class="form-control" id="styleCode" name="styleCode" required="" />
-
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="dimensions" class="control-label">Dimensions</label>
+                  <input type="text" class="form-control" id="dimensions" name="dimensions" />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="vendorPO" class="control-label">Vendor PO#</label>
+                  <input type="text" class="form-control" id="vendorPO" name="vendorPO" />
                 </div>
                 <div class="form-group col-md-8">
                   <label for="comments" class="control-label">Comments</label>
@@ -789,19 +796,19 @@ if ($_SESSION['usertype'] >= 1)
                 <label for="edit_itemTypeCode" class="control-label">Item Type</label>
                 <input type="text" class="form-control" id="edit_itemTypeCode" name="edit_itemTypeCode" list="itemTypeCodeList" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_grossWt" class="control-label">Gross Wt</label>
                 <input type="number" step="any" class="form-control" id="edit_grossWt" name="edit_grossWt" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_diaWt" class="control-label">Dia Wt</label>
                 <input type="number" step="any" class="form-control" id="edit_diaWt" name="edit_diaWt" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_cstoneWt" class="control-label">cstone Wt</label>
                 <input type="number" step="any" class="form-control" id="edit_cstoneWt" name="edit_cstoneWt" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_goldWt" class="control-label">Gold Wt</label>
                 <input type="number" step="any" class="form-control" id="edit_goldWt" name="edit_goldWt" />
               </div>
@@ -817,14 +824,22 @@ if ($_SESSION['usertype'] >= 1)
                 <label for="edit_curStock" class="control-label">Current Stock</label>
                 <input type="number" class="form-control" id="edit_curStock" name="edit_curStock" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_ringSize" class="control-label">Ring Size</label>
                 <input type="text" class="form-control" id="edit_ringSize" name="edit_ringSize" />
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 <label for="edit_styleCode" class="control-label">Style Code</label>
                 <input type="number" readonly class="form-control" id="edit_styleCode" name="edit_styleCode" required />
               </div>
+              <div class="form-group col-md-3">
+                  <label for="edit_dimensions" class="control-label">Dimensions</label>
+                  <input type="text" class="form-control" id="edit_dimensions" name="edit_dimensions" />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="edit_vendorPO" class="control-label">Vendor PO#</label>
+                  <input type="text" class="form-control" id="edit_vendorPO" name="edit_vendorPO" />
+                </div>
               <div class="form-group col-md-8">
                 <label for="edit_comments" class="control-label">Comments</label>
                 <textarea class="form-control" id="edit_comments" name="edit_comments" row="2"></textarea>
