@@ -42,7 +42,7 @@ if($_GET['grossWt']!=""){
 	$cond=$cond." and grossWt BETWEEN " . $grossWtRange[0] . " and ".$grossWtRange[1];
 }
 
-if ($_SESSION['usertype'] >= 1) $usertype = ' and userid=' . $_SESSION['userid'];
+if ($_SESSION['usertype'] > 1) $usertype = ' and userid=' . $_SESSION['userid'];
 if($_GET['sdt']!="0000-00-00")
 	$dtcon=" and dt between '".$_GET["sdt"]." 00:00:00' and '".$_GET["edt"]." 23:59:59'";
 $sqlTotal = "SELECT * FROM product where".$itemCon.$vcon." vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%' ".$cond." and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype.$dtcon;

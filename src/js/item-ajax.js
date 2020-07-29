@@ -1168,6 +1168,7 @@ $(document).ready(function () {
 
     $("#logout").click(function (e) {
         $('.ajax-loader').css("visibility", "visible");
+        localforage.clear();
         $.ajax({
             type: "POST",
             url: url + 'src/scripts/checkLogin.php',
