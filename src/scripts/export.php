@@ -40,7 +40,7 @@ $style = array(
    )
 );
 
-$ExcelHeader = $objPHPExcel->getActiveSheet()->getStyle("A1:T1");
+$ExcelHeader = $objPHPExcel->getActiveSheet()->getStyle("A1:W1");
 
 $objPHPExcel->getActiveSheet()
    ->getDefaultStyle()
@@ -75,9 +75,9 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(7.5);
-$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(25);
+$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(25);
 
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'Dimensions')->setCellValue('H1', 'gross Wt')->setCellValue('I1', 'dia Wt')->setCellValue('J1', 'cstone Wt')->setCellValue('K1', 'gold Wt')->setCellValue('L1', 'No. of Dia')->setCellValue('M1', 'Sell Price')->setCellValue('N1', 'Qty')->setCellValue('O1', 'Style Code')->setCellValue('P1', 'MU')->setCellValue('Q1', 'Cost Price')->setCellValue('R1', 'Enter 1')->setCellValue('S1', 'Comments')->setCellValue('T1', 'Vendor PO#');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Vendor')->setCellValue('B1', 'vCode')->setCellValue('C1', 'Item No')->setCellValue('D1', 'ItemPic')->setCellValue('E1', 'Description')->setCellValue('F1', 'Size')->setCellValue('G1', 'Dimensions')->setCellValue('H1', 'gross Wt')->setCellValue('I1', 'dia Wt')->setCellValue('J1', 'cstone Wt')->setCellValue('K1', 'gold Wt')->setCellValue('L1', 'No. of Dia')->setCellValue('M1', 'Sell Price')->setCellValue('N1', 'Qty')->setCellValue('O1', 'Brand')->setCellValue('P1', 'Style Code')->setCellValue('Q1', 'MU')->setCellValue('R1', 'Cost Price')->setCellValue('S1', 'Enter 1')->setCellValue('T1', 'Comments')->setCellValue('U1', 'Vendor PO#')->setCellValue('V1', 'Gold Price')->setCellValue('W1', 'Silver Price');
 $sql = "SELECT * FROM product where " . $itemCon . " vendor like '%" . $_GET["vendor"] . "%' and vendorCode like '%" . $_GET["vendorCode"] . "%' and description like '%" . $_GET["description"] . "%' and itemTypeCode like '%" . $_GET["itemTypeCode"] . "%' and diaWt like '%" . $_GET["diaWt"] . "%' and cstoneWt like '%" . $_GET["cstoneWt"] . "%' and goldWt like '%" . $_GET["goldWt"] . "%'" . $cond . " and ringSize like '%" . $_GET["ringSize"] . "%'" . $usertype . $dtcon . " Order By itemNo".$limitCon;
 $result = $mysqli->query($sql);
 while ($row = $result->fetch_assoc()) {
@@ -86,7 +86,7 @@ while ($row = $result->fetch_assoc()) {
       $row['mu']="";
       $row['costPrice']="";
    }
-   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['dimensions'])->setCellValue('H' . $sno, $row['grossWt'])->setCellValue('I' . $sno, $row['diaWt'])->setCellValue('J' . $sno, $row['cstoneWt'])->setCellValue('K' . $sno, $row['goldWt'])->setCellValue('L' . $sno, $row['noOfDia'])->setCellValue('M' . $sno, $row['sellPrice'])->setCellValue('N' . $sno, $row['curStock'])->setCellValue('O' . $sno, $row['styleCode'])->setCellValue('P' . $sno, $row['mu'])->setCellValue('Q' . $sno, $row['costPrice'])->setCellValue('R' . $sno, '1')->setCellValue('S' . $sno, $row['comments'])->setCellValue('T' . $sno, $row['vendorPO']);
+   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $sno, $row['vendor'])->setCellValue('B' . $sno, $row['vendorCode'])->setCellValue('C' . $sno, $row['itemNo'])->setCellValue('D' . $sno, $row['itemPic'])->setCellValue('E' . $sno, $row['description'])->setCellValue('F' . $sno, $row['ringSize'])->setCellValue('G' . $sno, $row['dimensions'])->setCellValue('H' . $sno, $row['grossWt'])->setCellValue('I' . $sno, $row['diaWt'])->setCellValue('J' . $sno, $row['cstoneWt'])->setCellValue('K' . $sno, $row['goldWt'])->setCellValue('L' . $sno, $row['noOfDia'])->setCellValue('M' . $sno, $row['sellPrice'])->setCellValue('N' . $sno, $row['curStock'])->setCellValue('O' . $sno, $row['brand'])->setCellValue('P' . $sno, $row['styleCode'])->setCellValue('Q' . $sno, $row['mu'])->setCellValue('R' . $sno, $row['costPrice'])->setCellValue('S' . $sno, '1')->setCellValue('T' . $sno, $row['comments'])->setCellValue('U' . $sno, $row['vendorPO'])->setCellValue('V' . $sno, $row['goldPrice'])->setCellValue('W' . $sno, $row['silverPrice']);
    $objDrawing = new PHPExcel_Worksheet_Drawing();
    $objDrawing->setName('test_img');
    $objDrawing->setDescription('test_img');
@@ -99,7 +99,7 @@ while ($row = $result->fetch_assoc()) {
    $objDrawing->setHeight(100);
    $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
    $objPHPExcel->getActiveSheet()->getRowDimension($sno)->setRowHeight(82.5);
-   $objPHPExcel->getActiveSheet()->getStyle('A' . $sno . ':T' . $sno)->getAlignment()->setWrapText(true);
+   $objPHPExcel->getActiveSheet()->getStyle('A' . $sno . ':W' . $sno)->getAlignment()->setWrapText(true);
    $sno++;
 }
 $objPHPExcel->setActiveSheetIndex(0);

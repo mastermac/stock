@@ -34,9 +34,9 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
       $blankLine = 0;
       $NoDashInItemFile = true;
       for ($row = 2; $row <= $highestRow; $row++) {
-         $rowData = $sheet->rangeToArray('A' . $row . ':' . 'T' . $row, NULL, TRUE, FALSE);
+         $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
-         if (strpos($data[2], '-') !== false && (clean($data[14]) == '586' || clean($data[14]) == '756' || clean($data[14]) == '6')) {
+         if (strpos($data[2], '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
             $NoDashInItemFile = false;
             break;
          }
@@ -44,7 +44,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
       if ($NoDashInItemFile) {
          for ($row = 2; $row <= $highestRow; $row++) {
             $previousData = "";
-            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'T' . $row, NULL, TRUE, FALSE);
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
             $data = $rowData[0];
             $date = date('Y/m/d H:i:s');
             if ($_POST['src'] == "importForm") {
@@ -56,7 +56,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                }
                $blankLine = 0;
 
-               $sql = "INSERT INTO product VALUES (null,'" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "', '','" . $data[4] . "','" . getStyleCodeVal(clean($data[14])) . "','" . clean($data[7]) . "','" . clean($data[8]) . "','" . clean($data[9]) . "', '" . clean($data[10]) . "','" . clean($data[11]) . "','" . clean($data[12]) . "','" . clean($data[13]) . "', '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[14]) . ",'" . $date . "','" . $data[18] . "','" . $data[15] . "','" . clean($data[16]) . "','".$data[6]."','".$data[19]."') ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[14])) . "', grossWt='" . clean($data[7]) . "',diaWt='" . clean($data[8]) . "',cstoneWt='" . clean($data[9]) . "',goldWt='" . clean($data[10]) . "',noOfDia='" . clean($data[11]) . "',sellPrice='" . clean($data[12]) . "',curStock='" . clean($data[13]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[14]) . "', mu='" . $data[15] . "', costPrice='" . clean($data[16]) . "', comments='" . $data[18] . "', dimensions='".$data[6]."', vendorPO='".$data[19]."' ;";
+               $sql = "INSERT INTO product VALUES (null,'" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "', '','" . $data[4] . "','" . getStyleCodeVal(clean($data[15])) . "','" . clean($data[7]) . "','" . clean($data[8]) . "','" . clean($data[9]) . "', '" . clean($data[10]) . "','" . clean($data[11]) . "','" . clean($data[12]) . "','" . clean($data[13]) . "', '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[15]) . ",'" . $date . "','" . $data[19] . "','" . $data[16] . "','" . clean($data[17]) . "','".$data[6]."','".$data[20]."','".$data[14]."','".clean($data[21])."','".clean($data[22])."') ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[15])) . "', grossWt='" . clean($data[7]) . "',diaWt='" . clean($data[8]) . "',cstoneWt='" . clean($data[9]) . "',goldWt='" . clean($data[10]) . "',noOfDia='" . clean($data[11]) . "',sellPrice='" . clean($data[12]) . "',curStock='" . clean($data[13]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[15]) . "', mu='" . $data[16] . "', costPrice='" . clean($data[17]) . "', comments='" . $data[19] . "', dimensions='".$data[6]."', vendorPO='".$data[20]."', brand='".$data[14]."', goldPrice='".clean($data[21])."', silverPrice='".clean($data[22])."' ;";
             } elseif ($_POST['src'] == "updateForm") {
                if (trim($data[2]) == "") {
                   $blankLine++;
@@ -90,19 +90,25 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                   $buildQuery = $buildQuery . " curStock='" . clean($data[13]) . "',";
                if (!isEmpty($data[5]))
                   $buildQuery = $buildQuery . " ringSize='" . clean($data[5]) . "',";
-               if (!isEmpty($data[14])) {
-                  $buildQuery = $buildQuery . " itemTypeCode='" . getStyleCodeVal($data[14]) . "',";
-                  $buildQuery = $buildQuery . " styleCode='" . clean($data[14]) . "',";
+               if (!isEmpty($data[15])) {
+                  $buildQuery = $buildQuery . " itemTypeCode='" . getStyleCodeVal($data[15]) . "',";
+                  $buildQuery = $buildQuery . " styleCode='" . clean($data[15]) . "',";
                }
-               $buildQuery = $buildQuery . " comments='" . $data[18] . "',";
-               if (!isEmpty($data[15]))
-                  $buildQuery = $buildQuery . " mu='" . $data[15] . "',";
+               $buildQuery = $buildQuery . " comments='" . $data[19] . "',";
                if (!isEmpty($data[16]))
-                  $buildQuery = $buildQuery . " costPrice='" . clean($data[16]) . "',";
+                  $buildQuery = $buildQuery . " mu='" . $data[16] . "',";
+               if (!isEmpty($data[17]))
+                  $buildQuery = $buildQuery . " costPrice='" . clean($data[17]) . "',";
                if (!isEmpty($data[6]))
                   $buildQuery = $buildQuery . " dimensions='" . clean($data[6]) . "',";
-               if (!isEmpty($data[19]))
-                  $buildQuery = $buildQuery . " vendorPO='" . clean($data[19]) . "',";
+               if (!isEmpty($data[20]))
+                  $buildQuery = $buildQuery . " vendorPO='" . clean($data[20]) . "',";
+               if (!isEmpty($data[14]))
+                  $buildQuery = $buildQuery . " brand='" . $data[14] . "',";
+               if (!isEmpty($data[21]))
+                  $buildQuery = $buildQuery . " goldPrice='" . clean($data[21]) . "',";
+               if (!isEmpty($data[22]))
+                  $buildQuery = $buildQuery . " silverPrice='" . clean($data[22]) . "',";
                if (substr($buildQuery, -1) == ",") {
                   $sql = substr($buildQuery, 0, -1) . " WHERE itemNo='" . $data[2] . "' ;";
                } else

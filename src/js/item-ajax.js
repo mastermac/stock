@@ -592,6 +592,9 @@ $(document).ready(function () {
             $("#edit_costPrice").val(data.data[0].costPrice);
             $("#edit_dimensions").val(data.data[0].dimensions);
             $("#edit_vendorPO").val(data.data[0].vendorPO);
+            $("#edit_brand").val(data.data[0].brand);
+            $("#edit_goldPrice").val(data.data[0].goldPrice);
+            $("#edit_silverPrice").val(data.data[0].silverPrice);
         });
     });
     $("body").on("click", ".edit-vendor", function () {
