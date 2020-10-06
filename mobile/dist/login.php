@@ -29,26 +29,8 @@ $_SESSION['msg'] = 0;
 </head>
 
 <body>
-
-  <!-- <div class="container">
-    <form class="form-signin" name="lgform" id="lgform" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-      <h2 class="form-signin-heading">Please sign in</h2>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-      <div class="checkbox" style="display: none;">
-        <label>
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
-
-  </div>
- -->
   <div class="container-fluid">
-    <div class="col-xl-4" id="formParentDiv" style="padding: 2rem;">
+    <div class="col-xl-4 pt-2" id="formParentDiv">
       <div class="card card-cascade narrower">
 
         <div class="view view-cascade gradient-card-header purple-gradient">
@@ -99,7 +81,7 @@ $_SESSION['msg'] = 0;
     </div>
   </div>
 
-  <script type="text/javascript" src="js/mdb.min.js"></script>
+  <script type="text/javascript" src="js/mdb.js"></script>
 </body>
 <script>
   $(document).ready(function(e) {

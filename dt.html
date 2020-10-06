@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="mobile/dist/css/mdb.css" />
+		<link href="https://cdn.jsdelivr.net/npm/handsontable@7.4.2/dist/handsontable.full.min.css" rel="stylesheet" media="screen" />
+		<style>
+			.currentRow {
+				background-color: #f9f9fb !important;
+			}
+			.currentCol {
+				background-color: #e7e8ef !important;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#centralModalSm">
+			Launch demo modal
+		</button>
+
+		<!-- Central Modal Small -->
+		<div class="modal fade" id="centralModalSm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<!-- Change class .modal-sm to change the size of the modal -->
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div id="example"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary btn-sm">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Central Modal Small -->
+
+		<script type="text/javascript" src="mobile/dist/js/mdb.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/handsontable@7.4.2/dist/handsontable.full.min.js"></script>
+		<script>
+			var data = [
+				[10, 11, 12, 13],
+				[20, 11, 14, 13],
+				[30, 15, 12, 13],
+			];
+			$("#centralModalSm").on("shown.bs.modal", function () {
+				console.table(data);
+
+				var container = document.getElementById("example");
+				var hot = new Handsontable(container, {
+					data: data,
+					rowHeaders: true,
+					colHeaders: ["Ford", "Tesla", "Toyota", "Honda"],
+					width: "100%",
+					stretchH: "all",
+					height: "150",
+					contextMenu: true,
+					columnSorting: true,
+					currentRowClassName: "currentRow",
+					currentColClassName: "currentCol",
+					licenseKey: "non-commercial-and-evaluation",
+				});
+			});
+		</script>
+	</body>
+</html>

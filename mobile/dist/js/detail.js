@@ -39,49 +39,12 @@ function Init() {
 function getDetailPage() {
     try {
         assignDefaultsIfEmpty();
-            // $("#OpportunityDetailDiv #filterDiv").hide();
-            // reassign = true;
-            // //SetPageNameForOmniture("OpportunityDetail");
-            // $("#OpportunityDetailDiv #retryDiv").html(retryTemplate.replace("{click_method}","retryOpportunityDetail"));
-            // localforage.getItem("detail" + "_ManagerHeaderData").then(function (value) {
-            //     var d = JSON.parse(JSON.stringify(value));
-            //     if (d != null) {
-            //         badgeNumber = d.BadgeNumber;
-            //         if (userState.SFDCInstance == "LDELL")
-            //             getlobList(badgeNumber, false);
-            //         $("#totalCnt").val(d.CountValue);
-            //         localforage.getItem("fullview_filter").then(function (val) {
-
-            //             if (value) {
-
-            //                 if (val) {
-            //                     localforage.getItem("filterdata").then(function (value) {
-            //                         initializeFilter(value);
-            //                     });
-            //                     localforage.setItem("fullview_filter", false);
-            //                 }
-            //                 else {
-            //                     localforage.getItem("detail_filter_data").then(function (value) {
-            //                         initializeFilter(value);
-            //                     });
-            //                     localforage.setItem("fullview_filter", false);
-            //                 }
-
-            //             }
-            //         });
-
-
-
-            //     }
-
-
-            // });
-            initializeFilter(null);
+        initializeFilter(null);
         $(window).scroll(function () {
             if (Offline.state == "up" && !isSortApplied && !isFilterApplied) {
-                var a = Math.round($(window).scrollTop());
-                var b = $(document).height() - $(window).height();
-                if ((a == b || a == b - 1) && dataCnt < parseInt($("#totalCnt").val())) {
+                // toastr["info"](a+" "+b);
+                if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight && dataCnt < parseInt($("#totalCnt").val())) {
+                    // toastr["info"]("Inside Scroll");
                     if (!isSortApplied && !isFilterApplied) {
                         isCallDetails = true;
                         pageoffset += pagesize;
@@ -127,9 +90,6 @@ function GetOpportunityDetails(badgeNumber, fromFilter) {
     var caller = getFunctionName(arguments.callee.toString());
    
         localforage.getItem(currentWidget+":"+caller + ":" + badgeNumber + ":" + filter + ":" + period + ":" + sort + ":" + lobfilter + ":" + dataCnt).then(function (value) {
-            
-                
-
             var data = JSON.parse(value);
             tempstage = [...stage1];
             tempquar = quarter1;
@@ -168,12 +128,6 @@ function GetOpportunityDetails(badgeNumber, fromFilter) {
                     source: 'page'
                 }, $("[id$='divOppList']"), '../../src/scripts/getData.php', false);
             ajaxCall.done(function (data) {
-                // if (data.total == 0) $("#myTable > tbody").html("");
-                // else {
-                //     manageRow(data.data);
-                //     is_ajax_fire = 1;
-                // }
-    
                 if (data.total > 0) {
                     var object = { value: data, timestamp: new Date().getTime() };
                     localforage.setItem( currentWidget+":"+ caller + ":" + badgeNumber + ":" + filter + ":" + period + ":" + sort + ":" + lobfilter + ":" + dataCnt, JSON.stringify(object));
@@ -267,7 +221,7 @@ function BindOpportunityDetails(data) {
             }
             var usd = "$ ";
             
-            sb.append("<div class='card' style='margin: 0.5rem 0rem;'>");
+            sb.append("<div class='card waves-effect' style='margin: 0.5rem 0rem;'>");
             sb.append("<div class='card-body' style= 'padding: 0.4rem; padding-right: 1rem;'>");
             sb.append("<div class='row'>");
             sb.append("<div class='col-3'>");

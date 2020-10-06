@@ -5,7 +5,7 @@ if (!isset($_SESSION['userid'])) {
 }
 $usertype = '';
 require('../../src/scripts/db_config.php');
-if ($_SESSION['usertype'] == 1)
+if ($_SESSION['usertype'] >= 1)
     $usertype = ' and userid=' . $_SESSION['userid'];
 ?>
 

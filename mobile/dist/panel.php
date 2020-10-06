@@ -5,7 +5,7 @@ if (!isset($_SESSION['userid'])) {
 }
 $usertype = '';
 require('../../src/scripts/db_config.php');
-if ($_SESSION['usertype'] == 1)
+if ($_SESSION['usertype'] >= 1)
     $usertype = ' and userid=' . $_SESSION['userid'];
 ?>
 <!DOCTYPE html>
@@ -99,6 +99,21 @@ if ($_SESSION['usertype'] == 1)
                 })
             }
         });
+        $.fancybox.defaults.animationEffect = "circular";
+        // $.fancybox.defaults.arrows = true;
+        $.fancybox.defaults.idleTime = 60;
+        $.fancybox.defaults.buttons = [
+            // "zoom",
+            "share",
+            // "slideShow",
+            "fullScreen",
+            "download",
+            "thumbs",
+            // "arrowLeft",
+            // "arrowRight",
+            "close",
+        ];
+
     </script>
     <?php
     if ($_SESSION["msg"] == 1) {

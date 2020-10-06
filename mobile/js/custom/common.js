@@ -68,7 +68,12 @@ function showsearch() {
     if (Offline.state == "up") {
         try {
             $("body").addClass("lock-scroll");
-            if ($("#liGlobalSearch").css('display') != 'none') {
+            SelectSearchBy();
+            $("#headerText").hide();
+            $("#headerImg").hide();
+            $("#liGlobalSearch").show();
+    
+            // if ($("#liGlobalSearch").css('display') != 'none') {
                 hSearchText = $("#txtGlobalSearch").val();
                 if (hSearchText.trim().length == 0) {
                     toastr["warning"]("Enter search key");
@@ -98,13 +103,13 @@ function showsearch() {
                         }
                     });
                 }
-            }
-            else {
-                $('#globalSearchModal').on('hidden.bs.modal', function () {
-                     $("body").removeClass("lock-scroll");
-                });
-                $("#globalSearchModal").modal("show");
-            }
+            // } 
+            // else {
+            //     $('#globalSearchModal').on('hidden.bs.modal', function () {
+            //          $("body").removeClass("lock-scroll");
+            //     });
+            //     $("#globalSearchModal").modal("show");
+            // }
         } catch (e) {
             console.log(e.message);
             logToKibana(e);

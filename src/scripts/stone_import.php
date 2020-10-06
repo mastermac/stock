@@ -35,23 +35,11 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
       $blankLine = 0;
       $NoDashInItemFile = true;
       $output['highest']=$highestRow;
-      $output['mem1']=memory_get_usage();
-
-      for ($row = 2; $row <= $highestRow; $row++) {
-         $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
-         $data = $rowData[0];
-         if (strpos($data[2], '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
-            $NoDashInItemFile = false;
-            break;
-         }
-      }
-      $output['mem2']=memory_get_usage();
-      if ($NoDashInItemFile) {
-         for ($row = 2; $row <= $highestRow; $row++) {
+         for($row = 2; $row <= $highestRow; $row++) {
             $previousData = "";
-            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . 'N' . $row, NULL, TRUE, FALSE);
             $data = $rowData[0];
-            $date = date('Y/m/d H:i:s');
+            $datetime = date('Y/m/d H:i:s');
             if ($_POST['src'] == "importForm") {
                if ($data[2] == '' && clean($data[12]) == '0') {
                   $blankLine++;
@@ -60,8 +48,22 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                   continue;
                }
                $blankLine = 0;
+               $rate = ( (float)clean(trim($data[11])) * (1-((float)clean(trim($data[12])))) );
+               $sql = "INSERT INTO `stone-inventory` VALUES (null,'" . trim($data[0]) . "','" . trim($data[1]) . "','" .
+                        trim($data[2]) . "', '" . $data[3] . "','" . trim($data[4]) . "','" .
+                        clean(trim($data[5])) . "','" . clean(trim($data[6])) . "','" . clean(trim($data[7])) . "','" .
+                        clean(trim($data[8])) . "', '" . trim($data[9]) . "','" . trim($data[10]) . "','" .
+                        clean(trim($data[11])) . "', '" . clean(trim($data[12])) . "','" . $rate . "','" .
+                        round($rate * (float)clean(trim($data[6])),2) . "', '" . round($rate * clean(trim($data[8])),0) . "','" . trim($data[13]) . "','" .
+                        $datetime . "', '" . $datetime . "','" . $_SESSION['userid'] . "') ON DUPLICATE KEY UPDATE lot_no='" .
+                        trim($data[0]) . "', name='" . trim($data[1]) . 
+                        "', size='" . $data[2] . "', shape='" . trim($data[3]) . "', seller='" . trim($data[4]) . 
+                        "',purchased_qty='" . clean($data[5]) . "',purchased_wt='" . clean($data[6]) . "',current_qty='" . clean($data[7]) . "',current_wt='" . clean($data[8]) . 
+                        "',unit='" . trim($data[9]) . "',box='" . trim($data[10]) . "',cost='" . clean($data[11]) . "',less='" . clean($data[12]) . 
+                        "', rate='" . $rate . "', total_amount='" . round($rate * (float)clean(trim($data[6])),2) . "', current_value='" . round($rate * clean(trim($data[8])),0) . "', description='" . 
+                        $data[13] . "', last_update_date='" . $datetime . "', userid='" . $_SESSION['userid'] . "' ;";
 
-               $sql = "INSERT INTO product VALUES (null,'" . trim($data[2]) . "','" . trim(strtoupper($data[0])) . "','" . trim(vendorCheck($data[1])) . "', '','" . $data[4] . "','" . getStyleCodeVal(clean($data[15])) . "','" . clean($data[7]) . "','" . clean($data[8]) . "','" . clean($data[9]) . "', '" . clean($data[10]) . "','" . clean($data[11]) . "','" . clean($data[12]) . "','" . clean($data[13]) . "', '" . trim($data[5]) . "',''," . $_SESSION['userid'] . "," . clean($data[15]) . ",'" . $date . "','" . $data[19] . "','" . $data[16] . "','" . clean($data[17]) . "','" . $data[6] . "','" . $data[20] . "','" . $data[14] . "','" . clean($data[21]) . "','" . clean($data[22]) . "') ON DUPLICATE KEY UPDATE vendor='" . strtoupper($data[0]) . "', vendorCode='" . vendorCheck($data[1]) . "', description='" . $data[4] . "', itemTypeCode='" . getStyleCodeVal(clean($data[15])) . "', grossWt='" . clean($data[7]) . "',diaWt='" . clean($data[8]) . "',cstoneWt='" . clean($data[9]) . "',goldWt='" . clean($data[10]) . "',noOfDia='" . clean($data[11]) . "',sellPrice='" . clean($data[12]) . "',curStock='" . clean($data[13]) . "',ringSize='" . $data[5] . "',styleCode='" . clean($data[15]) . "', mu='" . $data[16] . "', costPrice='" . clean($data[17]) . "', comments='" . $data[19] . "', dimensions='" . $data[6] . "', vendorPO='" . $data[20] . "', brand='" . $data[14] . "', goldPrice='" . clean($data[21]) . "', silverPrice='" . clean($data[22]) . "' ;";
+
             } elseif ($_POST['src'] == "updateForm") {
                if (trim($data[2]) == "") {
                   $blankLine++;
@@ -119,11 +121,12 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                } else
                   continue;
             }
-            $previousData = "";
-            $tempData = getCurrentData($data[2]);
-            if (count($tempData) > 2)
-               $previousData = implode("#", $tempData);
+            // $previousData = "";
+            // $tempData = getCurrentData($data[2]);
+            // if (count($tempData) > 2)
+            //    $previousData = implode("#", $tempData);
             $mysqli = getConn();
+//            echo $sql;
             $result = $mysqli->query($sql);
             $affected = mysqli_affected_rows($mysqli);
             //echo $affected."\r\n";
@@ -152,7 +155,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                }
             } else {
                $lineError = $lineError . $row . ", ";
-               writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', $data));
+               // writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', $data));
             }
          }
          if ($lineError == "") {
@@ -162,10 +165,6 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
             $output['success'] = 0;
             $output['msg'] = 'Entries in line ' . $lineError . ' have error!';
          }
-      } else {
-         $output['success'] = 0;
-         $output['msg'] = 'Some Ring ItemCode have DASH [-]. Remove Them and reupload file...';
-      }
    } else {
       $output['success'] = 0;
       $output['msg'] = 'there was an error uploading your file.';

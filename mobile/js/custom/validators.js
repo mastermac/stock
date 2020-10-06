@@ -44,6 +44,12 @@ function NullCheck(data) {
         return "";
     return data;
 } 
+function GiveValidNumber(data){
+    if(data)
+        return data;
+    else
+        return 0;
+}
 
 function IsUserInfoAvailable() {
     if (config == null || config == undefined || managerTokens == undefined || userState == undefined || SFDCInstance.length == 0)

@@ -80,14 +80,22 @@ function InitializeHeaderDefaultData() {
 }
 
 function logoutClick() {
-    localforage.clear().then(function () {
-        localStorage.removeItem('fromXamarin');
-        console.log("Cache Cleared");
-        window.location.assign("http://logout");
-    }).catch(function (err) {
-        // This code runs if there were any errors
-        console.log(err);
-    });
+        // $('.ajax-loader').css("visibility", "visible");
+        $.ajax({
+            type: "POST",
+            url: '../../src/scripts/checkLogin.php',
+            data: {
+                fromLogout: "key5678",
+                fromLogin: "key12"
+            }
+        }).done(function(data) {
+            localforage.clear().then(function () {
+                // $('.ajax-loader').css("visibility", "hidden");
+                window.location.href = "login.php?fromPanel=true";
+            }).catch(function (err) {
+                console.log(err);
+            });
+        });
 }
 
 function backButtonClick() {

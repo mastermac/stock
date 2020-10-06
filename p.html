@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script>
+			var __basePath = "/";
+		</script>
+		<style media="only screen">
+			html,
+			body {
+				height: 100%;
+				width: 100%;
+				margin: 0;
+				box-sizing: border-box;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			html {
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: 0;
+				overflow: auto;
+			}
+
+			body {
+				padding: 1rem;
+				overflow: auto;
+			}
+			.example-wrapper {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			#myGrid {
+				flex: 1 1 auto;
+				width: 100%;
+			}
+		</style>
+		<!-- <link rel="stylesheet" href="mobile/dist/css/mdb.css" /> -->
+		<link rel="stylesheet" href="src/css/daterangepicker.css" />
+		<script src="https://unpkg.com/@ag-grid-community/all-modules@23.2.0/dist/ag-grid-community.min.js"></script>
+	</head>
+
+	<body>
+		<div class="example-wrapper">
+			<div style="margin-bottom: 5px;">
+				<input type="text" oninput="onQuickFilterChanged()" id="quickFilter" placeholder="quick filter..." />
+			</div>
+			<div id="myGrid" class="ag-theme-alpine" style="height: 100%;"></div>
+		</div>
+
+		<script>
+			var gridOptions = {
+				columnDefs: [
+					{
+						headerName: "Athlete",
+						field: "athlete",
+						minWidth: 180,
+						headerCheckboxSelection: true,
+						headerCheckboxSelectionFilteredOnly: true,
+						checkboxSelection: true,
+						sortable: true,
+						filter: true,
+					},
+					{ field: "age", sortable: true, filter: true, filter: 'agNumberColumnFilter',},
+					{ field: "country", minWidth: 150, sortable: true, filter: true },
+					{ field: "year", filter: 'agSetColumnFilter' },
+					{ field: "date", minWidth: 150, sortable: true, filter: true, filter: 'agDateColumnFilter', },
+					{ field: "sport", minWidth: 150 },
+					{ field: "gold" },
+					{ field: "silver" },
+					{ field: "bronze" },
+					{ field: "total" },
+				],
+				defaultColDef: {
+					flex: 1,
+					minWidth: 100,
+					resizable: true,
+					editable: true,
+				},
+				suppressRowClickSelection: true,
+				rowSelection: "multiple",
+				undoRedoCellEditing: true,
+
+				// restricts the number of undo / redo steps to 5
+				undoRedoCellEditingLimit: 10,
+
+				// enables flashing to help see cell changes
+				enableCellChangeFlash: true,
+			};
+
+			function onQuickFilterChanged() {
+				gridOptions.api.setQuickFilter(document.getElementById("quickFilter").value);
+			}
+
+			// setup the grid after the page has finished loading
+			document.addEventListener("DOMContentLoaded", function () {
+				var gridDiv = document.querySelector("#myGrid");
+				new agGrid.Grid(gridDiv, gridOptions);
+
+				agGrid
+					.simpleHttpRequest({
+						url: "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json",
+					})
+					.then(function (data) {
+						gridOptions.api.setRowData(data);
+					});
+			});
+		</script>
+		<script type="text/javascript" src="mobile/dist/js/mdb.js"></script>
+		<script type="text/javascript" src="src/js/moment.js"></script>
+		<script type="text/javascript" src="src/js/daterangepicker.js"></script>
+	</body>
+</html>
