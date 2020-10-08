@@ -122,9 +122,9 @@ if ($_SESSION['usertype'] >= 1)
 	<div class="container-fluid text-center">
 		<!-- Header -->
 		<div class="btn-group mb-4 mt-4" role="group" aria-label="Basic example">
-			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" data-toggle="modal" data-target="#importModal">Import via File</button>
-			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" data-toggle="modal" data-target="#packingListModal">New List</button>
-			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" data-toggle="modal" data-target="#settingsModal">Settings</button>
+			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" data-toggle="modal" data-target="#importModal">Import</button>
+			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" data-toggle="modal" data-target="#stoneFormModal">Add New</button>
+			<button type="button" class="btn btn-outline-deep-purple btn-rounded waves-effect" onclick="exportData()">Export</button>
 		</div>
 
 		<!--Table-->
@@ -144,7 +144,7 @@ if ($_SESSION['usertype'] >= 1)
             </button>
           </div>
           <div class="modal-body">
-            <p><b>Please be sure that your .xlsx file has data in correct format.</b> <a href="src/import/importFormat.xlsx" target="_blank" class="tooltip-test" title="Tooltip">Download</a> the .xlsx sample file format if you don't have it!</p>
+            <p><b>Please be sure that your .xlsx file has data in correct format.</b> <a href="stone_importFormat.xlsx" target="_blank" class="tooltip-test" title="Tooltip">Download</a> the .xlsx sample file format if you don't have it!</p>
             <form id="importForm" name="importForm" action="src/scripts/stone_import.php" method="POST" enctype="multipart/form-data">
               <input type="file" class="form-control-file" id="importFile" accept=".xlsx" name="importFile">
           </div>
@@ -158,77 +158,81 @@ if ($_SESSION['usertype'] >= 1)
     </div>
 
 	<!--Modal: Create/Edit Stone-->
-	<div class="modal fade" id="packingListModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="stoneFormModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog cascading-modal modal-lg" role="document">
 			<div class="modal-content">
 				<div class="card card-cascade narrower mt-0">
 					<div class="view view-cascade gradient-card-header blue-gradient">
-						<h2 class="card-header-title mb-0">Create New Packing List</h2>
+						<h2 class="card-header-title mb-0" id="stoneFormHeader">Add New Stone</h2>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -3.5rem;">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 
 					<div class="card-body card-body-cascade text-center">
-						<form id="stoneForm" name="stoneForm" enctype="multipart/form-data">
+						<form id="stoneForm" name="stoneForm" enctype="multipart/form-data" method="post">
 							<div class="row">
 								<!-- <div class="md-form col-2 mb-0">
 										<input autocomplete=false required type="text" id="plId" name="plId" class="form-control" />
 										<label for="plId">ID <span class="text-danger">*</span></label>
 									</div> -->
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stLot" name="stLot" class="form-control" disabled />
-									<label for="stLot">Lot No <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="lot_no" name="lot_no" class="form-control" />
+									<label for="lot_no">Lot No <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-3 mb-0">
-									<input autocomplete=false required type="text" id="stName" name="stName" class="form-control" />
-									<label for="stName">Name <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="text" id="name" name="name" class="form-control" />
+									<label for="name">Name <span class="text-danger">*</span></label>
+								</div>
+								<div class="md-form col-2 mb-0">
+									<input autocomplete=false required type="text" id="size" name="size" class="form-control" />
+									<label for="size">Size <span class="text-danger">*</span></label>
+								</div>
+								<div class="md-form col-2 mb-0">
+									<input autocomplete=false required type="text" id="shape" name="shape" class="form-control" />
+									<label for="shape">Shape <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-3 mb-0">
-									<input autocomplete=false required type="text" id="stSize" name="stSize" class="form-control" />
-									<label for="stSize">Size <span class="text-danger">*</span></label>
-								</div>
-								<div class="md-form col-4 mb-0">
-									<input autocomplete=false required type="text" id="stSeller" name="stSeller" class="form-control" />
-									<label for="stSeller">Seller Name <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="text" id="seller" name="seller" class="form-control" />
+									<label for="seller">Seller Name <span class="text-danger">*</span></label>
 								</div>
 
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stPQty" name="stPQty" class="form-control" />
-									<label for="stPQty">P Qty <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="purchased_qty" name="purchased_qty" class="form-control" />
+									<label for="purchased_qty">P Qty <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stPWt" name="stPWt" class="form-control" />
-									<label for="stPWt">P Wt <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="purchased_wt" name="purchased_wt" class="form-control" />
+									<label for="purchased_wt">P Wt <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stUnit" name="stUnit" class="form-control" value="cts" />
-									<label for="stUnit">Unit <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="text" id="unit" name="unit" class="form-control" value="cts" />
+									<label for="unit">Unit <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stCQty" name="stCQty" class="form-control" />
-									<label for="stCQty">C Qty <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="current_qty" name="current_qty" class="form-control" />
+									<label for="current_qty">C Qty <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stCWt" name="stCWt" class="form-control" />
-									<label for="stCWt">C Wt <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="current_wt" name="current_wt" class="form-control" />
+									<label for="current_wt">C Wt <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stBox" name="stBox" class="form-control" />
-									<label for="stBox">Box # <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="text" id="box" name="box" class="form-control" />
+									<label for="box">Box # <span class="text-danger">*</span></label>
 								</div>
 
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stCost" name="stCost" class="form-control" />
-									<label for="stCost">Cost <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" id="cost" name="cost" class="form-control" />
+									<label for="cost">Cost <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-2 mb-0">
-									<input autocomplete=false required type="text" id="stLess" name="stLess" class="form-control" />
-									<label for="stLess">Less <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="number" step="0.01" id="less" name="less" class="form-control" />
+									<label for="less">Less <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col-8 mb-0">
-									<input autocomplete=false required type="text" id="stDescription" name="stDescription" class="form-control" />
-									<label for="stDescription">Description <span class="text-danger">*</span></label>
+									<input autocomplete=false required type="text" id="description" name="description" class="form-control" />
+									<label for="description">Description <span class="text-danger">*</span></label>
 								</div>
 
 
@@ -236,9 +240,9 @@ if ($_SESSION['usertype'] >= 1)
 									<input autocomplete=false required type="text" id="plDate" name="plDate" class="form-control" />
 									<label class="active" for="plDate">Date <span class="text-danger">*</span></label>
 								</div> -->
-								<div class="md-form col-2 pr-0 pl-0 mb-0">
-									<!-- <button type="reset" name="plReset" id="plReset" class="btn btn-outline-danger waves-effect compact-btn">Reset</button> -->
-									<button type="button" onclick="addStone()" name="stCreate" id="stCreate" class="btn btn-outline-success waves-effect compact-btn">Create</button>
+								<div class="md-form col-12 pr-0 pl-0 mb-0">
+									<button type="reset" name="stReset" id="stReset" class="btn btn-outline-danger waves-effect compact-btn">Reset</button>
+									<button type="submit" name="stCreate" id="stCreate" class="btn btn-outline-success waves-effect compact-btn">Create</button>
 								</div>
 							</div>
 						</form>
@@ -385,7 +389,7 @@ if ($_SESSION['usertype'] >= 1)
 											<a class="nav-link" id="diamondDetails-tab" data-toggle="pill" href="#diamondDetails" role="tab" aria-controls="diamondDetails" aria-selected="false">Diamond Details</a>
 										</li>
 										<li class="nav-item">
-											<a class="nav-link" id="stoneDetails-tab" data-toggle="pill" href="#stoneDetails" role="tab" aria-controls="stoneDetails" aria-selected="false">Stone Details</a>
+											<a class="nav-link" id="oneDetails-tab" data-toggle="pill" href="#stoneDetails" role="tab" aria-controls="stoneDetails" aria-selected="false">Stone Details</a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" id="otherDetails-tab" data-toggle="pill" href="#otherDetails" role="tab" aria-controls="otherDetails" aria-selected="false">Other Costs Details</a>
@@ -401,8 +405,8 @@ if ($_SESSION['usertype'] >= 1)
 										<div class="tab-pane fade" id="diamondDetails" role="tabpanel" aria-labelledby="diamondDetails-tab">
 											<div id="DiamondDetailsGrid" class="ag-theme-alpine mx-auto" style="height: 260px;width: 100%;text-align:left!important;"></div>
 										</div>
-										<div class="tab-pane fade" id="stoneDetails" role="tabpanel" aria-labelledby="stoneDetails-tab">
-											<div id="StoneDetailsGrid" class="ag-theme-alpine mx-auto" style="height: 260px;width: 100%;text-align:left!important;"></div>
+										<div class="tab-pane fade" id="oneDetails" role="tabpanel" aria-labelledby="stoneDetails-tab">
+											<div id="oneDetailsGrid" class="ag-theme-alpine mx-auto" style="height: 260px;width: 100%;text-align:left!important;"></div>
 										</div>
 										<div class="tab-pane fade" id="otherDetails" role="tabpanel" aria-labelledby="otherDetails-tab">
 											<div id="OtherCostsDetailsGrid" class="ag-theme-alpine mx-auto" style="height: 260px;width: 100%;text-align:left!important;"></div>

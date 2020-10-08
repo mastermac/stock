@@ -120,9 +120,12 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
                   continue;
             }
             $previousData = "";
-            $tempData = getCurrentData($data[2]);
-            if (count($tempData) > 2)
-               $previousData = implode("#", $tempData);
+            //echo $data;
+            if(is_array($data[2])){
+               $tempData = getCurrentData($data[2]);
+               if (count($tempData) > 2)
+                  $previousData = implode("#", $tempData);
+            }
             $mysqli = getConn();
             $result = $mysqli->query($sql);
             $affected = mysqli_affected_rows($mysqli);

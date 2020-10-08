@@ -140,7 +140,8 @@ function initializePackingListForm() {
 	);
 }
 
-function addStone() {
+
+function createPackingList() {
 	showLoader();
 	$.ajax({
 		dataType: "json",
@@ -156,6 +157,7 @@ function addStone() {
 		$("#packingListModal").modal("hide");
 	});
 }
+
 
 function getPackingLists() {
 	showLoader();

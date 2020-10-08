@@ -1,4 +1,5 @@
-var PackingListRates;
+var SelectedStone;
+
 var stoneInventory = {
 	columnDefs: [
 		{
@@ -44,9 +45,10 @@ var stoneInventory = {
 				clicked: function (field) {
 					currentPL = field;
 					var currentRow=stoneInventory.api.getRowNode(currentPL);
-					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt);
-					console.log(PackingListRates);
-					$("#packingListItemsModal").modal("show");
+					SelectedStone=new StoneInventory(currentRow.data.lot_no,currentRow.data.name, currentRow.data.size, currentRow.data.shape, currentRow.data.seller,
+						currentRow.data.purchased_qty, currentRow.data.purchased_wt, currentRow.data.current_qty, currentRow.data.current_wt, currentRow.data.unit, 
+						currentRow.data.box, currentRow.data.cost, currentRow.data.less, currentRow.data.rate, currentRow.data.description);
+					$("#stoneFormModal").modal("show");
 				},
 			},
 			resizable: false,
@@ -63,9 +65,9 @@ var stoneInventory = {
 					showLoader();
 					$.ajax({
 						dataType: "json",
-						url: url + "../src/scripts/packingList_d.php",
+						url: url + "../src/scripts/stone.php",
 						data: {
-							func: "deletePackingList",
+							func: "deleteStone",
 							id: field,
 						},
 					}).done(function (data) {
@@ -110,6 +112,24 @@ var stoneInventory = {
 		stoneInventory.api.flashCells({ rowNodes: [event.rowIndex] });
 	},
 };
+
+function exportData(){
+	let params = {
+		columnKeys: ['sno', 'lot_no', 'name', 'size','shape','seller','purchased_qty','purchased_wt','unit','current_qty','current_wt','box','cost','less','rate','total_amount','current_value','description']
+	};
+
+	let selectedRows = stoneInventory.api.getSelectedNodes();
+
+	if(selectedRows.length>0){
+		params={
+			onlySelected: true,
+			columnKeys: ['sno', 'lot_no', 'name', 'size','shape','seller','purchased_qty','purchased_wt','unit','current_qty','current_wt','box','cost','less','rate','total_amount','current_value','description']
+		}
+	}
+	stoneInventory.api.exportDataAsCsv(params);
+}
+
+
 var currentPL, currentItem;
 var myCellRenderer = function () {
 	return '<span style="color: black">Edit</span>';
@@ -144,38 +164,77 @@ function onColumnResized(params) {
   }
 //#region Packing Lists
 
-$("#packingListModal").on("show.bs.modal", initializePackingListForm);
-function initializePackingListForm() {
-	$("#newPackingList").trigger("reset");
-	$("#newPackingList label").removeClass("active");
+$("#stoneFormModal").on("show.bs.modal", initializeStoneForm);
+$("#stoneFormModal").on("hide.bs.modal", destroyStoneForm);
+function initializeStoneForm() {
+	$("#stoneForm").trigger("reset");
 	window.start = moment().format("YYYY-MM-DD");
-	$("#plDate").daterangepicker(
-		{
-			singleDatePicker: true,
-			opens: "center",
-		},
-		function (start, end, label) {
-			window.start = start.format("YYYY-MM-DD");
-		}
-	);
+	if(SelectedStone){
+		$("#stoneForm label").removeClass("active");
+		$("#stoneFormHeader").html("Edit Stone");
+		$("#stoneForm label").removeClass("active");
+		$('#lot_no').attr('readonly', true); 
+		$('#lot_no').addClass('text-muted');
+		$("#lot_no").val(SelectedStone.lot_no).change();
+		$("#lot_no").css('disabled', 'disabled');
+		$("#name").val(SelectedStone.name).change();
+		$("#size").val(SelectedStone.size).change();
+		$("#shape").val(SelectedStone.shape).change();
+		$("#seller").val(SelectedStone.seller).change();
+		$("#purchased_qty").val(SelectedStone.purchased_qty).change();
+		$("#purchased_wt").val(SelectedStone.purchased_wt).change();
+		$("#current_qty").val(SelectedStone.current_qty).change();
+		$("#current_wt").val(SelectedStone.current_wt).change();
+		$("#unit").val(SelectedStone.unit).change();
+		$("#box").val(SelectedStone.box).change();
+		$("#cost").val(SelectedStone.cost).change();
+		$("#less").val(SelectedStone.less).change();
+		$("#rate").val(SelectedStone.rate).change();
+		$("#description").val(SelectedStone.description).change();
+
+		$("#stCreate").html("Update");
+	}
+	else{
+		$('#lot_no').attr('readonly', false); 
+		$('#lot_no').removeClass('text-muted');
+		$("#stoneFormHeader").html("Add New Stone");
+	}
+}
+function destroyStoneForm(){
+	SelectedStone=null;
+}
+function getJSONFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
 }
 
-function createPackingList() {
+$("#stoneForm").on('submit', (function (e) {
+    e.preventDefault();
+	var formData = getJSONFormData($('#stoneForm'));
+
+	formData['func'] = "addStone";
+	formData['date'] = window.start;
+	
 	showLoader();
 	$.ajax({
 		dataType: "json",
-		url: url + "../src/scripts/packingList_c.php",
-		data: {
-			func: "createPackingList",
-			date: window.start,
-			name: $("#plName").val(),
-		},
+		url: url + "../src/scripts/stone.php",
+		data: formData,
 	}).done(function (data) {
 		hideLoader();
+		$("#stReset").click();
+		SelectedStone=null;
 		getStoneLists();
-		$("#packingListModal").modal("hide");
+		$("#stoneFormModal").modal("hide");
 	});
-}
+}))
+
 
 function getStoneLists() {
 	showLoader();
@@ -192,6 +251,7 @@ function getStoneLists() {
 }
 function BindPackingLists(data) {
 	stoneInventory.api.setRowData(data);
+	// stoneInventory.api.forEachNode(node=> node.rowIndex ? 0 : node.setSelected(true));
 	// stoneInventory.api.resetRowHeights();
 	// stoneInventory.api.sizeColumnsToFit();
 }
