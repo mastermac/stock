@@ -88,7 +88,7 @@ if ($_SESSION['usertype'] >= 1)
 
     .productTable tr td:nth-child(7),
     .productTable tr th:nth-child(7) {
-      width: 240px;
+      width: 70px;
     }
 
     .productTable tr td:nth-child(8),
@@ -375,7 +375,7 @@ if ($_SESSION['usertype'] >= 1)
           <th data-column-id="vendorCode" class="text-center">VCode</th>
           <th data-column-id="itemPic" class="text-center">Item Pic</th>
           <th data-column-id="description" class="text-center">Description</th>
-          <th data-column-id="itemTypeCode" class="text-center">Item Type</th>
+          <th data-column-id="styleCode" class="text-center" style="text-align: right;">Style</th>
           <th data-column-id="ringSize" class="text-center">Size</th>
           <th data-column-id="grossWt" class="text-center">G.W.</th>
           <th data-column-id="diaWt" class="text-center">Dia</th>

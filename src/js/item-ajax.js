@@ -71,13 +71,70 @@ $(document).ready(function () {
         s_dt = window.start;
         e_dt = window.end;
 
-        if (hasSomeValue(getVal('itemId')))         performSearch("itemId", "itemNo");
-        if (hasSomeValue(getVal('vendor')))         performSearch("vendor", "vendor");
-        if (hasSomeValue(getVal('description')))    performSearch("description", "description");
-        if (hasSomeValue(getVal('vendorCode')))     performSearch("vendorCode", "vendorCode");
-        if (hasSomeValue(getVal('styleCode')))      performSearch("styleCode", "styleCode");
-        if (hasSomeValue(getVal('itemIdExt')))      performSpecialSearch("itemIdExt");
+        if(
+            hasSomeValue(getVal('diaWt')) || 
+            hasSomeValue(getVal('cstoneWt')) || 
+            hasSomeValue(getVal('goldWt')) || 
+            hasSomeValue(getVal('ringSize')) || 
+            hasSomeValue(getVal('grossWt')) ||
+            hasSomeValue(getVal('sellPrice')) ||
+            hasSomeValue(getVal('curStock'))
+        ){
+            page = 1;
+            manageData();
+        }
+        else{
+            if (hasSomeValue(getVal('itemId')))         performSearch("itemId", "itemNo");
+            if (hasSomeValue(getVal('vendor')))         performSearch("vendor", "vendor");
+            if (hasSomeValue(getVal('description')))    performSearch("description", "description");
+            if (hasSomeValue(getVal('vendorCode')))     performSearch("vendorCode", "vendorCode");
+            if (hasSomeValue(getVal('styleCode')))      performSearch("styleCode", "styleCode");
+            if (hasSomeValue(getVal('itemIdExt')))      performSpecialSearch("itemIdExt");
+            if (hasSomeValue(s_dt) && hasSomeValue(e_dt)) {
+                var startDate = new Date(s_dt);
+                var endDate = new Date(e_dt);
+                var tempArray = new Array();
+                var pdLen = pdCopy.length;
+                var dt = null;
+                for (i = 0; i < pdLen; i++) {
+                    dt = new Date(pdCopy[i].dt.substr(0, 10));
+                    if (dt >= startDate && dt <= endDate) {
+                        tempArray.push(pdCopy[i]);
+                    }
+                }
+                pdCopy = tempArray;
+            }
+            total_page = Math.ceil(pdCopy.length / perPage);
+            if (total_page >= 1) {
+                current_page = page;
+                visible = total_page;
+                if (total_page > 8) visible = 7;
+                $('#pagination').empty();
+                $('#pagination').removeData("twbs-pagination");
+                $('#pagination').unbind("page");
+                $('#pagination').twbsPagination({
+                    totalPages: total_page,
+                    visiblePages: visible,
+                    initiateStartPageClick: false,
+                    onPageClick: function (event, pageL) {
+                        page = pageL;
+                        if (is_ajax_fire != 0) {
+                            searchCache();
+                        }
+                    }
+                });
+                page = current_page;
+                $("#totalData").val(pdCopy.length);
+                if (pdCopy.length <= perPage)
+                    manageRow(pdCopy);
+                else
+                    manageRow(pdCopy.slice(((page - 1) * perPage), ((page - 1) * perPage) + perPage));
+                is_ajax_fire = 1;
+    
+            }
+        }
 
+        
         // if (hasSomeValue(getVal('itemTypeCode')))   performSearch("itemTypeCode", "itemTypeCode");
         // if (hasSomeValue(getVal('grossWt')))        performSearch("grossWt", "grossWt");
         // if (hasSomeValue(getVal('diaWt')))          performSearch("diaWt", "diaWt");
@@ -87,48 +144,6 @@ $(document).ready(function () {
         // if (hasSomeValue(getVal('curStock')))       performSearch("curStock", "curStock");
         // if (hasSomeValue(getVal('ringSize')))       performSearch("ringSize", "ringSize");
 
-        if (hasSomeValue(s_dt) && hasSomeValue(e_dt)) {
-            var startDate = new Date(s_dt);
-            var endDate = new Date(e_dt);
-            var tempArray = new Array();
-            var pdLen = pdCopy.length;
-            var dt = null;
-            for (i = 0; i < pdLen; i++) {
-                dt = new Date(pdCopy[i].dt.substr(0, 10));
-                if (dt >= startDate && dt <= endDate) {
-                    tempArray.push(pdCopy[i]);
-                }
-            }
-            pdCopy = tempArray;
-        }
-        total_page = Math.ceil(pdCopy.length / perPage);
-        if (total_page >= 1) {
-            current_page = page;
-            visible = total_page;
-            if (total_page > 8) visible = 7;
-            $('#pagination').empty();
-            $('#pagination').removeData("twbs-pagination");
-            $('#pagination').unbind("page");
-            $('#pagination').twbsPagination({
-                totalPages: total_page,
-                visiblePages: visible,
-                initiateStartPageClick: false,
-                onPageClick: function (event, pageL) {
-                    page = pageL;
-                    if (is_ajax_fire != 0) {
-                        searchCache();
-                    }
-                }
-            });
-            page = current_page;
-            $("#totalData").val(pdCopy.length);
-            if (pdCopy.length <= perPage)
-                manageRow(pdCopy);
-            else
-                manageRow(pdCopy.slice(((page - 1) * perPage), ((page - 1) * perPage) + perPage));
-            is_ajax_fire = 1;
-
-        }
 
         $('.ajax-loader').css("visibility", "hidden");
     }
@@ -429,8 +444,8 @@ $(document).ready(function () {
                 rows = rows + '<td>' + value.vendorCode + '</td>';
                 rows = rows + '<td><a data-fancybox="gallery" href="pics/' + value.itemNo + '.JPG" data-caption="' + value.itemNo + '"><img class="lazy" src="pics/' + value.itemNo + '.JPG" onerror="this.src=\'pics/noImage.jpeg\';" alt="" border=3 height=75 width=75></img></a></td>';
                 rows = rows + '<td>' + value.description + '</td>';
-                rows = rows + '<td>' + value.itemTypeCode + '</td>';
-                rows = rows + '<td>' + value.ringSize + '</td>';
+                rows = rows + '<td style="text-align: right;">' + value.styleCode + '</td>';
+                rows = rows + '<td style="text-align: center;">' + value.ringSize + '</td>';
                 rows = rows + '<td style="text-align: right;">' + value.grossWt + '</td>';
                 rows = rows + '<td style="text-align: right;">' + value.diaWt + '</td>';
                 rows = rows + '<td style="text-align: right;">' + value.cstoneWt + '</td>';
