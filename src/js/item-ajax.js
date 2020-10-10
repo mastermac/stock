@@ -24,6 +24,14 @@ $(document).ready(function () {
     var fuse = null;
     var fuseResult = null;
     localforage.setDriver([localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]);
+    localforage.getItem("lastOperationCount").then(function (value) {
+        if(value!=null)
+        {
+            lastOperationCount = value;
+            $('#undo').attr("disabled", false);
+        }
+    });
+
     refreshCache(false);
     if(usertype==2){
         $(document).bind("contextmenu",function(e){
@@ -464,7 +472,6 @@ $(document).ready(function () {
         });
         $("#productData").html(rows);
     }
-
     function manageVendorRow(data) {
         var rows = '';
         vendorsno = 1;
@@ -523,6 +530,7 @@ $(document).ready(function () {
                 });
                 getPageData();
                 lastOperationCount = 1;
+                localforage.setItem("lastOperationCount", lastOperationCount);
                 $('#undo').attr("disabled", false);
             });
         }
@@ -706,6 +714,7 @@ $(document).ready(function () {
                         $(".modal").modal('hide');
                         manageData();
                         lastOperationCount = 1;
+                        localforage.setItem("lastOperationCount", lastOperationCount);
                         $('#undo').attr("disabled", false);
                     }
                 }
@@ -839,6 +848,7 @@ $(document).ready(function () {
                     manageData();
                     refreshCache();
                     lastOperationCount = 1;
+                    localforage.setItem("lastOperationCount", lastOperationCount);
                     $('#undo').attr("disabled", false);
                 }
                 else {
@@ -932,6 +942,7 @@ $(document).ready(function () {
                 refreshCache();
                 var resp = JSON.parse(data);
                 lastOperationCount = resp['total'];
+                localforage.setItem("lastOperationCount", lastOperationCount);
                 if (resp['success'] == 1) {
                     if (resp['impact'] > 0) {
                         toastr.success(resp['impact'] + ' records inserted!', 'Data Imported', {
@@ -986,6 +997,7 @@ $(document).ready(function () {
                 refreshCache();
                 var resp = JSON.parse(data);
                 lastOperationCount = resp['total'];
+                localforage.setItem("lastOperationCount", lastOperationCount);
                 if (resp['success'] == 1) {
                     if (resp['update'] > 0) {
                         toastr.warning(resp['update'] + ' records updated!', 'Data Imported', {
@@ -1211,6 +1223,8 @@ $(document).ready(function () {
             }).done(function (data) {
                 $('.ajax-loader').css("visibility", "hidden");
                 $('#undo').attr("disabled", true);
+                lastOperationCount = 0;
+                localforage.removeItem("lastOperationCount");
                 refreshCache();
                 manageData();
             });

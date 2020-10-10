@@ -20,6 +20,7 @@ while ($row = $result->fetch_assoc())
             break;
         case 7:
             $preData=extractPrevData($row['details'],7);
+            // print_r($preData);
             if(strpos($preData[0], 'newData') !== false) {
                 revertInsert($preData,-7);
             }
@@ -57,6 +58,7 @@ function extractPrevData($details,$origin){
 function revertDelete($prevData,$origin){
     array_shift($prevData);
     $sql="INSERT INTO product values (null,'".implode("','",$prevData)."');";
+    $data['sql'] = $sql;
     $mysqli=getConn();      
     $result = $mysqli->query($sql);
     writelog($origin,implode("#",$prevData));
@@ -64,6 +66,7 @@ function revertDelete($prevData,$origin){
 
 function revertInsert($prevData,$origin){
     $sql="DELETE FROM product where itemNo='".$prevData[1]."';";
+    $data['sql'] = $sql;
     // echo $sql;
     $mysqli=getConn();      
     $result = $mysqli->query($sql);
@@ -71,7 +74,7 @@ function revertInsert($prevData,$origin){
 }
 
 function revertImportUpdate($prevData,$origin){
-    $sql = "UPDATE product SET comments='".$prevData[19]."', mu='".$prevData[20]."', costPrice='".$prevData[21]."' itemNo='" . $prevData[1] . "', vendor='" . $prevData[2] . 
+    $sql = "UPDATE product SET comments='".$prevData[19]."', mu='".$prevData[20]."', costPrice='".$prevData[21]."', itemNo='" . $prevData[1] . "', vendor='" . $prevData[2] . 
            "', vendorCode='" . vendorCheck($prevData[3]) . "', description='" . $prevData[5] . "', itemTypeCode='" . 
            $prevData[6] . "', grossWt='" . $prevData[7] . "',diaWt='" . $prevData[8] . 
            "',cstoneWt='" . $prevData[9] . "',goldWt='" . $prevData[10] . "',noOfDia='" . $prevData[11] . 
@@ -83,6 +86,7 @@ function revertImportUpdate($prevData,$origin){
     $sql="UPDATE producthistory as p, (Select id from producthistory where sno=" . substr($prevData[0],9)." Order By timestamp desc limit 1) as i SET p.action='UNDO' where p.id=i.id";
     // echo $sql;
     $result = $mysqli->query($sql);
+    $data['sql'] = $sql;
     writelog($origin,implode("#",$prevData));
 }
 ?>

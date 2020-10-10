@@ -80,22 +80,23 @@ function writeLog($action,$data)
    if(isset($_SESSION['userid'])){
       $userid=$_SESSION['userid'];
    }
+   $ip=str_replace(":",".",$_SERVER['REMOTE_ADDR']);
    switch($action){
-      case 1: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",success:".$data."}";
+      case 1: $details="{userid:".$userid.",ip:".$ip.",success:".$data."}";
          break;
-      case 2: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",success:".$data."}";
+      case 2: $details="{userid:".$userid.",ip:".$ip.",success:".$data."}";
          break;
-      case 3: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",sql:".$data."}";
+      case 3: $details="{userid:".$userid.",ip:".$ip.",sql:".$data."}";
          break;
-      case 4: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",".$data."}";
+      case 4: $details="{userid:".$userid.",ip:".$ip.",".$data."}";
          break;
-      case 5: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",sql:".$data."}";
+      case 5: $details="{userid:".$userid.",ip:".$ip.",sql:".$data."}";
          break;
-      case 6: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",sql:".$data."}";
+      case 6: $details="{userid:".$userid.",ip:".$ip.",sql:".$data."}";
          break;
-      case 7: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",".$data."}";
+      case 7: $details="{userid:".$userid.",ip:".$ip.",".$data."}";
          break;
-      default: $details="{userid:".$userid.",ip:".$_SERVER['REMOTE_ADDR'].",".$data."}";
+      default: $details="{userid:".$userid.",ip:".$ip.",".$data."}";
         break;
    }
    $sql="INSERT INTO logs (userid,action,details,dt) VALUES ('".$userid."','".$action."','".$details."','".$dt."');";

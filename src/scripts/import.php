@@ -40,7 +40,8 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
       for ($row = 2; $row <= $highestRow; $row++) {
          $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
-         if (strpos($data[2], '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
+         $data[2]=trim($data[2]);
+         if (strpos(trim($data[2]), '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
             $NoDashInItemFile = false;
             break;
          }
@@ -51,6 +52,8 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
             $previousData = "";
             $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
             $data = $rowData[0];
+            if(!is_array($data) || trim($data[2])==NULL) continue;
+            $data[2]=trim($data[2]);
             $date = date('Y/m/d H:i:s');
             if ($_POST['src'] == "importForm") {
                if ($data[2] == '' && clean($data[12]) == '0') {
@@ -121,11 +124,10 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
             }
             $previousData = "";
             //echo $data;
-            if(is_array($data[2])){
-               $tempData = getCurrentData($data[2]);
-               if (count($tempData) > 2)
-                  $previousData = implode("#", $tempData);
-            }
+            $tempData = getCurrentData(trim($data[2]));
+            $data['tempData']=$tempData;
+            if (count($tempData) > 2)
+               $previousData = implode("#", $tempData);
             $mysqli = getConn();
             $result = $mysqli->query($sql);
             $affected = mysqli_affected_rows($mysqli);
@@ -133,29 +135,31 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
             if ($affected >= 1) {
                if ($_POST['src'] == "updateForm") {
                   $updateEntries++;
-                  writelog(7, "success:2,prevData:" . $previousData . ",newData:" . implode('#', $data));
+                  writelog(7, "success:2,prevData:" . $previousData . ",newData:" . implode('#', getCurrentData($data[2])));
                   continue;
                }
 
                $mysqli1 = getConn();
-               $sqlTotal = "Select * from product where itemNo like '" . $data[2] . "';";
+               $sqlTotal = "Select * from product where itemNo like '" . trim($data[2]) . "';";
                $output['newSql']=$sqlTotal;
                $result1 = mysqli_query($mysqli1, $sqlTotal);
                $totRows = mysqli_num_rows($result1);
+               $output['totRows'] = $totRows;
+               $output['affected'] = $affected;
                if ($totRows == 1 && $affected == 2) {
                   $updateEntries++;
-                  writelog(7, "success:2,prevData:" . $previousData . ",newData:" . implode('#', $data));
+                  writelog(7, "success:2,prevData:" . $previousData . ",newData:" . implode('#', getCurrentData($data[2])));
                } elseif ($totRows == 1 && $affected == 1) {
                   $successEntries++;
                   $previousData = "";
                   writelog(7, "success:1,prevData:" . $previousData . ",newData:" . implode("#", getCurrentData($data[2])));
                } elseif ($totRows == 0) {
                   $lineError = $lineError . $row . ", ";
-                  writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', $data));
+                  writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', getCurrentData($data[2])));
                }
             } else {
                $lineError = $lineError . $row . ", ";
-               writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', $data));
+               writelog(7, "success:0,prevData:" . $previousData . ",newData:" . implode('#', getCurrentData($data[2])));
             }
          }
          if ($lineError == "") {
