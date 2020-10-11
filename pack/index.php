@@ -259,47 +259,48 @@ if ($_SESSION['usertype'] >= 1)
 					</div>
 
 					<div class="card-body card-body-cascade">
-						<form id="PL-Items" name="PL-Items" enctype="multipart/form-data">
+						<form id="PL-Items" name="PL-Items" method="POST" enctype="multipart/form-data">
 							<fieldset style="border-color: dodgerblue !important;">
 								<legend>Add More Items</legend>
 								<div class="row">
+									<input type="hidden" id="itemid" name="itemid"/>
 									<div class="md-form col">
-										<input required type="text" id="itemCode" name="itemCode" class="form-control" />
-										<label for="itemCode">Item Code <span class="text-danger">*</span></label>
+										<input required type="text" id="itemcode" name="itemcode" class="form-control" />
+										<label for="itemcode">Item Code <span class="text-danger">*</span></label>
 									</div>
 									<div class="md-form col">
-										<input required type="text" id="itemDesignNo" name="itemDesignNo" class="form-control" />
-										<label class="active" for="itemDesignNo">Mewar # <span class="text-danger">*</span></label>
+										<input required type="text" id="mewarcode" name="mewarcode" class="form-control" />
+										<label class="active" for="mewarcode">Mewar # <span class="text-danger">*</span></label>
 									</div>
 									<div class="md-form col-1">
-										<input required type="number" id="itemQty" id="itemQty" class="form-control" min=1 />
-										<label for="itemQty">Qty <span class="text-danger">*</span></label>
+										<input required type="number" id="qty" name="qty" class="form-control" min=1 />
+										<label for="qty">Qty <span class="text-danger">*</span></label>
 									</div>
 									<div class="md-form col-1">
-										<input type="text" id="itemSize" name="itemSize" class="form-control" />
-										<label for="itemSize">Ring Size</label>
+										<input type="text" id="ringsize" name="ringsize" class="form-control" />
+										<label for="ringsize">Ring Size</label>
 									</div>
 									<div class="md-form col-1">
-										<select class="mdb-select md-form colorful-select  dropdown-primary" id="itemMetalType" name="itemMetalType"  onchange="selectChanged('itemMetalTypeLabel')">
+										<select class="mdb-select md-form colorful-select  dropdown-primary" id="metaltype" name="metaltype"  onchange="selectChanged('metaltypeLabel')">
 											<option value="10K">10K</option>
 											<option value="14K">14K</option>
 											<option value="18K">18K</option>
 											<option value="925">925</option>
 											<option value="1">Other</option>
 										</select>
-										<label  class="mdb-main-label" id="itemMetalTypeLabel">Metal Type</label>
+										<label  class="mdb-main-label" id="metaltypeLabel">Metal Type</label>
 									</div>
 									<div class="md-form col-1">
-										<input type="text" id="itemMetalColor" name="itemMetalColor" class="form-control" />
-										<label for="itemMetalColor">Metal Color</label>
+										<input type="text" id="metalcolor" name="metalcolor" class="form-control" />
+										<label for="metalcolor">Metal Color</label>
 									</div>
 									<div class="md-form col-3" style="margin-bottom: 0px;">
-										<input required type="text" id="itemDescription" name="itemDescription" class="form-control" />
-										<label for="itemDescription">Description <span class="text-danger">*</span></label>
+										<input required type="text" id="description" name="description" class="form-control" />
+										<label for="description">Description <span class="text-danger">*</span></label>
 									</div>
 									<div class="md-form col input-group">
 										<div class="custom-file">
-											<input type="file" class="custom-file-input" id="itemPic" aria-describedby="inputGroupFileAddon01">
+											<input type="file" class="custom-file-input" name="itemPic" id="itemPic" aria-describedby="inputGroupFileAddon01">
 											<label class="custom-file-label" for="itemPic" style="margin-top: -10px;">Item Pic</label>
 										</div>
 									</div>
@@ -342,7 +343,7 @@ if ($_SESSION['usertype'] >= 1)
 									<div class="mt-2">
 										<button type="button" onclick="AddMoreRows()" class="btn btn-sm btn-outline-info waves-effect" style="float: left;">Add More Rows</button>
 										<button type="button" name="PL_Items_Reset" id="PL_Items_Reset" onclick="resetPLItem()" class="btn btn-sm btn-outline-danger waves-effect" style="float: right;">Reset Item</button>
-										<button type="button" name="PL_Items_Create" id="PL_Items_Create" onclick="createPLItem()" class="btn btn-sm btn-outline-success waves-effect" style="float: right;">Save Item</button>
+										<button type="submit" name="PL_Items_Create" id="PL_Items_Create" class="btn btn-sm btn-outline-success waves-effect" style="float: right;">Save Item</button>
 									</div>
 
 								</div>
@@ -383,6 +384,7 @@ if ($_SESSION['usertype'] >= 1)
 	<script type="text/javascript" src="src/js/toastr.min.js"></script>
 	<script src="../src/js/moment.js"></script>
 	<script src="../src/js/daterangepicker.js"></script>
+	<script src="img-cell-renderer.js"></script>
 	<script src="edit-btn-cell-renderer.js"></script>
 	<script src="del-btn-cell-renderer.js"></script>
 	<script src="main.js"></script>

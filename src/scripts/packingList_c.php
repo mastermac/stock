@@ -23,13 +23,13 @@ function createPLItem(){
     
     $mysqli = getConn();
     $stmt = $mysqli->prepare("INSERT INTO `pl-items` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ississss", $_GET['pid'], $_GET['itemcode'], $_GET['mewarcode'], $_GET['qty'], $_GET['ringsize'], $_GET['metaltype'], $_GET['metalcolor'], $_GET['description']);
+    $stmt->bind_param("ississss", $_POST['pid'], $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description']);
     $stmt->execute();
     $stmt->close();
     $mysqli->close();
 
     $mysqli1 = getConn();
-    $sql = "SELECT id from `pl-items` WHERE pid='".$_GET['pid']."' AND itemcode='".$_GET['itemcode']."' AND mewarcode='".$_GET['mewarcode']."' AND qty='".$_GET['qty']."' AND metaltype='".$_GET['metaltype']."' AND metalcolor='".$_GET['metalcolor']."' AND description='".$_GET['description']."' ORDER BY id DESC LIMIT 1";
+    $sql = "SELECT id from `pl-items` WHERE pid='".$_POST['pid']."' AND itemcode='".$_POST['itemcode']."' AND mewarcode='".$_POST['mewarcode']."' AND qty='".$_POST['qty']."' AND metaltype='".$_POST['metaltype']."' AND metalcolor='".$_POST['metalcolor']."' AND description='".$_POST['description']."' ORDER BY id DESC LIMIT 1";
     $data['sql']=$sql;
     $result = $mysqli1->query($sql);
     $itemId='';
@@ -37,39 +37,72 @@ function createPLItem(){
         $itemId = $row['id'];
         $data['itemId']=$itemId;
     }
-    $data['metals']=count($_GET['metals']);
-    
-    for($i=0;$i<count($_GET['metals']);$i++){
+    $metalArray= json_decode($_POST['metals'], true);
+    $diamondArray= json_decode($_POST['diamonds'], true);
+    $stoneArray= json_decode($_POST['stones'], true);
+    $otherArray= json_decode($_POST['others'], true);
+    // print_r($metalArray[0]);
+    for($i=0;$i<count($metalArray);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['metals'][$i]['wt'], $_GET['metals'][$i]['amt']);
+        $stmt2->bind_param("iiss", $_POST['pid'], $itemId, $metalArray[$i]['wt'], $metalArray[$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
     }
-    for($i=0;$i<count($_GET['diamonds']);$i++){
+    for($i=0;$i<count($diamondArray);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-diamond` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiisssisss", $_GET['pid'], $itemId, $_GET['diamonds'][$i]['lot_id'], $_GET['diamonds'][$i]['shape'], $_GET['diamonds'][$i]['size'], $_GET['diamonds'][$i]['setting'], $_GET['diamonds'][$i]['qty'], $_GET['diamonds'][$i]['wt'], $_GET['diamonds'][$i]['rate'], $_GET['diamonds'][$i]['amt']);
+        $stmt2->bind_param("iiisssisss", $_POST['pid'], $itemId, $diamondArray[$i]['lot_id'], $diamondArray[$i]['shape'], $diamondArray[$i]['size'], $diamondArray[$i]['setting'], $diamondArray[$i]['qty'], $diamondArray[$i]['wt'], $diamondArray[$i]['rate'], $diamondArray[$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
     }
-    for($i=0;$i<count($_GET['stones']);$i++){
+    for($i=0;$i<count($stoneArray);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-stone` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiisssisss", $_GET['pid'], $itemId, $_GET['stones'][$i]['lot_id'], $_GET['stones'][$i]['name'], $_GET['stones'][$i]['shape'], $_GET['stones'][$i]['size'], $_GET['stones'][$i]['qty'], $_GET['stones'][$i]['wt'], $_GET['stones'][$i]['rate'], $_GET['stones'][$i]['amt']);
+        $stmt2->bind_param("iiisssisss", $_POST['pid'], $itemId, $stoneArray[$i]['lot_id'], $stoneArray[$i]['name'], $stoneArray[$i]['shape'], $stoneArray[$i]['size'], $stoneArray[$i]['qty'], $stoneArray[$i]['wt'], $stoneArray[$i]['rate'], $stoneArray[$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
     }
-    for($i=0;$i<count($_GET['others']);$i++){
+    for($i=0;$i<count($otherArray);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-others` VALUES (null, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['others'][$i]['desc'], $_GET['others'][$i]['amt']);
+        $stmt2->bind_param("iiss", $_POST['pid'], $itemId, $otherArray[$i]['description'], $otherArray[$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
+    }
+
+    if (!empty($_FILES['itemPic']['name'])) {
+        $target_dir    = $_SERVER['DOCUMENT_ROOT'] . "/stock/pack/pics/";
+        $imageFileType = pathinfo(basename($_FILES["itemPic"]["name"]), PATHINFO_EXTENSION);
+        $target_file   = $target_dir . $_POST['itemcode'] . '.' . $imageFileType;
+        $img           = $_FILES['itemPic']['tmp_name'];
+        $dst           = $target_dir . $_POST['itemcode'];
+        if (($img_info = getimagesize($img)) === FALSE)
+            die("Image not found or not an image");
+        $width  = $img_info[0];
+        $height = $img_info[1];
+        switch ($img_info[2]) {
+            case IMAGETYPE_GIF:
+                $src = imagecreatefromgif($img);
+                break;
+            case IMAGETYPE_JPEG:
+                $src = imagecreatefromjpeg($img);
+                break;
+            case IMAGETYPE_PNG:
+                $src = imagecreatefrompng($img);
+                break;
+            default:
+                die("Unknown filetype");
+        }
+        $tmp = imagecreatetruecolor(200, 200);
+        imagecopyresampled($tmp, $src, 0, 0, 0, 0, 200, 200, $width, $height);
+        imagejpeg($tmp, $dst . ".JPG",80);
+        imagedestroy($tmp);
+        imagedestroy($src);
     }
     echo json_encode($data);
 }
@@ -81,7 +114,11 @@ function returnData($json,$sql,$result){
     echo json_encode($data);
 }
 
-switch($_GET["func"]){
+$functionType=$_GET['func'];
+if(empty($functionType))
+    $functionType=$_POST['func'];
+
+switch($functionType){
     case "createPackingList": createPackingList();
         break;
     case "createPLItem": createPLItem();

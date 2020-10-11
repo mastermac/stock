@@ -193,6 +193,7 @@ var gridOptions_PL_Items = {
 			editable: false,
 		},
 		{ headerName: "Item #", field: "itemcode" },
+		{ headerName: "Pic", field: "itemcode", cellRenderer: 'imgCell', editable: false },
 		{ headerName: "Mewar #", field: "mewarcode" },
 		{ headerName: "Qty", field: "qty", width: 15, filter: "agNumberColumnFilter" },
 		{ headerName: "Ring Size", field: "ringsize" },
@@ -219,20 +220,20 @@ var gridOptions_PL_Items = {
 						},
 					}).done(function (response) {
 						resetPLItem();
-
-						$("#itemCode").val(response.data.itemcode).change();
-						$("#itemDesignNo").val(response.data.mewarcode).change();
-						$("#itemQty").val(response.data.qty).change();
-						$("#itemSize").val(response.data.ringsize).change();
-						$("#itemMetalType").val(response.data.metaltype).change();
-						$("#itemMetalColor").val(response.data.metalcolor).change();
-						$("#itemDescription").val(response.data.description).change();
+						$("#itemid").val(response.data.id);
+						$("#itemcode").val(response.data.itemcode).change();
+						$("#mewarcode").val(response.data.mewarcode).change();
+						$("#qty").val(response.data.qty).change();
+						$("#ringsize").val(response.data.ringsize).change();
+						$("#metaltype").val(response.data.metaltype).change();
+						$("#metalcolor").val(response.data.metalcolor).change();
+						$("#description").val(response.data.description).change();
 			
 						metalGridOptions.api.setRowData(response.data.metal);
 						diamondGridOptions.api.setRowData(response.data.diamond);
 						stoneGridOptions.api.setRowData(response.data.stone);
 						otherCostGridOptions.api.setRowData(response.data.others);
-
+						isEditingItem=true;
 						hideLoader();
 					});
 				},
@@ -277,6 +278,7 @@ var gridOptions_PL_Items = {
 		type: "leftAligned",
 		enableCellChangeFlash: true,
 	},
+	rowHeight: 80,
 	animateRows: true,
 	suppressRowClickSelection: true,
 	rowSelection: "multiple",
@@ -287,17 +289,19 @@ var gridOptions_PL_Items = {
 	components: {
 		editButton: EditBtnCellRenderer,
 		delButton: DelBtnCellRenderer,
+		imgCell: ImageCellRenderer
 	},
 	onCellValueChanged: function (event) {
 		newData.push(event.data);
 		gridOptions_PL.api.flashCells({ rowNodes: [event.rowIndex] });
 	},
 };
-
+var isEditingItem=false;
 $("#packingListItemsModal").on("show.bs.modal", ()=>{
 	InitPLItemsForm();
 
 	InitPLItemDetailsForm();
+	$("#metalDetails-tab").click();
 });
 $("#packingListItemsModal").on("hidden.bs.modal", () => {
 	gridOptions_PL_Items.api.destroy();
@@ -338,36 +342,43 @@ function getPLItems(packingListId) {
 		BindPL_Items(data.data);
 	});
 }
-function createPLItem() {
 
-	var item = new Item();
-	console.log(item);
-	AllDetailsTabClicked(true);
-
+$("#PL-Items").on('submit', (function (e) {
+	e.preventDefault();
 	showLoader();
+	var formData = new FormData(this);
+	var form_action = $("#create-item").find("form").attr("action");
+	$('.ajax-loader').css("visibility", "visible");
+	AllDetailsTabClicked(true);
+	let funcType='createPLItem';
+	let urlEnd='packingList_c.php';
+	if(isEditingItem){
+		funcType='updatePLItem';
+		urlEnd='packingList_u.php';
+	}
+	formData.append('func', funcType);
+	formData.append('pid', currentPL);
+	formData.append('metals', JSON.stringify(metalGridData));
+	formData.append('diamonds', JSON.stringify(diamondGridData));
+	formData.append('stones', JSON.stringify(stoneGridData));
+	formData.append('others', JSON.stringify(otherCostGridData));
+	console.log(formData);
 	$.ajax({
+		type: 'POST',
 		dataType: "json",
-		url: url + "../src/scripts/packingList_c.php",
-		data: {
-			func: "createPLItem",
-			pid: currentPL,
-			itemcode: $("#itemCode").val(),
-			mewarcode: $("#itemDesignNo").val(),
-			qty: $("#itemQty").val(),
-			ringsize: $("#itemSize").val(),
-			metaltype: $("#itemMetalType").val(),
-			metalcolor: $("#itemMetalColor").val(),
-			description: $("#itemDescription").val(),
-			metals: metalGridData,
-			diamonds: diamondGridData,
-			stones: stoneGridData,
-			others: otherCostGridData
-		},
+		url: url + "../src/scripts/"+urlEnd,
+		data: formData,
+		contentType: false,
+		processData: false,
 	}).done(function (data) {
 		hideLoader();
+		if(isEditingItem)
+			toastr['success']("Item updated successfully.");
+		else
+			toastr['success']("Item added successfully.");
 		resetPLItem();
 	});
-}
+}));
 
 function resetPLItem(){
 	gridOptions_PL_Items.api.destroy();
@@ -378,6 +389,8 @@ function resetPLItem(){
 	allGridOptions.api.destroy();
 	InitPLItemsForm();
 	InitPLItemDetailsForm();
+	$("#metalDetails-tab").click();
+	isEditingItem=false;
 }
 function BindPL_Items(data) {
 	gridOptions_PL_Items.api.setRowData(data);
@@ -389,6 +402,7 @@ function BindPL_Items(data) {
 //#region Edit Item Details
 var metalDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false, filter: false },
+	{ headerName: "Id", field: "id", hide: true },
 	{ headerName: "Metal Wt", field: "wt", filter: "agNumberColumnFilter" },
 	{ headerName: "Amount", field: "amt", editable: false},
 	{
@@ -426,6 +440,7 @@ var metalDetailsColDef = [
 
 var diamondDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
+	{ headerName: "Id", field: "id", hide: true },
 	{ headerName: "Lot No", field: "lot_id", filter: "agNumberColumnFilter" },
 	{ headerName: "Shape/Color/Cut", field: "shape", editable: false },
 	{ headerName: "Size", field: "size", editable: false },
@@ -476,6 +491,7 @@ var diamondDetailsColDef = [
 
 var stoneDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
+	{ headerName: "Id", field: "id", hide: true },
 	{ headerName: "Lot No", field: "lot_id", filter: "agNumberColumnFilter" },
 	{ headerName: "Name", field: "name", editable: false },
 	{ headerName: "Shape", field: "shape", editable: false },
@@ -519,6 +535,7 @@ var stoneDetailsColDef = [
 
 var otherCostsDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
+	{ headerName: "Id", field: "id", hide: true },
 	{ headerName: "Description", field: "description", width: 200 },
 	{ headerName: "Amount", field: "amt", filter: "agNumberColumnFilter" },
 	{
@@ -684,7 +701,7 @@ var dummyData=[{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},];
 
 function getStoneMultiplier(){
 	let multiplier = 1;
-	switch($("#itemMetalType").val().toLowerCase()){
+	switch($("#metaltype").val().toLowerCase()){
 		case "14k": multiplier = 0.59 * 1.1 * PackingListRates.gold; break;
 		case "18k": multiplier = 0.76 * 1.1 * PackingListRates.gold; break;
 		case "10k": multiplier = 0.42 * 1.1 * PackingListRates.gold; break;
@@ -836,8 +853,8 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 			let labourRt = PackingListRates.labour;
 			let platingRt = 0;
 
-			if($("#itemMetalType").val().toLowerCase()!="925")	labourRt=PackingListRates.goldLabour;
-			if($("#itemMetalColor").val().toLowerCase()=="wg" || $("#itemMetalColor").val().toLowerCase()=="rh" || $("#itemMetalColor").val().toLowerCase()=="yp")
+			if($("#metaltype").val().toLowerCase()!="925")	labourRt=PackingListRates.goldLabour;
+			if($("#metalcolor").val().toLowerCase()=="wg" || $("#metalcolor").val().toLowerCase()=="rh" || $("#metalcolor").val().toLowerCase()=="yp")
 				platingRt = PackingListRates.plating;
 
 			allTotalGridData[0].labour_cpf+= (Number(metalGridData[i].wt) * labourRt);
@@ -869,7 +886,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 	}
 	allTotalGridData[0].labour_total = allTotalGridData[0].labour_cpf + allTotalGridData[0].labour_setting + allTotalGridData[0].labour_plating + allTotalGridData[0].labour_findings;
 	allTotalGridData[0].gross_wt = allTotalGridData[0].metal_wt + (allTotalGridData[0].dia_wt + allTotalGridData[0].stone_wt)*0.2;
-	allTotalGridData[0].fac_ppc = Math.round(allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt)/Number($("#itemQty").val(),0);
+	allTotalGridData[0].fac_ppc = Math.round(allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt)/Number($("#qty").val(),0);
 	var factoryProfitIncludedPPC =allTotalGridData[0].fac_ppc + (allTotalGridData[0].fac_ppc*PackingListRates.factoryProfit*.01);
 	var priceInUSD = factoryProfitIncludedPPC / PackingListRates.exchange;
 	allTotalGridData[0].fac_sp = Math.round(priceInUSD * 3.5);
