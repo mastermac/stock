@@ -204,6 +204,10 @@ if ($_SESSION['usertype'] >= 1)
 								</div>
 								<div class="w-100"></div>
 								<div class="md-form col mb-0">
+									<input type="text" id="goldLabourRt" name="goldLabourRt" class="form-control" />
+									<label for="goldLabourRt">Gold Labour/grm Rt</label>
+								</div>
+								<div class="md-form col mb-0">
 									<input type="text" id="platingRt" name="platingRt" class="form-control" />
 									<label for="platingRt">Plating/grm Rt</label>
 								</div>
@@ -213,7 +217,7 @@ if ($_SESSION['usertype'] >= 1)
 								</div>
 								<div class="md-form col mb-0">
 									<input type="text" id="microDiaRt" name="microDiaRt" class="form-control" />
-									<label for="microDiaRt">Micro Diamond Setting Rt</label>
+									<label for="microDiaRt">Micro Dia Setting Rt</label>
 								</div>
 								<div class="w-100"></div>
 								<div class="md-form col mb-0">
@@ -277,8 +281,9 @@ if ($_SESSION['usertype'] >= 1)
 									</div>
 									<div class="md-form col-1">
 										<select class="mdb-select md-form colorful-select  dropdown-primary" id="itemMetalType" name="itemMetalType"  onchange="selectChanged('itemMetalTypeLabel')">
+											<option value="10K">10K</option>
 											<option value="14K">14K</option>
-											<option value="28K">18K</option>
+											<option value="18K">18K</option>
 											<option value="925">925</option>
 											<option value="1">Other</option>
 										</select>
@@ -314,7 +319,7 @@ if ($_SESSION['usertype'] >= 1)
 											<a class="nav-link" id="otherDetails-tab" data-toggle="pill" href="#otherDetails" role="tab" aria-controls="otherDetails" aria-selected="false">Other Costs Details</a>
 										</li>
 										<li class="nav-item">
-											<a class="nav-link" id="allDetails-tab" data-toggle="pill" href="#allDetails" role="tab" aria-controls="allDetails" aria-selected="false" onclick="AllDetailsTabClicked()">All Totals</a>
+											<a class="nav-link" id="allDetails-tab" data-toggle="pill" href="#allDetails" role="tab" aria-controls="allDetails" aria-selected="false" onclick="AllDetailsTabClicked(false)">All Totals</a>
 										</li>
 									</ul>
 									<div class="tab-content" id="pills-tabContent">
@@ -336,7 +341,7 @@ if ($_SESSION['usertype'] >= 1)
 									</div>
 									<div class="mt-2">
 										<button type="button" onclick="AddMoreRows()" class="btn btn-sm btn-outline-info waves-effect" style="float: left;">Add More Rows</button>
-										<button type="reset" name="PL_Items_Reset" id="PL_Items_Reset" class="btn btn-sm btn-outline-danger waves-effect" style="float: right;">Reset Item</button>
+										<button type="button" name="PL_Items_Reset" id="PL_Items_Reset" onclick="resetPLItem()" class="btn btn-sm btn-outline-danger waves-effect" style="float: right;">Reset Item</button>
 										<button type="button" name="PL_Items_Create" id="PL_Items_Create" onclick="createPLItem()" class="btn btn-sm btn-outline-success waves-effect" style="float: right;">Save Item</button>
 									</div>
 

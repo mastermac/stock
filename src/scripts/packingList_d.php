@@ -1,5 +1,6 @@
 <?php
 require 'db_config.php';
+
 session_start();
 
 function deletePackingList(){
@@ -12,6 +13,14 @@ function deletePackingList(){
 function deletePLItem(){
     $mysqli = getConn();
     $sql = "DELETE from `pl-items` where id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-diamond` where item_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-stone` where item_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-metal` where item_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-others` where item_id=".$_GET['id'];
     $result = $mysqli->query($sql);
     returnData($sql,$result);
 }

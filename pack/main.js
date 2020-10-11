@@ -19,6 +19,7 @@ var gridOptions_PL = {
 		{ headerName: "Silver", field: "silverRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Gold", field: "goldRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Labour", field: "labourRt", filter: "agNumberColumnFilter" },
+		{ headerName: "G Labour", field: "goldLabourRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Plating", field: "platingRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Findings", field: "findingsRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Micro Dia", field: "microDiaSettingRt", hide: true },
@@ -35,7 +36,7 @@ var gridOptions_PL = {
 				clicked: function (field) {
 					currentPL = field;
 					var currentRow=gridOptions_PL.api.getRowNode(currentPL);
-					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt);
+					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.goldLabourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt);
 					console.log(PackingListRates);
 					$("#packingListItemsModal").modal("show");
 				},
@@ -206,8 +207,20 @@ var gridOptions_PL_Items = {
 			cellRenderer: "editButton",
 			cellRendererParams: {
 				clicked: function (field) {
+					showLoader();
 					currentItem = field;
-					$("#itemDetailModal").modal("show");
+					$.ajax({
+						dataType: "json",
+						url: url + "../src/scripts/packingList_r.php",
+						data: {
+							func: "getPackingListItemById",
+							id: currentPL,
+							itemId: currentItem
+						},
+					}).done(function (data) {
+						resetPLItem();
+						hideLoader();
+					});
 				},
 			},
 			width: 20,
@@ -314,6 +327,7 @@ function createPLItem() {
 
 	var item = new Item();
 	console.log(item);
+	AllDetailsTabClicked(true);
 
 	showLoader();
 	$.ajax({
@@ -329,11 +343,26 @@ function createPLItem() {
 			metaltype: $("#itemMetalType").val(),
 			metalcolor: $("#itemMetalColor").val(),
 			description: $("#itemDescription").val(),
+			metals: metalGridData,
+			diamonds: diamondGridData,
+			stones: stoneGridData,
+			others: otherCostGridData
 		},
 	}).done(function (data) {
 		hideLoader();
-		getPLItems(currentPL);
+		resetPLItem();
 	});
+}
+
+function resetPLItem(){
+	gridOptions_PL_Items.api.destroy();
+	metalGridOptions.api.destroy();
+	diamondGridOptions.api.destroy();
+	stoneGridOptions.api.destroy();
+	otherCostGridOptions.api.destroy();
+	allGridOptions.api.destroy();
+	InitPLItemsForm();
+	InitPLItemDetailsForm();
 }
 function BindPL_Items(data) {
 	gridOptions_PL_Items.api.setRowData(data);
@@ -629,6 +658,19 @@ var labourGridOptions = Object.create(commonGridOptions);
 var factoryGridOptions = Object.create(commonGridOptions);
 var allGridOptions = Object.create(allDetailsGO);
 var dummyData=[{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},];
+
+function getStoneMultiplier(){
+	let multiplier = 1;
+	switch($("#itemMetalType").val().toLowerCase()){
+		case "14k": multiplier = 0.59 * 1.1 * PackingListRates.gold; break;
+		case "18k": multiplier = 0.76 * 1.1 * PackingListRates.gold; break;
+		case "10k": multiplier = 0.42 * 1.1 * PackingListRates.gold; break;
+		case "925": multiplier = 1 * PackingListRates.silver; break;
+		case "other": multiplier = 1; break;
+	}
+	return multiplier;
+}
+
 function InitPLItemDetailsForm() {
 	$("#PL-Items").trigger("reset");
 	$("#PL-Items label").removeClass("active");
@@ -642,7 +684,7 @@ function InitPLItemDetailsForm() {
 	metalGridOptions.api.setColumnDefs(metalDetailsColDef);
 	metalGridOptions.onCellValueChanged = function(event){
 		if(event.data.metal_wt && event.column.colId === "metal_wt"){
-			metalGridOptions.api.getRowNode(event.data.metal_sno).setDataValue('metal_amt', PackingListRates.silver * event.data.metal_wt);
+			metalGridOptions.api.getRowNode(event.data.metal_sno).setDataValue('metal_amt', Math.round(getStoneMultiplier() * event.data.metal_wt));
 		}
 	}
 
@@ -654,7 +696,7 @@ function InitPLItemDetailsForm() {
 	diamondGridOptions.api.setColumnDefs(diamondDetailsColDef);
 	diamondGridOptions.onCellValueChanged = function(event){
 		if(event.data.dia_wt && event.data.dia_rate && ( event.column.colId === "dia_wt" ||  event.column.colId === "dia_rate")){
-			diamondGridOptions.api.getRowNode(event.data.dia_sno).setDataValue('dia_amt', event.data.dia_wt * event.data.dia_rate);
+			diamondGridOptions.api.getRowNode(event.data.dia_sno).setDataValue('dia_amt', Math.round(event.data.dia_wt * event.data.dia_rate));
 		}
 	}
 
@@ -692,8 +734,8 @@ var stoneGridData=[];
 var otherCostGridData=[];
 var allTotalGridData=[];
 
-function AllDetailsTabClicked(){
-	GetAllGridData();
+function AllDetailsTabClicked(ignoreEmpty=false){
+	GetAllGridData(ignoreEmpty);
 	allTotalGridData=[
 		{
 			gross_wt: 0,
@@ -718,9 +760,16 @@ function AllDetailsTabClicked(){
 	for(var i=0;i<metalGridData.length;i++){
 		if(metalGridData[i].metal_wt){
 			allTotalGridData[0].metal_wt+= Number(metalGridData[i].metal_wt);
-			allTotalGridData[0].metal_amt+= (Number(metalGridData[i].metal_wt)*PackingListRates.silver);
-			allTotalGridData[0].labour_cpf+= (Number(metalGridData[i].metal_wt) * PackingListRates.labour);
-			allTotalGridData[0].labour_plating+= (Number(metalGridData[i].metal_wt) * PackingListRates.plating);
+			allTotalGridData[0].metal_amt+= (Number(metalGridData[i].metal_wt) * getStoneMultiplier());
+			let labourRt = PackingListRates.labour;
+			let platingRt = 0;
+
+			if($("#itemMetalType").val().toLowerCase()!="925")	labourRt=PackingListRates.goldLabour;
+			if($("#itemMetalColor").val().toLowerCase()=="wg" || $("#itemMetalColor").val().toLowerCase()=="rh" || $("#itemMetalColor").val().toLowerCase()=="yp")
+				platingRt = PackingListRates.plating;
+
+			allTotalGridData[0].labour_cpf+= (Number(metalGridData[i].metal_wt) * labourRt);
+			allTotalGridData[0].labour_plating+= (Number(metalGridData[i].metal_wt) * platingRt);
 		}
 	}
 
@@ -728,7 +777,7 @@ function AllDetailsTabClicked(){
 		if(diamondGridData[i].dia_lot_id){
 			allTotalGridData[0].dia_qty+= Number(diamondGridData[i].dia_qty);
 			allTotalGridData[0].dia_wt+= Number(diamondGridData[i].dia_wt);
-			allTotalGridData[0].dia_amt+= (Number(diamondGridData[i].dia_wt) * Number(diamondGridData[i].dia_qty));
+			allTotalGridData[0].dia_amt+= (Math.round(Number(diamondGridData[i].dia_wt) * Number(diamondGridData[i].dia_rate)));
 			allTotalGridData[0].labour_setting+=Number(diamondGridData[i].dia_qty)*10;
 		}
 	}
@@ -736,7 +785,7 @@ function AllDetailsTabClicked(){
 		if(stoneGridData[i].stone_lot_id){
 			allTotalGridData[0].stone_qty+= Number(stoneGridData[i].stone_qty);
 			allTotalGridData[0].stone_wt+= Number(stoneGridData[i].stone_wt);
-			allTotalGridData[0].stone_amt+= (Number(stoneGridData[i].stone_wt) * Number(stoneGridData[i].stone_qty));
+			allTotalGridData[0].stone_amt+= (Number(stoneGridData[i].stone_wt) * Number(stoneGridData[i].stone_rate));
 			allTotalGridData[0].labour_setting+=Number(stoneGridData[i].stone_qty)*6;
 		}
 	}
@@ -748,7 +797,7 @@ function AllDetailsTabClicked(){
 	}
 	allTotalGridData[0].labour_total = allTotalGridData[0].labour_cpf + allTotalGridData[0].labour_setting + allTotalGridData[0].labour_plating + allTotalGridData[0].labour_findings;
 	allTotalGridData[0].gross_wt = allTotalGridData[0].metal_wt + (allTotalGridData[0].dia_wt + allTotalGridData[0].stone_wt)*0.2;
-	allTotalGridData[0].fac_ppc = (allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt)/Number($("#itemQty").val());
+	allTotalGridData[0].fac_ppc = Math.round(allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt)/Number($("#itemQty").val(),0);
 	var factoryProfitIncludedPPC =allTotalGridData[0].fac_ppc + (allTotalGridData[0].fac_ppc*PackingListRates.factoryProfit*.01);
 	var priceInUSD = factoryProfitIncludedPPC / PackingListRates.exchange;
 	allTotalGridData[0].fac_sp = Math.round(priceInUSD * 3.5);
@@ -766,7 +815,7 @@ function AddMoreRows(){
 	stoneGridOptions.api.setRowData(stoneGridData);
 	otherCostGridOptions.api.setRowData(otherCostGridData);
 }
-function GetAllGridData(){
+function GetAllGridData(ignoreEmpty=false){
 	metalGridData=[];
 	diamondGridData=[];
 	stoneGridData=[];
@@ -774,16 +823,20 @@ function GetAllGridData(){
 	allTotalGridData=[];
 
 	metalGridOptions.api.forEachNode(function(rowNode, index) {
-		metalGridData.push(rowNode.data);	
+		if((ignoreEmpty && rowNode.data.metal_wt) || !ignoreEmpty)
+			metalGridData.push(rowNode.data);	
 	});
 	diamondGridOptions.api.forEachNode(function(rowNode, index) {
-		diamondGridData.push(rowNode.data);		
+		if((ignoreEmpty && rowNode.data.dia_lot_id) || !ignoreEmpty)
+			diamondGridData.push(rowNode.data);		
 	});
 	stoneGridOptions.api.forEachNode(function(rowNode, index) {
-		stoneGridData.push(rowNode.data);		
+		if((ignoreEmpty && rowNode.data.stone_lot_id) || !ignoreEmpty)
+			stoneGridData.push(rowNode.data);		
 	});
 	otherCostGridOptions.api.forEachNode(function(rowNode, index) {
-		otherCostGridData.push(rowNode.data);		
+		if((ignoreEmpty && rowNode.data.other_amt) || !ignoreEmpty)
+			otherCostGridData.push(rowNode.data);		
 	});
 }
 
@@ -808,6 +861,7 @@ function getSettings() {
 		$("#silverRt").val(data.data[0].silverRt).change();
 		$("#goldRt").val(data.data[0].goldRt).change();
 		$("#labourRt").val(data.data[0].labourRt).change();
+		$("#goldLabourRt").val(data.data[0].goldLabourRt).change();
 		$("#platingRt").val(data.data[0].platingRt).change();
 		$("#findingsRt").val(data.data[0].findingsRt).change();
 
@@ -830,6 +884,7 @@ function updateSettings() {
 			silverRt: $("#silverRt").val(),
 			goldRt: $("#goldRt").val(),
 			labourRt: $("#labourRt").val(),
+			goldLabourRt: $("#goldLabourRt").val(),
 			platingRt: $("#platingRt").val(),
 			findingsRt: $("#findingsRt").val(),
 			microDiaRt: $("#microDiaRt").val(),
