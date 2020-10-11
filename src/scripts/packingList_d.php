@@ -7,6 +7,16 @@ function deletePackingList(){
     $mysqli = getConn();
     $sql = "DELETE from packinglist where id=".$_GET['id'];
     $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-items` where pid=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-diamond` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-stone` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-metal` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $sql = "DELETE from `pl-others` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
     returnData($sql,$result);
 }
 
