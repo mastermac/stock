@@ -864,10 +864,14 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 
 	for(var i=0;i<diamondGridData.length;i++){
 		if(diamondGridData[i].lot_id){
+			let settingRate=10;
+			if(diamondGridData[i].setting=="Micro")	settingRate = PackingListRates.microDiamondSetting;
+			else if(diamondGridData[i].setting=="Prong")	settingRate = PackingListRates.prongDiamondSetting;
+			else if(diamondGridData[i].setting=="Baguette")	settingRate = PackingListRates.baguetteDiamondSetting;
 			allTotalGridData[0].dia_qty+= Number(diamondGridData[i].qty);
 			allTotalGridData[0].dia_wt+= Number(diamondGridData[i].wt);
 			allTotalGridData[0].dia_amt+= (Math.round(Number(diamondGridData[i].wt) * Number(diamondGridData[i].rate)));
-			allTotalGridData[0].labour_setting+=Number(diamondGridData[i].qty)*10;
+			allTotalGridData[0].labour_setting+=Number(diamondGridData[i].qty)*settingRate;
 		}
 	}
 	for(var i=0;i<stoneGridData.length;i++){
@@ -875,7 +879,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 			allTotalGridData[0].stone_qty+= Number(stoneGridData[i].qty);
 			allTotalGridData[0].stone_wt+= Number(stoneGridData[i].wt);
 			allTotalGridData[0].stone_amt+= Math.round(Number(stoneGridData[i].wt) * Number(stoneGridData[i].rate));
-			allTotalGridData[0].labour_setting+=Number(stoneGridData[i].qty)*6;
+			allTotalGridData[0].labour_setting+=Number(stoneGridData[i].qty)*PackingListRates.roundStoneSetting;
 		}
 	}
 	for(var i=0;i<otherCostGridData.length;i++){
