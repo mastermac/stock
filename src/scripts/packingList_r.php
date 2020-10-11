@@ -117,6 +117,15 @@ function getItemOthers($pid, $id){
     return $json;
 }
 
+function getStoneById(){
+    $mysqli = getConn();
+    $sql = "SELECT * from `stone-inventory` where lot_no=".$_GET['lotId'];
+    $result = $mysqli->query($sql);
+    $json;
+    while ($row = $result->fetch_assoc())
+        $json = $row;
+    returnData($json,$sql,$result);
+}
 
 function returnData($json,$sql,$result){
     $data['data'] = $json;
@@ -133,6 +142,8 @@ switch($_GET["func"]){
     case "getPackingListItems": getPackingListItems();
         break;
     case "getPackingListItemById": getPackingListItemById();
+        break;
+    case "getStoneById": getStoneById();
         break;
 }
 

@@ -380,6 +380,7 @@ if ($_SESSION['usertype'] >= 1)
 	</div>
 
 	<script src="mdb.js"></script>
+	<script type="text/javascript" src="src/js/toastr.min.js"></script>
 	<script src="../src/js/moment.js"></script>
 	<script src="../src/js/daterangepicker.js"></script>
 	<script src="edit-btn-cell-renderer.js"></script>

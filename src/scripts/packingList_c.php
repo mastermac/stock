@@ -42,23 +42,23 @@ function createPLItem(){
     for($i=0;$i<count($_GET['metals']);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['metals'][$i]['metal_wt'], $_GET['metals'][$i]['metal_amt']);
+        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['metals'][$i]['wt'], $_GET['metals'][$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
     }
     for($i=0;$i<count($_GET['diamonds']);$i++){
         $mysqli2 = getConn();
-        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-diamond` VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiiisss", $_GET['pid'], $itemId, $_GET['diamonds'][$i]['dia_lot_id'], $_GET['diamonds'][$i]['dia_qty'], $_GET['diamonds'][$i]['dia_wt'], $_GET['diamonds'][$i]['dia_rate'], $_GET['diamonds'][$i]['dia_amt']);
+        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-diamond` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt2->bind_param("iiisssisss", $_GET['pid'], $itemId, $_GET['diamonds'][$i]['lot_id'], $_GET['diamonds'][$i]['shape'], $_GET['diamonds'][$i]['size'], $_GET['diamonds'][$i]['setting'], $_GET['diamonds'][$i]['qty'], $_GET['diamonds'][$i]['wt'], $_GET['diamonds'][$i]['rate'], $_GET['diamonds'][$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
     }
     for($i=0;$i<count($_GET['stones']);$i++){
         $mysqli2 = getConn();
-        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-stone` VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiiisss", $_GET['pid'], $itemId, $_GET['stones'][$i]['stone_lot_id'], $_GET['stones'][$i]['stone_qty'], $_GET['stones'][$i]['stone_wt'], $_GET['stones'][$i]['stone_rate'], $_GET['stones'][$i]['stone_amt']);
+        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-stone` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt2->bind_param("iiisssisss", $_GET['pid'], $itemId, $_GET['stones'][$i]['lot_id'], $_GET['stones'][$i]['name'], $_GET['stones'][$i]['shape'], $_GET['stones'][$i]['size'], $_GET['stones'][$i]['qty'], $_GET['stones'][$i]['wt'], $_GET['stones'][$i]['rate'], $_GET['stones'][$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
@@ -66,7 +66,7 @@ function createPLItem(){
     for($i=0;$i<count($_GET['others']);$i++){
         $mysqli2 = getConn();
         $stmt2 = $mysqli2->prepare("INSERT INTO `pl-others` VALUES (null, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['others'][$i]['other_desc'], $_GET['others'][$i]['other_amt']);
+        $stmt2->bind_param("iiss", $_GET['pid'], $itemId, $_GET['others'][$i]['desc'], $_GET['others'][$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();
