@@ -15,6 +15,7 @@ $updateEntries = 0;
 $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/stock/src/import/";
 $imageFileType = pathinfo(basename($_FILES[$fna]["name"]), PATHINFO_EXTENSION);
 $fname = mt_rand();
+$sql="";
 $target_file = $target_dir . $fname . '.' . $imageFileType;
 if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
    if (move_uploaded_file($_FILES[$fna]["tmp_name"], $target_file)) {
@@ -126,7 +127,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
             //echo $data;
             $tempData = getCurrentData(trim($data[2]));
             $data['tempData']=$tempData;
-            if (count($tempData) > 2)
+            if (is_array($tempData) && count($tempData) > 2)
                $previousData = implode("#", $tempData);
             $mysqli = getConn();
             $result = $mysqli->query($sql);
