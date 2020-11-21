@@ -16,6 +16,7 @@ var stoneInventory = {
 			headerName: "Lot#",
 			field: "lot_no",
 			pinned: 'left',
+			filter: "agNumberColumnFilter"
 		},
 		{ headerName: "Name", field: "name", width: 180, pinned: 'left' },
 		{ headerName: "Size", field: "size", width: 130 },
