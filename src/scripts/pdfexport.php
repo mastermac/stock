@@ -23,10 +23,13 @@ function ImprovedTable($header,$sql)
     $loc="";
     $data=array();
     $index=0;
+
+    $cell_width = 65;  //define cell width
+    $cell_height=6;    //define cell height
     while ($row = $result->fetch_assoc())
     {
         if(file_exists('../../pics/' . $row['itemNo'] . '.JPG')){
-            $data[$index++]=array($sno,$row['itemNo'],$row['sellPrice']);
+            $data[$index++]=array($sno,$row['itemNo'],$row['sellPrice'], $row['description']);
             if($index%3==0){
                 for($i=0;$i<3;$i++){
                     if (file_exists('../../pics/' . $data[$i][1] . '.JPG'))
@@ -36,12 +39,25 @@ function ImprovedTable($header,$sql)
                     $this->Cell( 65, 35, $this->Image($loc, $this->GetX(), $this->GetY(), 0,35), 0, 'C' );
                 }
                 $this->Ln();
+                $this->SetFont('Arial','',10);
                 for($i=0;$i<3;$i++){                
-                    $this->Cell(65,6,"Item No: ".$data[$i][1],0,'L');
+                    $this->Cell(65,6,"".$data[$i][1],0,'L'); //Item No
                 }
                 $this->Ln();
                 for($i=0;$i<3;$i++){                
                     $this->Cell(65,6,"Price: $".number_format($data[$i][2]),0,'L');
+                }
+                if($_GET['includeDescription']=="true"){
+                    $this->Ln();
+                    $current_y = $this->GetY();
+                    $current_x = $this->GetX();
+                    $this->SetFont('Arial','',10);
+                    for($i=0;$i<3;$i++){
+                        $this->SetY($current_y, false); 
+                        $this->MultiCell(65,6,$data[$i][3],0,"L");
+                        $current_x+=$cell_width;
+                        $this->SetX($current_x);
+                    }
                 }
                 $this->Ln();
                 $index=0;
@@ -64,12 +80,26 @@ function ImprovedTable($header,$sql)
             $this->Cell( 65, 35, $this->Image($loc, $this->GetX(), $this->GetY(), 0,35), 0, 'C' );
         }
         $this->Ln();
+        $this->SetFont('Arial','',10);
         for($i=0;$i<$index;$i++){                
-            $this->Cell(65,6,"Item No: ".$data[$i][1],0,'L');
+            $this->Cell(65,6,"".$data[$i][1],0,'L'); //Item No
         }
         $this->Ln();
         for($i=0;$i<$index;$i++){                
             $this->Cell(65,6,"Price: $".number_format($data[$i][2]),0,'L');
+        }
+        if($_GET['includeDescription']=="true"){
+            $this->Ln();
+            $current_y = $this->GetY();
+            $current_x = $this->GetX();
+            $this->SetFont('Arial','',10);
+            for($i=0;$i<3;$i++){                
+                $this->SetY($current_y, false); 
+                $this->MultiCell(65,6,$data[$i][3],0,"L");
+                $current_x+=$cell_width;                           
+                $this->SetX($current_x);
+                // $this->SetXY($current_x, $current_y); 
+            }
         }
         $this->Ln();
         $index=0;

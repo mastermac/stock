@@ -42,7 +42,7 @@ if ($imageFileType == 'xlsx' || $imageFileType == 'xls') {
          $rowData = $sheet->rangeToArray('A' . $row . ':' . 'W' . $row, NULL, TRUE, FALSE);
          $data = $rowData[0];
          $data[2]=trim($data[2]);
-         if (strpos(trim($data[2]), '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
+         if ((startsWith(trim($data[2]),"14")||startsWith(trim($data[2]),"18")||startsWith(trim($data[2]),"SD")) && strpos(trim($data[2]), '-') !== false && (clean($data[15]) == '586' || clean($data[15]) == '756' || clean($data[15]) == '6')) {
             $NoDashInItemFile = false;
             break;
          }

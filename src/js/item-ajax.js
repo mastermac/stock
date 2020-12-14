@@ -1113,6 +1113,9 @@ $(document).ready(function () {
             customerDesigns = confirm("Do you want to include Customer Specific Designs?\nMax 100 Items will be exported...\nPress OK -> YES    OR    Cancel -> NO");
         else
             customerDesigns = confirm("Do you want to include Customer Specific Designs?\n\nPress OK -> YES    OR    Cancel -> NO");
+        
+        var descriptionOption = false;
+        descriptionOption = confirm("Do you want to print description as well?\n\nPress OK -> YES    OR    Cancel -> NO");
         $('.ajax-loader').css("visibility", "visible");
         s_dt = window.start;
         e_dt = window.end;
@@ -1138,7 +1141,8 @@ $(document).ready(function () {
                 sdt: s_dt,
                 edt: e_dt,
                 itemNoExt: getVal('itemIdExt'),
-                customerDesigns: customerDesigns
+                customerDesigns: customerDesigns,
+                includeDescription: descriptionOption
             }
         }).done(function (data) {
             var resp = JSON.parse(JSON.stringify(data));
