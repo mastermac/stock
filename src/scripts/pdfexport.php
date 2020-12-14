@@ -14,7 +14,7 @@ function Header()
 function ImprovedTable($header,$sql)
 {
 	// Column widths
-	$w = array(65, 65, 65);
+	$w = array(48, 48, 48,48);
 	// Header
 	// Data
     $mysqli=getConn();
@@ -23,41 +23,41 @@ function ImprovedTable($header,$sql)
     $loc="";
     $data=array();
     $index=0;
-
-    $cell_width = 65;  //define cell width
+    $itemsInARow=4;
+    $cell_width = 48;  //define cell width
     $cell_height=6;    //define cell height
     while ($row = $result->fetch_assoc())
     {
         if(file_exists('../../pics/' . $row['itemNo'] . '.JPG')){
-            $data[$index++]=array($sno,$row['itemNo'],$row['sellPrice'], $row['description']);
-            if($index%3==0){
-                for($i=0;$i<3;$i++){
+            $data[$index++]=array($sno,$row['itemNo'],$row['sellPrice'], $row['dimensions']);
+            if($index%$itemsInARow==0){
+                for($i=0;$i<$itemsInARow;$i++){
                     if (file_exists('../../pics/' . $data[$i][1] . '.JPG'))
                         $loc='../../pics/' . $data[$i][1] . '.JPG';
                     else
                         $loc='../../pics/noImage.jpeg';
-                    $this->Cell( 65, 35, $this->Image($loc, $this->GetX(), $this->GetY(), 0,35), 0, 'C' );
+                    $this->Cell( $cell_width, $cell_width-5, $this->Image($loc, $this->GetX(), $this->GetY(), 0,$cell_width), 0,0, 'C' );
                 }
                 $this->Ln();
                 $this->SetFont('Arial','',10);
-                for($i=0;$i<3;$i++){                
-                    $this->Cell(65,6,"".$data[$i][1],0,'L'); //Item No
-                }
-                $this->Ln();
-                for($i=0;$i<3;$i++){                
-                    $this->Cell(65,6,"Price: $".number_format($data[$i][2]),0,'L');
+                for($i=0;$i<$itemsInARow;$i++){                
+                    $this->Cell($cell_width,6,"".$data[$i][1],0,0,'C'); //Item No
                 }
                 if($_GET['includeDescription']=="true"){
                     $this->Ln();
                     $current_y = $this->GetY();
                     $current_x = $this->GetX();
                     $this->SetFont('Arial','',10);
-                    for($i=0;$i<3;$i++){
+                    for($i=0;$i<$itemsInARow;$i++){
                         $this->SetY($current_y, false); 
-                        $this->MultiCell(65,6,$data[$i][3],0,"L");
+                        $this->Cell($cell_width,6,$data[$i][3],0,0,"C");
                         $current_x+=$cell_width;
                         $this->SetX($current_x);
                     }
+                }
+                $this->Ln();
+                for($i=0;$i<$itemsInARow;$i++){                
+                    $this->Cell($cell_width,6,"$".number_format($data[$i][2]),0,0,'C');
                 }
                 $this->Ln();
                 $index=0;
@@ -77,29 +77,30 @@ function ImprovedTable($header,$sql)
             else
                 $loc='../../pics/noImage.jpeg';
             // $this->Cell( 65, 35, $this->Image($loc, $this->GetX(), $this->GetY(), 0,35), 'T', 'C' );
-            $this->Cell( 65, 35, $this->Image($loc, $this->GetX(), $this->GetY(), 0,35), 0, 'C' );
+            $this->Cell( $cell_width, $cell_width-5, $this->Image($loc, $this->GetX(), $this->GetY(), 0,$cell_width), 0, 0,'C' );
         }
         $this->Ln();
         $this->SetFont('Arial','',10);
-        for($i=0;$i<$index;$i++){                
-            $this->Cell(65,6,"".$data[$i][1],0,'L'); //Item No
-        }
-        $this->Ln();
-        for($i=0;$i<$index;$i++){                
-            $this->Cell(65,6,"Price: $".number_format($data[$i][2]),0,'L');
+        for($i=0;$i<$index;$i++){    
+            //echo $data[$i][1];
+            $this->Cell($cell_width,6,"".$data[$i][1],0,0,'C'); //Item No
         }
         if($_GET['includeDescription']=="true"){
             $this->Ln();
             $current_y = $this->GetY();
             $current_x = $this->GetX();
             $this->SetFont('Arial','',10);
-            for($i=0;$i<3;$i++){                
+            for($i=0;$i<$itemsInARow;$i++){                
                 $this->SetY($current_y, false); 
-                $this->MultiCell(65,6,$data[$i][3],0,"L");
+                $this->Cell($cell_width,6,$data[$i][3],0,0,"C");
                 $current_x+=$cell_width;                           
                 $this->SetX($current_x);
                 // $this->SetXY($current_x, $current_y); 
             }
+        }
+        $this->Ln();
+        for($i=0;$i<$index;$i++){                
+            $this->Cell($cell_width,6,"$".number_format($data[$i][2]),0,0,'C');
         }
         $this->Ln();
         $index=0;
