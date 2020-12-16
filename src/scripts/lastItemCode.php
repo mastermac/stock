@@ -52,8 +52,8 @@ while ($row = $result->fetch_assoc())
 	//print_r($arr);
 	$mysqli2=getConn();
 	$maxitno="";
-   	$s2="SELECT itemNo from product where".$cond." itemNo not like '%-%' and itemNo like '" . $srch.$arr[0]."' and styleCode=".$row['styleCode']." order by dt desc, sno desc LIMIT 1";
-  // 	echo $s2;
+   	$s2="SELECT itemNo from product where".$cond." itemNo not like '%-%' and itemNo like '" . $srch.$arr[0]."%' and styleCode=".$row['styleCode']." order by dt desc, sno desc LIMIT 1";
+ 	// 	echo $s2;
    //	echo '<br><br>';
    	$result2 = $mysqli2->query($s2);
    	
