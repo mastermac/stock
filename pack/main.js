@@ -375,9 +375,14 @@ $("#PL-Items").on('submit', (function (e) {
 			toastr['success']("Item updated successfully.");
 		else
 			toastr['success']("Item added successfully.");
+		updateStoneInventory();
 		resetPLItem();
 	});
 }));
+
+function updateStoneInventory(){
+
+}
 
 function resetPLItem(){
 	gridOptions_PL_Items.api.destroy();
