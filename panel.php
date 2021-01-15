@@ -454,12 +454,16 @@ if ($_SESSION['usertype'] >= 1)
                 <input type="hidden" value="add" name="vendorAction" id="vendorAction">
                 <input type="hidden" value="" name="vid" id="vid">
                 <div class="form-group col-md-4">
-                  <label for="itemId">Vendor Name:</label>
+                  <label for="itemId">Vendor Name</label>
                   <input type="text" style="padding: .375rem .15rem;" class="form-control" id="vendorName" name="vendorName" required />
                 </div>
                 <div class="form-group col-md-2" id="vendorModalDiv">
-                  <label for="vendor" class="control-label">V ID:</label>
+                  <label for="vendor" class="control-label">V ID</label>
                   <input type="text" style="padding: .375rem .15rem;" class="form-control" id="vendorId" name="vendorId" />
+                </div>
+                <div class="form-group col-md-2" id="vendorModalDiv">
+                  <label for="vendor" class="control-label">Profit %</label>
+                  <input type="number" style="padding: .375rem .15rem;" class="form-control" id="vendorProfit" name="vendorProfit" step="0.01" />
                 </div>
                 <div class="form-group col-md-2" style="display: none;">
                   <label for="vendor" class="control-label"></label>
@@ -485,7 +489,7 @@ if ($_SESSION['usertype'] >= 1)
                     <span class="custom-control-description">Create an Account?</span>
                   </label>
                 </div>
-                <div class="form-group col-md-4" ></div>
+                <div class="form-group col-md-2" ></div>
                 <div class="form-group col-md-4 newUser">
                   <label for="itemId">Email:</label>
                   <input type="Email" class="form-control" id="vendorEmail" name="vendorEmail" />
@@ -520,6 +524,7 @@ if ($_SESSION['usertype'] >= 1)
                   <th data-column-id="vendorTableEmail" class="text-center" style="width: 210px;">Email</th>
                   <th data-column-id="vendorTablePwd" class="text-center" style="width: 150px;">Password</th>
                   <th data-column-id="vendorTableType" class="text-center" style="width: 100px;">Type</th>
+                  <th data-column-id="vendorTableProfit" class="text-center" style="width: 100px;">Profit %</th>
                   <th data-column-id="vendorTableSeries" class="text-center" style="width:70px;">Series</th>
                   <!-- <th data-column-id="vendorTableExport" class="text-center" style="width: 70px;">Export</th>
                   <th data-column-id="vendorTableEnabled" class="text-center" style="width: 70px;">Enabled</th> -->

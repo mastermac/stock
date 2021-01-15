@@ -5,7 +5,7 @@ session_start();
 function updateSettings()
 {
     $mysqli = getConn();
-    $sql = "UPDATE settings set exchangeRt=".$_GET['exchangeRt'].", silverRt=".$_GET['silverRt'].", goldRt=".$_GET['goldRt'].", labourRt=".$_GET['labourRt'].", goldLabourRt=".$_GET['goldLabourRt'].", platingRt=".$_GET['platingRt'].", findingsRt=".$_GET['findingsRt'].", microDiaSettingRt=".$_GET['microDiaRt'].", roundStoneSettingRt=".$_GET['roundStoneRt'].", prongDiaSettingRt=".$_GET['prongDiaRt'].", baguetteDiaSettingRt=".$_GET['baguetteDiaRt'].";";
+    $sql = "UPDATE settings set currentDrawback=".$_GET['currentDrawback'].", gst=".$_GET['gst'].", exchangeRt=".$_GET['exchangeRt'].", silverRt=".$_GET['silverRt'].", goldRt=".$_GET['goldRt'].", labourRt=".$_GET['labourRt'].", goldLabourRt=".$_GET['goldLabourRt'].", platingRt=".$_GET['platingRt'].", findingsRt=".$_GET['findingsRt'].", microDiaSettingRt=".$_GET['microDiaRt'].", roundStoneSettingRt=".$_GET['roundStoneRt'].", prongDiaSettingRt=".$_GET['prongDiaRt'].", baguetteDiaSettingRt=".$_GET['baguetteDiaRt'].";";
     $result = $mysqli->query($sql);
     $data['sql'] = $sql;
     echo json_encode($data);
@@ -28,12 +28,12 @@ function updatePLItem(){
     for($i=0;$i<count($metalArray);$i++){
         $mysqli2 = getConn();
         if(empty($metalArray[$i]['id'])){
-            $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?)");
-            $stmt2->bind_param("iiss", $_POST['pid'], $itemId, $metalArray[$i]['wt'], $metalArray[$i]['amt']);
-        }
+            $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?, ?, ?)");
+            $stmt2->bind_param("iissss", $_POST['pid'], $itemId, $metalArray[$i]['wt'], $metalArray[$i]['loss'], $metalArray[$i]['price'], $metalArray[$i]['amt']);
+            }
         else{
-            $stmt2 = $mysqli2->prepare("UPDATE `pl-metal` SET wt=?, amt=? WHERE id=?");
-            $stmt2->bind_param("ssi", $metalArray[$i]['wt'], $metalArray[$i]['amt'], $metalArray[$i]['id']);
+            $stmt2 = $mysqli2->prepare("UPDATE `pl-metal` SET wt=?, loss=?, price=?, amt=? WHERE id=?");
+            $stmt2->bind_param("ssssi", $metalArray[$i]['wt'], $metalArray[$i]['loss'], $metalArray[$i]['price'], $metalArray[$i]['amt'], $metalArray[$i]['id']);
         }
         $stmt2->execute();
         $stmt2->close();

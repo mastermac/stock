@@ -10,7 +10,7 @@ $canExport=0;
 if(!isset($_POST['canExport']))
 	$_POST['canExport']=1;
 if($_POST['vendorAction']=="add"){
-$sql="INSERT INTO vendor VALUES (null,'".$_POST['vendorId']."','".$_POST['vendorName']."'";
+$sql="INSERT INTO vendor VALUES (null,'".$_POST['vendorId']."','".$_POST['vendorName']."','".$_POST['vendorProfit']."'";
 if(isset($_POST['newAccount']))
 $sql=$sql.",'".$_POST['vendorEmail']."','".$_POST['vendorPwd']."','".$_POST['vendorType']."','".$_POST['vendorSeries']."',$canExport,$accountActive);";
 else
@@ -18,7 +18,7 @@ $sql=$sql.",null,null,1,'',$canExport,$accountActive);";
 
 }
 else if($_POST['vendorAction']=="edit"){
-	$sql="UPDATE vendor set name='".$_POST['vendorName']."'";
+	$sql="UPDATE vendor set name='".$_POST['vendorName']."', profit='".$_POST['vendorProfit']."'";
 if(isset($_POST['newAccount']))
 $sql=$sql.",email='".$_POST['vendorEmail']."',pwd='".$_POST['vendorPwd']."',type='".$_POST['vendorType']."',series='".$_POST['vendorSeries']."',canExport=$canExport,enabled=$accountActive where vid=".$_POST['vid'].";";
 else

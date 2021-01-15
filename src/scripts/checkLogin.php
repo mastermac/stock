@@ -31,12 +31,13 @@ if ($_POST['fromLogin'] == "key1234")
             $_SESSION['series'] = $row["series"];
             $_SESSION['canExport']=$row['canExport'];
             $_SESSION['vendorid']=$row['code'];
+            $_SESSION['vendorProfit']=$row['profit'];            
          }
          $_SESSION['msg'] = 1;
          $response['error'] = false;
-	 $sql1 = "UPDATE product set userid=".$_SESSION['userid']." where vendor=".$_SESSION['vendorid']." and userid!=".$_SESSION['userid'].";";
-      	 $mysqli1 =getConn();
-      	 $result1 = $mysqli1->query($sql1);
+	      $sql1 = "UPDATE product set userid=".$_SESSION['userid']." where vendor=".$_SESSION['vendorid']." and userid!=".$_SESSION['userid'].";";
+      	$mysqli1 =getConn();
+      	$result1 = $mysqli1->query($sql1);
          writelog(1,"1");
       }
       else

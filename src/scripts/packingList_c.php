@@ -44,8 +44,8 @@ function createPLItem(){
     // print_r($metalArray[0]);
     for($i=0;$i<count($metalArray);$i++){
         $mysqli2 = getConn();
-        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?)");
-        $stmt2->bind_param("iiss", $_POST['pid'], $itemId, $metalArray[$i]['wt'], $metalArray[$i]['amt']);
+        $stmt2 = $mysqli2->prepare("INSERT INTO `pl-metal` VALUES (null, ?, ?, ?, ?, ?, ?)");
+        $stmt2->bind_param("iissss", $_POST['pid'], $itemId, $metalArray[$i]['wt'], $metalArray[$i]['loss'], $metalArray[$i]['price'], $metalArray[$i]['amt']);
         $stmt2->execute();
         $stmt2->close();
         $mysqli2->close();

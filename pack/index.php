@@ -7,6 +7,7 @@ $usertype = '';
 require('../src/scripts/db_config.php');
 if ($_SESSION['usertype'] >= 1)
 	$usertype = ' and userid=' . $_SESSION['userid'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,6 +105,7 @@ if ($_SESSION['usertype'] >= 1)
 	<script type="text/javascript">
 		//var url = "http://silvercityonline.com/silvercity/";
 		var main = "<?php echo $_SERVER['DOCUMENT_ROOT'] ?>";
+		var vendorProfit = Number("<?php echo $_SESSION['vendorProfit'] ?>");
 		var url = "";
 		if (main == "C:/wamp64/www" || main == "C:/wamp/www")
 			url = "http://localhost:8080/stock/pack/";
@@ -187,53 +189,61 @@ if ($_SESSION['usertype'] >= 1)
 						<form id="newPackingList" name="newPackingList" enctype="multipart/form-data">
 							<div class="row">
 								<div class="md-form col mb-0">
-									<input required type="text" id="exchangeRt" name="exchangeRt" class="form-control" />
+									<input required type="number" step="0.01" id="exchangeRt" name="exchangeRt" class="form-control" />
 									<label for="exchangeRt">Exchange Rt <span class="text-danger">*</span></label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="silverRt" name="silverRt" class="form-control" />
+									<input type="number" step="0.01" id="silverRt" name="silverRt" class="form-control" />
 									<label for="silverRt">Silver/grm Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="goldRt" name="goldRt" class="form-control" />
+									<input type="number" step="0.01" id="goldRt" name="goldRt" class="form-control" />
 									<label for="goldRt">Gold/grm Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="labourRt" name="labourRt" class="form-control" />
-									<label for="labourRt">Labour/grm Rt</label>
+									<input type="number" step="0.01" id="labourRt" name="labourRt" class="form-control" />
+									<label for="labourRt">Silver Labour/grm Rt</label>
 								</div>
 								<div class="w-100"></div>
 								<div class="md-form col mb-0">
-									<input type="text" id="goldLabourRt" name="goldLabourRt" class="form-control" />
+									<input type="number" step="0.01" id="goldLabourRt" name="goldLabourRt" class="form-control" />
 									<label for="goldLabourRt">Gold Labour/grm Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="platingRt" name="platingRt" class="form-control" />
+									<input type="number" step="0.01" id="platingRt" name="platingRt" class="form-control" />
 									<label for="platingRt">Plating/grm Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="findingsRt" name="findingsRt" class="form-control" />
+									<input type="number" step="0.01" id="findingsRt" name="findingsRt" class="form-control" />
 									<label for="findingsRt">Findings Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="microDiaRt" name="microDiaRt" class="form-control" />
+									<input type="number" step="0.01" id="microDiaRt" name="microDiaRt" class="form-control" />
 									<label for="microDiaRt">Micro Dia Setting Rt</label>
 								</div>
 								<div class="w-100"></div>
 								<div class="md-form col mb-0">
-									<input type="text" id="prongDiaRt" name="prongDiaRt" class="form-control" />
+									<input type="number" step="0.01" id="prongDiaRt" name="prongDiaRt" class="form-control" />
 									<label for="prongDiaRt">Prong Diamond Setting Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="baguetteDiaRt" name="baguetteDiaRt" class="form-control" />
+									<input type="number" step="0.01" id="baguetteDiaRt" name="baguetteDiaRt" class="form-control" />
 									<label for="baguetteDiaRt">Baguette Diamond Setting Rt</label>
 								</div>
 								<div class="md-form col mb-0">
-									<input type="text" id="roundStoneRt" name="roundStoneRt" class="form-control" />
+									<input type="number" step="0.01" id="roundStoneRt" name="roundStoneRt" class="form-control" />
 									<label for="roundStoneRt">Round Stone Setting Rt</label>
 								</div>
 								<div class="w-100"></div>
-								<div class="md-form col mb-0 mt-1">
+								<div class="md-form col mb-0">
+									<input type="number" step="0.01" id="currentDrawbackRt" name="currentDrawbackRt" class="form-control" />
+									<label for="currentDrawbackRt">Current Draw back</label>
+								</div>
+								<div class="md-form col mb-0">
+									<input type="number" step="0.01" id="gstRt" name="gstRt" class="form-control" />
+									<label for="gstRt">GST % on Gold</label>
+								</div>
+								<div class="md-form col mb-0 mt-1 pt-3">
 									<button type="button" onclick="updateSettings()" class="btn btn-outline-success waves-effect compact-btn">Update</button>
 									<button type="button" onclick="getSettings()" class="btn btn-outline-danger waves-effect compact-btn">Reset</button>
 								</div>

@@ -497,7 +497,8 @@ $(document).ready(function () {
                 rows = rows + '<td>' + value.email + '</td>';
                 rows = rows + '<td>' + value.pwd + '</td>';
                 rows = rows + '<td>' + value.type + '</td>';
-                rows = rows + '<td>' + value.series + '</td>';
+                rows = rows + '<td style="text-align: right;">' + value.profit + '</td>';
+                rows = rows + '<td style="text-align: center;">' + value.series + '</td>';
                 // rows = rows + '<td>' + value.canExport + '</td>';
                 // rows = rows + '<td>' + value.enabled + '</td>';
                 rows = rows + '<td data-id="' + value.vid + '">';
@@ -639,6 +640,7 @@ $(document).ready(function () {
             $("#vendorId").attr('readonly', '');
             $("#vendorName").val(data.data[0].name);
             $("#vendorId").val(data.data[0].code);
+            $("#vendorProfit").val(data.data[0].profit);
             
             if (data.data[0].enabled == "1") $("#accountActive").attr('checked', 'true');
             else $("#accountActive").removeAttr('checked');

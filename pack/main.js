@@ -36,7 +36,7 @@ var gridOptions_PL = {
 				clicked: function (field) {
 					currentPL = field;
 					var currentRow=gridOptions_PL.api.getRowNode(currentPL);
-					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.goldLabourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt);
+					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.goldLabourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt, vendorProfit);
 					console.log(PackingListRates);
 					$("#packingListItemsModal").modal("show");
 				},
@@ -407,7 +407,9 @@ function BindPL_Items(data) {
 var metalDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false, filter: false },
 	{ headerName: "Id", field: "id", hide: true },
-	{ headerName: "Metal Wt", field: "wt", filter: "agNumberColumnFilter" },
+	{ headerName: "Weight", field: "wt", filter: "agNumberColumnFilter" },
+	{ headerName: "Loss %", field: "loss", filter: "agNumberColumnFilter" },
+	{ headerName: "Net Price", field: "price", editable: false, filter: "agNumberColumnFilter" },
 	{ headerName: "Amount", field: "amt", editable: false},
 	{
 		headerName: "Delete",
@@ -703,12 +705,12 @@ var factoryGridOptions = Object.create(commonGridOptions);
 var allGridOptions = Object.create(allDetailsGO);
 var dummyData=[{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},];
 
-function getStoneMultiplier(){
+function getStoneMultiplier(loss){
 	let multiplier = 1;
 	switch($("#metaltype").val().toLowerCase()){
-		case "14k": multiplier = 0.59 * 1.1 * PackingListRates.gold; break;
-		case "18k": multiplier = 0.76 * 1.1 * PackingListRates.gold; break;
-		case "10k": multiplier = 0.42 * 1.1 * PackingListRates.gold; break;
+		case "14k": multiplier = 0.59 * (1+(loss*.01)) * PackingListRates.gold; break;
+		case "18k": multiplier = 0.76 * (1+(loss*.01)) * PackingListRates.gold; break;
+		case "10k": multiplier = 0.42 * (1+(loss*.01)) * PackingListRates.gold; break;
 		case "925": multiplier = 1 * PackingListRates.silver; break;
 		case "other": multiplier = 1; break;
 	}
@@ -759,12 +761,13 @@ function InitPLItemDetailsForm() {
 	metalGridOptions.getRowNodeId = d => {
 		return d.sno;
 	};
-	metalGridOptions.api.setRowData([{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},]);
+	metalGridOptions.api.setRowData([{sno: 1, loss: 10},{sno: 2, loss: 10},{sno: 3, loss: 10},{sno: 4, loss: 10},{sno: 5, loss: 10},{sno: 6, loss: 10},{sno: 7, loss: 10},]);
 	
 	metalGridOptions.api.setColumnDefs(metalDetailsColDef);
 	metalGridOptions.onCellValueChanged = function(event){
-		if(event.data.wt && event.column.colId === "wt"){
-			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Math.round(getStoneMultiplier() * event.data.wt));
+		if(event.data.wt && event.data.loss && ( event.column.colId === "wt" ||  event.column.colId === "loss")){
+			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('price', Math.round(getStoneMultiplier(event.data.loss)*100)/100);
+			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Math.round(getStoneMultiplier(event.data.loss) * event.data.wt));
 		}
 	}
 
@@ -853,7 +856,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 	for(var i=0;i<metalGridData.length;i++){
 		if(metalGridData[i].wt){
 			allTotalGridData[0].metal_wt+= Number(metalGridData[i].wt);
-			allTotalGridData[0].metal_amt+= Math.round(Number(metalGridData[i].wt) * getStoneMultiplier());
+			allTotalGridData[0].metal_amt+= Math.round(Number(metalGridData[i].wt) * getStoneMultiplier(metalGridData[i].loss));
 			let labourRt = PackingListRates.labour;
 			let platingRt = 0;
 
@@ -902,7 +905,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 }
 function AddMoreRows(){
 	GetAllGridData();
-	metalGridData.push({sno: metalGridData.length+1},{sno: metalGridData.length+2},{sno: metalGridData.length+3},{sno: metalGridData.length+4},{sno: metalGridData.length+5});
+	metalGridData.push({sno: metalGridData.length+1, loss: 10},{sno: metalGridData.length+2, loss: 10},{sno: metalGridData.length+3, loss: 10},{sno: metalGridData.length+4, loss: 10},{sno: metalGridData.length+5, loss: 10});
 	diamondGridData.push({sno: diamondGridData.length+1},{sno: diamondGridData.length+2},{sno: diamondGridData.length+3},{sno: diamondGridData.length+4},{sno: diamondGridData.length+5});
 	stoneGridData.push({sno: stoneGridData.length+1},{sno: stoneGridData.length+2},{sno: stoneGridData.length+3},{sno: stoneGridData.length+4},{sno: stoneGridData.length+5});
 	otherCostGridData.push({sno: otherCostGridData.length+1},{sno: otherCostGridData.length+2},{sno: otherCostGridData.length+3},{sno: otherCostGridData.length+4},{sno: otherCostGridData.length+5});
@@ -966,7 +969,8 @@ function getSettings() {
 		$("#prongDiaRt").val(data.data[0].prongDiaSettingRt).change();
 		$("#roundStoneRt").val(data.data[0].roundStoneSettingRt).change();
 		$("#baguetteDiaRt").val(data.data[0].baguetteDiaSettingRt).change();
-
+		$("#currentDrawbackRt").val(data.data[0].currentDrawback).change();
+		$("#gstRt").val(data.data[0].gst).change();
 	});
 }
 
@@ -988,7 +992,8 @@ function updateSettings() {
 			prongDiaRt: $("#prongDiaRt").val(),
 			baguetteDiaRt: $("#baguetteDiaRt").val(),
 			roundStoneRt: $("#roundStoneRt").val(),
-
+			currentDrawback: $("#currentDrawbackRt").val(),
+			gst: $("#gstRt").val()
 		},
 	}).done(function (data) {
 		hideLoader();

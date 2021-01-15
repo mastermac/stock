@@ -46,7 +46,7 @@ function ItemOtherDetails(){
     this.amt=0;
 }
 
-function PL_Rates(exchangeRt, silverRt, goldRt, labourRt, goldLabourRt, platingRt, findingRt, micro, prong, baguette, round){
+function PL_Rates(exchangeRt, silverRt, goldRt, labourRt, goldLabourRt, platingRt, findingRt, micro, prong, baguette, round, factoryProfit){
     this.exchange=Number(exchangeRt) || 0;
     this.silver=Number(silverRt) || 0; 
     this.gold=Number(goldRt) || 0;
@@ -58,6 +58,6 @@ function PL_Rates(exchangeRt, silverRt, goldRt, labourRt, goldLabourRt, platingR
     this.prongDiamondSetting = Number(prong) || 0;
     this.baguetteDiamondSetting = Number(baguette) || 0;
     this.roundStoneSetting = Number(round) || 0;
-    this.factoryProfit = 10;
+    this.factoryProfit = factoryProfit || 10;
 
 }
