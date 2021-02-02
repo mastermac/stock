@@ -34,6 +34,26 @@ for($i=0;$i<$NumRows;$i++){
         // $UpdateLogQuery[]="UPDATE producthistory SET action='API-update' where curstock='".$stock[1]."' and itemNo='".$stock[0]."'";
         $UpdateLogQuery[]="UPDATE producthistory as p, (Select id from producthistory where itemNo='".trim($stock[0])."' and curstock='".trim($stock[1])."' Order By timestamp desc limit 1) as i SET p.action='API-update' where p.id=i.id and DATE(p.timestamp)='".date("Y-m-d")."'";
         $syncedItems++;
+
+        $modStock = explode("-",trim($stock[0]));
+        $newStock="";
+        if(count($modStock)>1){
+            if(count($modStock)==2){
+                if(onlyChar($modStock[0]))
+                    $newStock = $modStock[0].$modStock[1];
+                else
+                    $newStock = $modStock[0].".".$modStock[1];
+            }
+            else if(count($modStock)==3){
+                if(onlyChar($modStock[0]))
+                    $newStock = $modStock[0].$modStock[1];
+                $newStock = $newStock.".".$modStock[2];
+            }
+
+            $Query[]="UPDATE product SET curstock='".trim($stock[1])."' WHERE itemNo='".trim($newStock)."' and curstock!='".trim($stock[1])."'";
+            $UpdateLogQuery[]="UPDATE producthistory as p, (Select id from producthistory where itemNo='".trim($newStock)."' and curstock='".trim($stock[1])."' Order By timestamp desc limit 1) as i SET p.action='API-update' where p.id=i.id and DATE(p.timestamp)='".date("Y-m-d")."'";
+            $syncedItems++;
+        }
     }
     else
         array_push($errorStockCodes,$dataRows[$i]);

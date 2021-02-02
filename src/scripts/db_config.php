@@ -25,6 +25,15 @@ function onlyNum($string){
    $string = preg_replace('/[^0-9]/', '', $string);
    return $string;
 }
+function onlyChar($string){
+   $string = str_replace(' ', '', $string);
+   $string = str_replace(',', '', $string);
+   $string = preg_replace('/[^A-Za-z]/', '', $string);
+   if(strlen($string)==0)
+      return true;
+   return false;
+}
+
 function onlyDeciNum($string){
       $string = str_replace(' ', '', $string);
       $string = str_replace(',', '', $string);
