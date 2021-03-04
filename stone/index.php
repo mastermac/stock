@@ -198,6 +198,7 @@ if ($_SESSION['usertype'] >= 1)
 
 	<script src="../metal/jquery-3.6.0.min.js"></script>
 	<script src="../metal/mdb.min.js"></script>
+	<script src="../metal/common.js"></script>
 	<!-- <script src="mdb.js"></script> -->
 	<script src="../src/js/moment.js"></script>
 	<script src="../src/js/daterangepicker.js"></script>

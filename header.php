@@ -10,12 +10,12 @@
 					<a class="nav-link" href="#">SilverCity Dashboard</a>
 				</li>
 			</ul>
-			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0" id="usernameHeader">
 				<li class="nav-item">
-					<a class="nav-link" href="#">Welcome Admin</a>
+					<a class="nav-link" href="#" style="color: white;">Welcome <?php echo strtoupper($_SESSION['username']); ?></a>
 				</li>
 			</ul>
-			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0" id="linksHeader">
 				<li class="nav-item">
 					<a class="nav-link" href="/stock/metal/">Metal</a>
 				</li>
@@ -32,7 +32,7 @@
 					<a class="nav-link" href="/stock/">Stock</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" onclick="alert('Hello')">Logout</a>
+					<a class="nav-link" id="logout" href="#" name="logout">Logout</a>
 				</li>
 				
 				<!-- <li class="nav-item dropdown">

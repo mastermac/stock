@@ -241,6 +241,12 @@ if ($_SESSION['usertype'] >= 1)
     input[button]{
       cursor: pointer;
     }
+    #usernameHeader{
+      margin-left: auto;
+    }
+    #linksHeader{
+      margin-left: auto;
+    }
   </style>
   <link rel="stylesheet" href="src/css/ion.rangeSlider.min.css" />
 </head>
@@ -250,11 +256,13 @@ if ($_SESSION['usertype'] >= 1)
     <img src="src/images/ajax.gif" class="img-responsive" />
   </div>
 
-  <div class="container-fluid" style="zoom: 90%;">
+  <?php include_once('header.php'); ?>
+
+  <div class="container-fluid mt-4" style="zoom: 90%;">
     <div class="row" style="margin:25px 0px;">
       <div class="col-sm-12 text-center">
         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-          <button type="button" class="btn btn-outline-secondary">Welcome <?php echo $_SESSION['username']; ?></button>
+          <!-- <button type="button" class="btn btn-outline-secondary">Welcome <?php echo $_SESSION['username']; ?></button> -->
           <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#create-item">Add Product</button>
           <?php
           if ($_SESSION['usertype'] == 0) {
@@ -285,7 +293,7 @@ if ($_SESSION['usertype'] >= 1)
             </select>
           </div>
           <button type="button" class="btn btn-outline-info" id="undo" name="undo" disabled>Undo</button>
-          <button type="button" class="btn btn-outline-info" id="logout" name="logout">Log Out</button>
+          <!-- <button type="button" class="btn btn-outline-info">Log Out</button> -->
         </div>
       </div>
     </div>

@@ -443,6 +443,7 @@ if ($_SESSION['usertype'] >= 1)
 
 			<script src="jquery-3.6.0.min.js"></script>
 			<script src="mdb.min.js"></script>
+			<script src="common.js"></script>
 			<script src="../src/js/sweetalert2.min.js"></script>
 			<script src="../src/js/moment.js"></script>
 			<script src="../src/js/daterangepicker.js"></script>
