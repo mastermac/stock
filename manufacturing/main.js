@@ -1,4 +1,7 @@
 var SelectedStone;
+toastr.options = {
+	"positionClass": "toast-bottom-right",
+};
 
 var manufacturingInventory = {
 	columnDefs: [
@@ -10,7 +13,8 @@ var manufacturingInventory = {
 			checkboxSelection: true,
 			editable: false,
 			filter: false,
-			pinned: 'left'
+			pinned: 'left',
+			width: 90
 		},
 		{
 			headerName: "Type", field: "type", width: 200,
@@ -20,32 +24,36 @@ var manufacturingInventory = {
 				values: ['14k gold diamond earring', '14k gold diamond ring', '14k gold diamond bracelet', '14k gold diamond pendant', '14k gold diamond necklace', '14k gold diamond charms', '14k gold diamond bangle', '18k gold diamond earring', '18k gold diamond ring', '18k gold diamond bracelet', '18k gold diamond pendant', '18k gold diamond necklace', '18k gold diamond bangle', '18k gold diamond charms', '925 silver diamond earring', '925 silver diamond bracelet', '925 silver diamond bangle', '925 silver diamond ring', '925 silver diamond pendant', '925 silver diamond necklace', '925 silver diamond charms'],
 			},
 		},
+		{ headerName: "Comments", field: "comments", width: 200, pinned: 'left' },
 		{
 			headerName: "M Code",
 			field: "mewarCode",
 			pinned: 'left',
-			filter: "agNumberColumnFilter"
+			filter: "agNumberColumnFilter",
+			hide: true
 		},
-		{ headerName: "V Code", field: "vendorCode", width: 130, pinned: 'left' },
-		{ headerName: "Lot#", field: "lotNo", width: 110 },
-		{ headerName: "Stone", field: "stoneName", width: 160 },
-		{ headerName: "Qty", field: "qty", filter: "agNumberColumnFilter" },
-		{ headerName: "Wt (grm)", field: "wt_in_grms", filter: "agNumberColumnFilter" },
-		{ headerName: "Wt (cts)", field: "wt_in_cts", filter: "agNumberColumnFilter", editable: false },
-		{ headerName: "Gold (grm)", field: "gold_in_grms", filter: "agNumberColumnFilter" },
-		{ headerName: "Gold (cts)", field: "gold_in_cts", filter: "agNumberColumnFilter", editable: false },
-		{ headerName: "G. Wt (grm)", field: "grossWt", filter: "agNumberColumnFilter" },
-		{ headerName: "Dia/Stone Pcs", field: "dia_stone_pcs", filter: "agNumberColumnFilter", width: 150 },
+		{ headerName: "Code", field: "vendorCode", width: 110, pinned: 'left' },
+		{ headerName: "D/S?", field: "d_or_s", width: 90 },
+		{ headerName: "Lot#", field: "lotNo", width: 90 },
+		{ headerName: "Stone", field: "stoneName", editable:false, width: 170 },
+		{ headerName: "Qty", field: "qty", filter: "agNumberColumnFilter", width: 85 },
+		{ headerName: "Dia/St Wt", field: "wt_in_grms", filter: "agNumberColumnFilter", width: 120 },
+		{ headerName: "Wt (ct)", field: "wt_in_cts", filter: "agNumberColumnFilter", editable: false },
+		{ headerName: "Oth Metal Wt", field: "other_metal_grm", filter: "agNumberColumnFilter", width: 150 },
+		{ headerName: "Gold Wt", field: "gold_in_grms", filter: "agNumberColumnFilter", editable: false },
+		{ headerName: "Gold (ct)", field: "gold_in_cts", filter: "agNumberColumnFilter", editable: false, hide: true, width: 130 },
+		{ headerName: "Gross Wt", field: "grossWt", filter: "agNumberColumnFilter", width: 120 },
+		{ headerName: "Dia/St Pcs", field: "dia_stone_pcs", filter: "agNumberColumnFilter", width: 120 },
 		{ headerName: "Img", field: "img", hide: true },
-		{ headerName: "Size", field: "size" },
-		{ headerName: "Comments", field: "comments", width: 300 },
-		{ headerName: "Last Updated", editable: false, field: "timestamp", width: 160, filter: "agDateColumnFilter" },
+		{ headerName: "Size", field: "size", width: 90 },
+		{ headerName: "Last Updated", editable: false, field: "timestamp", width: 150, filter: "agDateColumnFilter" },
 		{
 			headerName: "PL #",
 			field: "invoice_id",
 			editable: false,
 			resizable: false,
-			pinned: 'right'
+			pinned: 'right',
+			width: 90
 		},
 		{
 			headerName: "Delete",
@@ -66,17 +74,17 @@ var manufacturingInventory = {
 						},
 					}).done(function (data) {
 						hideLoader();
-						getStoneLists();
+						getManufacturingList();
 					});
 				},
 			},
 			resizable: false,
-			width: 100,
+			width: 70,
 			pinned: 'right'
 		},
 	],
 	defaultColDef: {
-		width: 130,
+		width: 110,
 		wrapText: true,
 		autoHeight: true,
 		resizable: true,
@@ -108,9 +116,6 @@ var manufacturingInventory = {
 	},
 };
 
-function Init(){
-	
-}
 
 function exportData() {
 	let params = {
@@ -130,50 +135,52 @@ function exportData() {
 
 function moveToInvoice() {
 	let selectedRows = manufacturingInventory.api.getSelectedNodes();
-	if (selectedRows.length <= 0) return;
+	if (selectedRows.length <= 0){
+		toastr['warning']("Please select some items!");
+		return;
+	} 
 	if (changedRows.length > 0) {
 		Swal.fire('Please Save your changes before initiating this request!');
 		return;
 	}
-	let temp=false;
+	let temp = false;
 	selectedRows.forEach(row => {
-		if(row.data.invoice_id){
-			temp=true;
+		if (row.data.invoice_id) {
+			temp = true;
 			return;
 		}
 	})
-	if(temp){
+	if (temp) {
 		Swal.fire('Please unselect already moved items before initiating this request!');
 		return;
 	}
-	
+
 	$("#invoiceModal").modal('show');
 }
-
 $("#invoiceModal").on("show.bs.modal", getPackingLists);
 
-
-function AddMoreRows(){
+function AddMoreRows() {
 	let data = [];
-	manufacturingInventory.api.forEachNode(function(rowNode, index) {
-		data.push(rowNode.data);	
+	manufacturingInventory.api.forEachNode(function (rowNode, index) {
+		data.push(rowNode.data);
 	});
 	data.push({ sno: data.length + 1 }, { sno: data.length + 2 }, { sno: data.length + 3 }, { sno: data.length + 4 }, { sno: data.length + 5 }, { sno: data.length + 6 }, { sno: data.length + 7 }, { sno: data.length + 8 }, { sno: data.length + 9 }, { sno: data.length + 10 });
 	manufacturingInventory.api.setRowData(data);
 
 }
-
+var monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function getPackingLists() {
-	$("#plNameParent").css("display","none");
-	$("#plDateParent").css("display","none");
+	$("#plNameParent").css("display", "none");
+	$("#plDateParent").css("display", "none");
 	window.start = moment().format("YYYY-MM-DD");
 	$("#plDate").daterangepicker(
 		{
 			singleDatePicker: true,
-			opens: "center",
+			opens: "center"
 		},
 		function (start, end, label) {
-			window.start = start.format("YYYY-MM-DD");
+			let dateElements = (start._d + "").split(" ");
+			window.start = dateElements[3]+"-"+(monthsShort.indexOf(dateElements[1])+1)+"-"+dateElements[2];
 		}
 	);
 	showLoader();
@@ -187,56 +194,90 @@ function getPackingLists() {
 		hideLoader();
 		document.getElementById("invoiceNames").options.length = 0;
 		data.data.forEach(pl => {
-			let optionText = pl.name; 
-            let optionValue = pl.id; 
-            $('#invoiceNames').append(`<option value="${optionValue}">${optionText}</option>`); 
+			let optionText = pl.name;
+			let optionValue = pl.id;
+			$('#invoiceNames').append(`<option value="${optionValue}">${optionText}</option>`);
 		});
-		$('#invoiceNames').append(`<option value="other">Other</option>`); 
+		// $('#invoiceNames').append(`<option value="other">Other</option>`);
 		console.log(data.data);
 	});
 }
 function invoiceChanged(sel) {
-	if(sel.value=="other"){
-		$("#plNameParent").css("display","block");
-		$("#plDateParent").css("display","block");
+	if (sel.value == "other") {
+		$("#plNameParent").css("display", "block");
+		$("#plDateParent").css("display", "block");
 	}
-	else{
-		$("#plNameParent").css("display","none");
-		$("#plDateParent").css("display","none");
+	else {
+		$("#plNameParent").css("display", "none");
+		$("#plDateParent").css("display", "none");
 	}
 }
 function moveToPackingList() {
 	showLoader();
-	var dt=manufacturingInventory.api.getSelectedNodes();
+	var dt = manufacturingInventory.api.getSelectedNodes();
 	let manuInventory = [];
 	dt.forEach(row => {
-		manuInventory.push(row.data);
-	})
+		let firstOccurance = getFirstOccuranceOfItem(row.data.vendorCode);
+		if (firstOccurance.sno == row.data.sno) {
+			manuInventory.push(row.data);
+			manuInventory[manuInventory.length - 1].stones = [];
+			manuInventory[manuInventory.length - 1].diamonds = [];
+			let customData = {"lotNo": row.data.lotNo, "stoneName": row.data.stoneName, "dia_stone_pcs": row.data.dia_stone_pcs, "wt_in_cts": row.data.wt_in_cts};
+			if (row.data.d_or_s.toLowerCase() == "s")
+				manuInventory[manuInventory.length - 1].stones.push(customData);
+			else if (row.data.d_or_s.toLowerCase() == "d")
+				manuInventory[manuInventory.length - 1].diamonds.push(customData);			
+		}
+		else {
+			for (let i = 0; i < manuInventory.length; i++) {
+				if (manuInventory[i].vendorCode == row.data.vendorCode) {
+					let customData = {"lotNo": row.data.lotNo, "stoneName": row.data.stoneName, "dia_stone_pcs": row.data.dia_stone_pcs, "wt_in_cts": row.data.wt_in_cts};
+					if (row.data.d_or_s.toLowerCase() == "s")
+						manuInventory[i].stones.push(customData);
+					else if (row.data.d_or_s.toLowerCase() == "d")
+						manuInventory[i].diamonds.push(customData);
+					break;
+				}
+			}
+		}
+	});
+	console.log(manuInventory);
+	let packingName = $("#invoiceNames").val();
+	if(!packingName)
+		packingName = $("#plName").val();
 	$.ajax({
 		dataType: "json",
 		url: url + "../src/scripts/manufacturing.php",
 		data: {
 			func: "moveToInvoice",
-			packing: $("#invoiceNames").val(),
+			packing: packingName,
 			data: manuInventory
 		},
 	}).done(function (data) {
 		hideLoader();
-		getStoneLists();
+		getManufacturingList();
 		toastr['success'](data.result);
 		$("#invoiceModal").modal("hide");
 	});
 }
 
-
 function uploadData() {
 	let manuInventory = [];
 	manufacturingInventory.api.forEachNode(function (rowNode, index) {
 		if (changedRows.indexOf(rowNode.data.sno) >= 0) {
+			var firstOccurance = getFirstOccuranceOfItem(rowNode.data.vendorCode);
+			if (firstOccurance.sno != rowNode.data.sno) {
+				rowNode.data.type = firstOccurance.type;
+				rowNode.data.grossWt = 0;
+			}
 			if (rowNode.data.id)
 				manuInventory.push(rowNode.data);
-			else if (!rowNode.data.id && rowNode.data.type && rowNode.data.mewarCode && rowNode.data.vendorCode)
+			else if (!rowNode.data.id && rowNode.data.vendorCode) {
+				if (!rowNode.data.type)
+					rowNode.data.type = "";
 				manuInventory.push(rowNode.data);
+
+			}
 		}
 	});
 	console.log(manuInventory);
@@ -253,7 +294,7 @@ function uploadData() {
 		hideLoader();
 		$("#stReset").click();
 		SelectedStone = null;
-		getStoneLists();
+		getManufacturingList();
 		$("#stoneFormModal").modal("hide");
 	});
 }
@@ -266,7 +307,6 @@ function onQuickFilterChanged() {
 	manufacturingInventory.api.setQuickFilter(document.getElementById("quickFilter").value);
 }
 var newData = new Array();
-// setup the grid after the page has finished loading
 
 var changedRows = [];
 
@@ -274,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	var gridDiv = document.querySelector("#manufacturingInventory");
 	$("#manufacturingInventory").css("height", window.innerHeight - 170 + "px");
 	new agGrid.Grid(gridDiv, manufacturingInventory);
-	getStoneLists();
+	getManufacturingList();
 	manufacturingInventory.getRowNodeId = d => {
 		return d.sno; // return the property you want set as the id.
 	};
@@ -285,26 +325,76 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (event.data.wt_in_grms && event.column.colId === "wt_in_grms") {
 			console.log(manufacturingInventory.api.getRowNode(event.data.sno));
 			manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('wt_in_cts', Math.round(Number(event.data.wt_in_grms) * 5 * 1000) / 1000);
+
+			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
+			var goldWt = Math.round(Number(firstOccurance.grossWt) - Number(getAllWeightInfoForItem(firstOccurance.vendorCode)));
+			manufacturingInventory.api.getRowNode(firstOccurance.sno).setDataValue('gold_in_grms', goldWt);
 		}
-		if (event.data.gold_in_grms && event.column.colId === "gold_in_grms") {
-			manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('gold_in_cts', Math.round(Number(event.data.gold_in_grms) * 5 * 1000) / 1000);
+		if (event.data.other_metal_grm && event.column.colId === "other_metal_grm") {
+			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
+			var goldWt = Math.round(Number(firstOccurance.grossWt) - Number(getAllWeightInfoForItem(firstOccurance.vendorCode)));
+			manufacturingInventory.api.getRowNode(firstOccurance.sno).setDataValue('gold_in_grms', goldWt);
+		}
+		if (event.data.lotNo && event.column.colId === "lotNo") {
+			setStoneDetails(event.data.lotNo, event.data.sno);
 		}
 
-		// if(event.colDef.field=="lot_id"){
-		// 	currentStoneSno = event.data.sno;
-		// 	currentStoneLotId = event.data.lot_id;
-		// 	currentStoneType = "stone";
-		// 	getStoneDetails();
-		// }
+		if (event.data.grossWt && (event.column.colId === "grossWt" || event.column.colId === "wt_in_grms" || event.column.colId === "other_metal_grm")) {
+			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
+			if (event.data.sno == firstOccurance.sno) {
+				var goldWt = Math.round(Number(event.data.grossWt) - Number(event.data.wt_in_grms) - Number(event.data.other_metal_grm) - getWeightInfoForItem(event.data.vendorCode, event.data.sno))
+				manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('gold_in_grms', goldWt);
+			}
+		}
 	}
-	// agGrid
-	// 	.simpleHttpRequest({
-	// 		url: "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json",
-	// 	})
-	// 	.then(function (data) {
-	// 		manufacturingInventory.api.setRowData(data);
-	// 	});
 });
+
+function setStoneDetails(lotid, sno) {
+	showLoader();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_r.php",
+		data: {
+			func: "getStoneById",
+			lotId: lotid
+		},
+	}).done(function (data) {
+		hideLoader();
+		if (data.data)
+			manufacturingInventory.api.getRowNode(sno).setDataValue('stoneName', data.data.name);
+		else
+			toastr['error']("No Record found with Lot Id");
+	});
+}
+
+
+function getFirstOccuranceOfItem(vendorCode) {
+	var data = 0;
+	manufacturingInventory.api.forEachNode(function (rowNode, index) {
+		if (rowNode.data.vendorCode == vendorCode && data == 0)
+			data = rowNode.data;
+	});
+	return data;
+}
+
+function getWeightInfoForItem(vendorCode, sno) {
+	var wt = 0;
+	manufacturingInventory.api.forEachNode(function (rowNode, index) {
+		if (rowNode.data.sno != sno && rowNode.data.vendorCode == vendorCode)
+			wt += Number(rowNode.data.wt_in_grms) + Number(rowNode.data.other_metal_grm);
+	});
+	return wt;
+}
+function getAllWeightInfoForItem(vendorCode) {
+	var wt = 0;
+	manufacturingInventory.api.forEachNode(function (rowNode, index) {
+		if (rowNode.data.vendorCode == vendorCode)
+			wt += Number(rowNode.data.wt_in_grms) + Number(rowNode.data.other_metal_grm);
+	});
+	return wt;
+}
+
+
 function onColumnResized(params) {
 	params.api.resetRowHeights();
 }
@@ -312,47 +402,7 @@ function onColumnResized(params) {
 function onColumnVisible(params) {
 	params.api.resetRowHeights();
 }
-//#region Packing Lists
 
-$("#stoneFormModal").on("show.bs.modal", initializeStoneForm);
-$("#stoneFormModal").on("hide.bs.modal", destroyStoneForm);
-function initializeStoneForm() {
-	$("#stoneForm").trigger("reset");
-	window.start = moment().format("YYYY-MM-DD");
-	if (SelectedStone) {
-		$("#stoneForm label").removeClass("active");
-		$("#stoneFormHeader").html("Edit Stone");
-		$("#stoneForm label").removeClass("active");
-		$('#lot_no').attr('readonly', true);
-		$('#lot_no').addClass('text-muted');
-		$("#lot_no").val(SelectedStone.lot_no).change();
-		$("#lot_no").css('disabled', 'disabled');
-		$("#name").val(SelectedStone.name).change();
-		$("#size").val(SelectedStone.size).change();
-		$("#shape").val(SelectedStone.shape).change();
-		$("#seller").val(SelectedStone.seller).change();
-		$("#purchased_qty").val(SelectedStone.purchased_qty).change();
-		$("#purchased_wt").val(SelectedStone.purchased_wt).change();
-		$("#current_qty").val(SelectedStone.current_qty).change();
-		$("#current_wt").val(SelectedStone.current_wt).change();
-		$("#unit").val(SelectedStone.unit).change();
-		$("#box").val(SelectedStone.box).change();
-		$("#cost").val(SelectedStone.cost).change();
-		$("#less").val(SelectedStone.less).change();
-		$("#rate").val(SelectedStone.rate).change();
-		$("#description").val(SelectedStone.description).change();
-
-		$("#stCreate").html("Update");
-	}
-	else {
-		$('#lot_no').attr('readonly', false);
-		$('#lot_no').removeClass('text-muted');
-		$("#stoneFormHeader").html("Add New Stone");
-	}
-}
-function destroyStoneForm() {
-	SelectedStone = null;
-}
 function getJSONFormData($form) {
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
@@ -364,29 +414,7 @@ function getJSONFormData($form) {
 	return indexed_array;
 }
 
-$("#stoneForm").on('submit', (function (e) {
-	e.preventDefault();
-	var formData = getJSONFormData($('#stoneForm'));
-
-	formData['func'] = "addStone";
-	formData['date'] = window.start;
-
-	showLoader();
-	$.ajax({
-		dataType: "json",
-		url: url + "../src/scripts/manufacturing.php",
-		data: formData,
-	}).done(function (data) {
-		hideLoader();
-		$("#stReset").click();
-		SelectedStone = null;
-		getStoneLists();
-		$("#stoneFormModal").modal("hide");
-	});
-}))
-
-
-function getStoneLists() {
+function getManufacturingList() {
 	showLoader();
 	$.ajax({
 		dataType: "json",
@@ -396,741 +424,22 @@ function getStoneLists() {
 		},
 	}).done(function (data) {
 		hideLoader();
-		BindPackingLists(data.data);
+		BindListData(data.data);
 	});
 }
-function BindPackingLists(data) {
+function BindListData(data) {
 	data.push({ sno: data.length + 1 }, { sno: data.length + 2 }, { sno: data.length + 3 }, { sno: data.length + 4 }, { sno: data.length + 5 }, { sno: data.length + 6 }, { sno: data.length + 7 }, { sno: data.length + 8 }, { sno: data.length + 9 }, { sno: data.length + 10 });
 	manufacturingInventory.api.setRowData(data);
 }
 
-//#endregion
-
-//#region PL-Items
-
-var gridOptions_PL_Items = {
-	columnDefs: [
-		{
-			headerName: "S.No",
-			field: "sno",
-			headerCheckboxSelection: true,
-			headerCheckboxSelectionFilteredOnly: true,
-			checkboxSelection: true,
-			editable: false,
-		},
-		{ headerName: "Item #", field: "itemcode" },
-		{ headerName: "Mewar #", field: "mewarcode" },
-		{ headerName: "Qty", field: "qty", width: 15, filter: "agNumberColumnFilter" },
-		{ headerName: "Ring Size", field: "ringsize" },
-		{ headerName: "M Type", field: "metaltype" },
-		{ headerName: "M Color", field: "metalcolor" },
-		{ headerName: "Description", field: "description", width: 150 },
-		{
-			headerName: "Edit",
-			field: "id",
-			filter: false,
-			sortable: false,
-			cellRenderer: "editButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					currentItem = field;
-					$("#itemDetailModal").modal("show");
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-		{
-			headerName: "Delete",
-			field: "id",
-			filter: false,
-			sortable: false,
-			cellRenderer: "delButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					showLoader();
-					$.ajax({
-						dataType: "json",
-						url: url + "../src/scripts/packingList_d.php",
-						data: {
-							func: "deletePLItem",
-							id: field,
-						},
-					}).done(function (data) {
-						hideLoader();
-						getPLItems(currentPL);
-					});
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-	],
-	defaultColDef: {
-		flex: 1,
-		width: 40,
-		resizable: true,
-		editable: true,
-		filter: true,
-		sortable: true,
-		type: "leftAligned",
-		enableCellChangeFlash: true,
-	},
-	animateRows: true,
-	suppressRowClickSelection: true,
-	rowSelection: "multiple",
-	undoRedoCellEditing: true,
-	enableFillHandle: true,
-	undoRedoCellEditingLimit: 10,
-	stopEditingWhenGridLosesFocus: true,
-	components: {
-		editButton: EditBtnCellRenderer,
-		delButton: DelBtnCellRenderer,
-	},
-	onCellValueChanged: function (event) {
-		newData.push(event.data);
-		manufacturingInventory.api.flashCells({ rowNodes: [event.rowIndex] });
-	},
-};
-
-$("#packingListItemsModal").on("show.bs.modal", () => {
-	InitPLItemsForm();
-
-	InitPLItemDetailsForm();
-});
-$("#packingListItemsModal").on("hidden.bs.modal", () => {
-	gridOptions_PL_Items.api.destroy();
-
-	metalGridOptions.api.destroy();
-	diamondGridOptions.api.destroy();
-	stoneGridOptions.api.destroy();
-	otherCostGridOptions.api.destroy();
-	allGridOptions.api.destroy();
-});
-
-
-
-function InitPLItemsForm() {
-	$("#PL-Items").trigger("reset");
-	$("#PL-Items label").removeClass("active");
-	var gridDiv = document.querySelector("#PL_Items_Grid");
-	new agGrid.Grid(gridDiv, gridOptions_PL_Items);
-	getPLItems(currentPL);
-	gridOptions_PL_Items.getRowNodeId = d => {
-		return d.id; // return the property you want set as the id.
-	};
-}
-
-function getPLItems(packingListId) {
-	showLoader();
-	$.ajax({
-		dataType: "json",
-		url: url + "../src/scripts/packingList_r.php",
-		data: {
-			func: "getPackingListItems",
-			id: packingListId,
-		},
-	}).done(function (data) {
-		hideLoader();
-		BindPL_Items(data.data);
-	});
-}
-function createPLItem() {
-
-	var item = new Item();
-	console.log(item);
-
-	showLoader();
-	$.ajax({
-		dataType: "json",
-		url: url + "../src/scripts/packingList_c.php",
-		data: {
-			func: "createPLItem",
-			pid: currentPL,
-			itemcode: $("#itemCode").val(),
-			mewarcode: $("#itemDesignNo").val(),
-			qty: $("#itemQty").val(),
-			ringsize: $("#itemSize").val(),
-			metaltype: $("#itemMetalType").val(),
-			metalcolor: $("#itemMetalColor").val(),
-			description: $("#itemDescription").val(),
-		},
-	}).done(function (data) {
-		hideLoader();
-		getPLItems(currentPL);
-	});
-}
-function BindPL_Items(data) {
-	gridOptions_PL_Items.api.setRowData(data);
-	gridOptions_PL_Items.api.sizeColumnsToFit();
-}
-
-//#endregion
-
-//#region Edit Item Details
-var metalDetailsColDef = [
-	{ headerName: "S.No", field: "metal_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false, filter: false },
-	{ headerName: "Metal Wt", field: "metal_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "metal_amt", editable: false },
-	{
-		headerName: "Delete",
-		field: "metal_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				metalGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.metal_sno = node.metal_sno - 1;
-						data.push(node);
-					}
-				});
-				metalGridOptions.api.setRowData(data);
-				metalGridOptions.getRowNodeId = d => {
-					return d.metal_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var diamondDetailsColDef = [
-	{ headerName: "S.No", field: "dia_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Lot No", field: "dia_lot_id", filter: "agNumberColumnFilter" },
-	{ headerName: "Shape/Color/Cut", field: "dia_shape", editable: false },
-	{ headerName: "Size", field: "dia_size", editable: false },
-	{ headerName: "# Pcs", field: "dia_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Ct Wt", field: "dia_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Rate/ct", field: "dia_rate", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "dia_amt", editable: false },
-	{
-		headerName: "Delete",
-		field: "dia_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				diamondGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.dia_sno = node.dia_sno - 1;
-						data.push(node);
-					}
-				});
-				diamondGridOptions.api.setRowData(data);
-				diamondGridOptions.getRowNodeId = d => {
-					return d.dia_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var stoneDetailsColDef = [
-	{ headerName: "S.No", field: "stone_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Lot No", field: "stone_lot_id", filter: "agNumberColumnFilter" },
-	{ headerName: "Name", field: "stone_name", editable: false },
-	{ headerName: "Shape", field: "stone_shape", editable: false },
-	{ headerName: "Size", field: "stone_size", editable: false },
-	{ headerName: "Pcs", field: "stone_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Ctw.", field: "stone_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Rs/ct", field: "stone_rate", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "stone_amt", filter: "agNumberColumnFilter", editable: false },
-	{
-		headerName: "Delete",
-		field: "stone_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				stoneGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.stone_sno = node.stone_sno - 1;
-						data.push(node);
-					}
-				});
-				stoneGridOptions.api.setRowData(data);
-				stoneGridOptions.getRowNodeId = d => {
-					return d.stone_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var otherCostsDetailsColDef = [
-	{ headerName: "S.No", field: "other_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Description", field: "other_desc", width: 200 },
-	{ headerName: "Amount", field: "other_amt", filter: "agNumberColumnFilter" },
-	{
-		headerName: "Delete",
-		field: "other_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				otherCostGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.other_sno = node.other_sno - 1;
-						data.push(node);
-					}
-				});
-				otherCostGridOptions.api.setRowData(data);
-				otherCostGridOptions.getRowNodeId = d => {
-					return d.other_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var LabourDetailsColDef = [
-	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "CPF", field: "cpf", filter: "agNumberColumnFilter", editable: false },
-	{ headerName: "Setting", field: "setting", filter: "agNumberColumnFilter", editable: false },
-	{ headerName: "Plating", field: "plating", filter: "agNumberColumnFilter", editable: false },
-	{ headerName: "Findings Cost", field: "findings", filter: "agNumberColumnFilter", editable: false },
-	{ headerName: "Mount Total", field: "total", filter: "agNumberColumnFilter", editable: false },
-];
-
-var FactoryDetailsColDef = [
-	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Per Piece Cost", field: "ppc", filter: "agNumberColumnFilter", editable: false },
-	{ headerName: "Selling Price", field: "sp", filter: "agNumberColumnFilter", editable: false },
-];
-
-var allDetailsColDef = [
-	{ headerName: "G. Wt", field: "gross_wt", width: 75 },
-	{
-		headerName: "Metal Details",
-		children: [
-			{ headerName: "Metal Wt", field: "metal_wt" },
-			{ headerName: "Amt", field: "metal_amt" },
-		],
-	},
-	{
-		headerName: "Diamond Details",
-		children: [
-			{ headerName: "# Pcs", field: "dia_qty", width: 75 },
-			{ headerName: "Ct Wt", field: "dia_wt", width: 75 },
-			{ headerName: "Amt", field: "dia_amt" },
-		],
-	},
-	{
-		headerName: "Stone Details",
-		children: [
-			{ headerName: "Pcs", field: "stone_qty", width: 75 },
-			{ headerName: "Ctw.", field: "stone_wt", width: 75 },
-			{ headerName: "Amt", field: "stone_amt" }
-		],
-	},
-	{
-		headerName: "Oth Costs",
-		children: [
-			{ headerName: "Total Amt", field: "other_amt" },
-		],
-	},
-	{
-		headerName: "Labour Details",
-		children: [
-			{ headerName: "CPF", field: "labour_cpf" },
-			{ headerName: "Setting", field: "labour_setting" },
-			{ headerName: "Plating", field: "labour_plating" },
-			{ headerName: "Findings Cost", field: "labour_findings", width: 130 },
-			{ headerName: "Total", field: "labour_total" },
-		],
-	},
-	{
-		headerName: "Factory Details",
-		children: [
-			{ headerName: "PPC (in Rs)", field: "fac_ppc" },
-			{ headerName: "SP (in $)", field: "fac_sp" },
-		],
-	},
-];
-var allDetailsGO = {
-	defaultColDef: {
-		width: 100,
-		resizable: true,
-		editable: false,
-		filter: false,
-		sortable: false,
-		type: "leftAligned",
-		enableCellChangeFlash: true,
-	},
-	animateRows: true,
-	suppressRowClickSelection: true,
-	enableFillHandle: true,
-	stopEditingWhenGridLosesFocus: true,
-}
-var commonGridOptions = {
-	defaultColDef: {
-		flex: 1,
-
-		width: 40,
-		resizable: true,
-		editable: true,
-		filter: true,
-		sortable: true,
-		type: "leftAligned",
-		enableCellChangeFlash: true,
-	},
-	immutableData: false,
-	animateRows: true,
-	suppressRowClickSelection: true,
-	rowSelection: "multiple",
-	undoRedoCellEditing: true,
-	enableFillHandle: true,
-	undoRedoCellEditingLimit: 10,
-	stopEditingWhenGridLosesFocus: true,
-	components: {
-		editButton: EditBtnCellRenderer,
-		delButton: DelBtnCellRenderer,
-	},
-	onCellValueChanged: function (event) {
-		newData.push(event.data);
-	},
-};
-
-$("#itemDetailModal").on("show.bs.modal", InitPLItemDetailsForm);
-$("#itemDetailModal").on("hide.bs.modal", () => {
-	metalGridOptions.api.destroy();
-	diamondGridOptions.api.destroy();
-	stoneGridOptions.api.destroy();
-	otherCostGridOptions.api.destroy();
-	allGridOptions.api.destroy();
-	// labourGridOptions.api.destroy();
-	// factoryGridOptions.api.destroy();
-});
-
-var metalGridOptions = Object.create(commonGridOptions);
-var diamondGridOptions = Object.create(commonGridOptions);
-var stoneGridOptions = Object.create(commonGridOptions);
-var otherCostGridOptions = Object.create(commonGridOptions);
-var labourGridOptions = Object.create(commonGridOptions);
-var factoryGridOptions = Object.create(commonGridOptions);
-var allGridOptions = Object.create(allDetailsGO);
-var dummyData = [{ sno: 1 }, { sno: 2 }, { sno: 3 }, { sno: 4 }, { sno: 5 }, { sno: 6 }, { sno: 7 },];
-function InitPLItemDetailsForm() {
-	$("#PL-Items").trigger("reset");
-	$("#PL-Items label").removeClass("active");
-
-	new agGrid.Grid(document.querySelector("#MetalDetailsGrid"), metalGridOptions);
-	metalGridOptions.getRowNodeId = d => {
-		return d.metal_sno;
-	};
-	metalGridOptions.api.setRowData([{ metal_sno: 1 }, { metal_sno: 2 }, { metal_sno: 3 }, { metal_sno: 4 }, { metal_sno: 5 }, { metal_sno: 6 }, { metal_sno: 7 },]);
-
-	metalGridOptions.api.setColumnDefs(metalDetailsColDef);
-	metalGridOptions.onCellValueChanged = function (event) {
-		if (event.data.metal_wt && event.column.colId === "metal_wt") {
-			metalGridOptions.api.getRowNode(event.data.metal_sno).setDataValue('metal_amt', PackingListRates.silver * event.data.metal_wt);
-		}
-	}
-
-	new agGrid.Grid(document.querySelector("#DiamondDetailsGrid"), diamondGridOptions);
-	diamondGridOptions.getRowNodeId = d => {
-		return d.dia_sno;
-	};
-	diamondGridOptions.api.setRowData([{ dia_sno: 1 }, { dia_sno: 2 }, { dia_sno: 3 }, { dia_sno: 4 }, { dia_sno: 5 }, { dia_sno: 6 }, { dia_sno: 7 },]);
-	diamondGridOptions.api.setColumnDefs(diamondDetailsColDef);
-	diamondGridOptions.onCellValueChanged = function (event) {
-		if (event.data.dia_wt && event.data.dia_rate && (event.column.colId === "dia_wt" || event.column.colId === "dia_rate")) {
-			diamondGridOptions.api.getRowNode(event.data.dia_sno).setDataValue('dia_amt', event.data.dia_wt * event.data.dia_rate);
-		}
-	}
-
-	new agGrid.Grid(document.querySelector("#StoneDetailsGrid"), stoneGridOptions);
-	stoneGridOptions.getRowNodeId = d => {
-		return d.stone_sno;
-	};
-	stoneGridOptions.api.setRowData([{ stone_sno: 1 }, { stone_sno: 2 }, { stone_sno: 3 }, { stone_sno: 4 }, { stone_sno: 5 }, { stone_sno: 6 }, { stone_sno: 7 },]);
-	stoneGridOptions.api.setColumnDefs(stoneDetailsColDef);
-	stoneGridOptions.onCellValueChanged = function (event) {
-		if (event.data.stone_wt && event.data.stone_rate && (event.column.colId === "stone_wt" || event.column.colId === "stone_rate")) {
-			stoneGridOptions.api.getRowNode(event.data.stone_sno).setDataValue('stone_amt', event.data.stone_wt * event.data.stone_rate);
-		}
-	}
-
-	new agGrid.Grid(document.querySelector("#OtherCostsDetailsGrid"), otherCostGridOptions);
-	otherCostGridOptions.getRowNodeId = d => {
-		return d.other_sno;
-	};
-	otherCostGridOptions.api.setRowData([{ other_sno: 1 }, { other_sno: 2 }, { other_sno: 3 }, { other_sno: 4 }, { other_sno: 5 }, { other_sno: 6 }, { other_sno: 7 },]);
-	otherCostGridOptions.api.setColumnDefs(otherCostsDetailsColDef);
-
-	new agGrid.Grid(document.querySelector("#AllDetailsGrid"), allGridOptions);
-	allGridOptions.getRowNodeId = d => {
-		return d.metal_sno;
-	};
-	allGridOptions.api.setRowData([{ metal_sno: 1 }, { metal_sno: 2 }, { metal_sno: 3 }, { metal_sno: 4 }, { metal_sno: 5 }, { metal_sno: 6 }, { metal_sno: 7 },]);
-	allGridOptions.api.setColumnDefs(allDetailsColDef);
-
-}
-
-var metalGridData = [];
-var diamondGridData = [];
-var stoneGridData = [];
-var otherCostGridData = [];
-var allTotalGridData = [];
-
-function AllDetailsTabClicked() {
-	GetAllGridData();
-	allTotalGridData = [
-		{
-			gross_wt: 0,
-			metal_wt: 0,
-			metal_amt: 0,
-			dia_qty: 0,
-			dia_wt: 0,
-			dia_amt: 0,
-			stone_qty: 0,
-			stone_wt: 0,
-			stone_amt: 0,
-			other_amt: 0,
-			labour_cpf: 0,
-			labour_setting: 0,
-			labour_plating: 0,
-			labour_findings: 0,
-			labour_total: 0,
-			fac_ppc: 0,
-			fac_sp: 0
-		}
-	];
-	for (var i = 0; i < metalGridData.length; i++) {
-		if (metalGridData[i].metal_wt) {
-			allTotalGridData[0].metal_wt += Number(metalGridData[i].metal_wt);
-			allTotalGridData[0].metal_amt += (Number(metalGridData[i].metal_wt) * PackingListRates.silver);
-			allTotalGridData[0].labour_cpf += (Number(metalGridData[i].metal_wt) * PackingListRates.labour);
-			allTotalGridData[0].labour_plating += (Number(metalGridData[i].metal_wt) * PackingListRates.plating);
-		}
-	}
-
-	for (var i = 0; i < diamondGridData.length; i++) {
-		if (diamondGridData[i].dia_lot_id) {
-			allTotalGridData[0].dia_qty += Number(diamondGridData[i].dia_qty);
-			allTotalGridData[0].dia_wt += Number(diamondGridData[i].dia_wt);
-			allTotalGridData[0].dia_amt += (Number(diamondGridData[i].dia_wt) * Number(diamondGridData[i].dia_qty));
-			allTotalGridData[0].labour_setting += Number(diamondGridData[i].dia_qty) * 10;
-		}
-	}
-	for (var i = 0; i < stoneGridData.length; i++) {
-		if (stoneGridData[i].stone_lot_id) {
-			allTotalGridData[0].stone_qty += Number(stoneGridData[i].stone_qty);
-			allTotalGridData[0].stone_wt += Number(stoneGridData[i].stone_wt);
-			allTotalGridData[0].stone_amt += (Number(stoneGridData[i].stone_wt) * Number(stoneGridData[i].stone_qty));
-			allTotalGridData[0].labour_setting += Number(stoneGridData[i].stone_qty) * 6;
-		}
-	}
-	for (var i = 0; i < otherCostGridData.length; i++) {
-		if (otherCostGridData[i].other_amt && !otherCostGridData[i].other_desc.toLowerCase().includes("finding"))
-			allTotalGridData[0].other_amt += Number(otherCostGridData[i].other_amt);
-		else if (otherCostGridData[i].other_amt && otherCostGridData[i].other_desc.toLowerCase().includes("finding"))
-			allTotalGridData[0].labour_findings += Number(otherCostGridData[i].other_amt);
-	}
-	allTotalGridData[0].labour_total = allTotalGridData[0].labour_cpf + allTotalGridData[0].labour_setting + allTotalGridData[0].labour_plating + allTotalGridData[0].labour_findings;
-	allTotalGridData[0].gross_wt = allTotalGridData[0].metal_wt + (allTotalGridData[0].dia_wt + allTotalGridData[0].stone_wt) * 0.2;
-	allTotalGridData[0].fac_ppc = (allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt) / Number($("#itemQty").val());
-	var factoryProfitIncludedPPC = allTotalGridData[0].fac_ppc + (allTotalGridData[0].fac_ppc * PackingListRates.factoryProfit * .01);
-	var priceInUSD = factoryProfitIncludedPPC / PackingListRates.exchange;
-	allTotalGridData[0].fac_sp = Math.round(priceInUSD * 3.5);
-	allGridOptions.api.setRowData(allTotalGridData);
-}
-function GetAllGridData() {
-	metalGridData = [];
-	diamondGridData = [];
-	stoneGridData = [];
-	otherCostGridData = [];
-	allTotalGridData = [];
-
-	metalGridOptions.api.forEachNode(function (rowNode, index) {
-		metalGridData.push(rowNode.data);
-	});
-	diamondGridOptions.api.forEachNode(function (rowNode, index) {
-		diamondGridData.push(rowNode.data);
-	});
-	stoneGridOptions.api.forEachNode(function (rowNode, index) {
-		stoneGridData.push(rowNode.data);
-	});
-	otherCostGridOptions.api.forEachNode(function (rowNode, index) {
-		otherCostGridData.push(rowNode.data);
-	});
-}
-
-//#endregion
-
-//#region Settings
-
-$("#settingsModal").on("show.bs.modal", getSettings);
-
-function getSettings() {
-	showLoader();
-	$.ajax({
-		dataType: "json",
-		url: url + "../src/scripts/packingList_r.php",
-		data: {
-			func: "getSettings",
-		},
-	}).done(function (data) {
-		hideLoader();
-		$("#newPackingList label").removeClass("active");
-		$("#exchangeRt").val(data.data[0].exchangeRt).change();
-		$("#silverRt").val(data.data[0].silverRt).change();
-		$("#goldRt").val(data.data[0].goldRt).change();
-		$("#labourRt").val(data.data[0].labourRt).change();
-		$("#platingRt").val(data.data[0].platingRt).change();
-		$("#findingsRt").val(data.data[0].findingsRt).change();
-
-		$("#microDiaRt").val(data.data[0].microDiaSettingRt).change();
-		$("#prongDiaRt").val(data.data[0].prongDiaSettingRt).change();
-		$("#roundStoneRt").val(data.data[0].roundStoneSettingRt).change();
-		$("#baguetteDiaRt").val(data.data[0].baguetteDiaSettingRt).change();
-
-	});
-}
-
-function updateSettings() {
-	showLoader();
-	$.ajax({
-		dataType: "json",
-		url: url + "../src/scripts/packingList_u.php",
-		data: {
-			func: "updateSettings",
-			exchangeRt: $("#exchangeRt").val(),
-			silverRt: $("#silverRt").val(),
-			goldRt: $("#goldRt").val(),
-			labourRt: $("#labourRt").val(),
-			platingRt: $("#platingRt").val(),
-			findingsRt: $("#findingsRt").val(),
-			microDiaRt: $("#microDiaRt").val(),
-			prongDiaRt: $("#prongDiaRt").val(),
-			baguetteDiaRt: $("#baguetteDiaRt").val(),
-			roundStoneRt: $("#roundStoneRt").val(),
-
-		},
-	}).done(function (data) {
-		hideLoader();
-		toastr["success"]("Settings Updated!");
-		$("#settingsModal").modal("hide");
-	});
-}
-
-//#endregion
-
-//#region Helper Functions
 function showLoader() {
 	$(".ajax-loader").css("visibility", "visible");
 }
 function hideLoader() {
 	$(".ajax-loader").css("visibility", "hidden");
 }
-//#endregion
 
-//#region Overrides
-
-//#endregion
-
-
-
-
-
-
-$("#importForm").on('submit', (function (e) {
-	e.preventDefault();
-	var formData = new FormData(this);
-	$('.ajax-loader').css("visibility", "visible");
-	formData.append("src", "importForm");
-	$.ajax({
-		type: 'POST',
-		url: url + '../src/scripts/stone_import.php',
-		data: formData,
-		contentType: false,
-		processData: false,
-	}).done(function (data) {
-		$('.ajax-loader').css("visibility", "hidden");
-		refreshCache();
-		var resp = JSON.parse(data);
-		lastOperationCount = resp['total'];
-		if (resp['success'] == 1) {
-			if (resp['impact'] > 0) {
-				toastr.success(resp['impact'] + ' records inserted!', 'Data Imported', {
-					timeOut: 0,
-					closeButton: true
-				});
-			}
-			if (resp['update'] > 0) {
-				toastr.warning(resp['update'] + ' records updated!', 'Data Imported', {
-					timeOut: 0,
-					closeButton: true
-				});
-			}
-			manageData();
-		}
-		else if (resp['success'] == 0) {
-			toastr.error(resp['msg'], 'Import Failed', {
-				timeOut: 0,
-				closeButton: true
-			});
-			if (resp['impact'] > 0) {
-				toastr.success(resp['impact'] + ' records inserted!', 'Data Imported', {
-					timeOut: 0,
-					closeButton: true
-				});
-			}
-			if (resp['update'] > 0) {
-				toastr.warning(resp['update'] + ' records updated!', 'Data Imported', {
-					timeOut: 0,
-					closeButton: true
-				});
-			}
-		}
-		$('#undo').attr("disabled", false);
-		$('#importForm')[0].reset();
-		$(".modal").modal('hide');
-	});
-}));
-
-
+function resetFilters(){
+	manufacturingInventory.api.setFilterModel(null);
+	manufacturingInventory.api.onFilterChanged();
+}

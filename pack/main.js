@@ -1,4 +1,7 @@
 var PackingListRates;
+toastr.options = {
+	"positionClass": "toast-bottom-right",
+};
 var gridOptions_PL = {
 	columnDefs: [
 		{
@@ -143,6 +146,11 @@ function initializePackingListForm() {
 
 
 function createPackingList() {
+	if(!$("#plName").val())
+	{
+		toastr['warning']("Please enter a name for packing list!");
+		return;
+	}
 	showLoader();
 	$.ajax({
 		dataType: "json",
@@ -219,6 +227,9 @@ var gridOptions_PL_Items = {
 						},
 					}).done(function (response) {
 						resetPLItem();
+						hideLoader();
+						$("#PL-Items .form-control").addClass("active");
+
 						$("#itemid").val(response.data.id);
 						$("#itemcode").val(response.data.itemcode).change();
 						$("#mewarcode").val(response.data.mewarcode).change();
@@ -233,7 +244,6 @@ var gridOptions_PL_Items = {
 						stoneGridOptions.api.setRowData(response.data.stone);
 						otherCostGridOptions.api.setRowData(response.data.others);
 						isEditingItem=true;
-						hideLoader();
 					});
 				},
 			},

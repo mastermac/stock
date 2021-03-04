@@ -17,7 +17,7 @@ function getSettings()
 
 function getManufacturingList(){
     $mysqli = getConn();
-    $sql = "SELECT * from `manufacturing` order by id desc";
+    $sql = "SELECT * from `manufacturing` order by id asc";
     $result = $mysqli->query($sql);
     $json = array();
     $sno=0;
@@ -87,14 +87,14 @@ function upsertData()
     $mysqli = getConn();
     foreach ($_GET['data'] as $data){
         if(isset($data['id'])){
-            $stmt = $mysqli->prepare("UPDATE `manufacturing` SET type=?, mewarCode=?, vendorCode=?, lotNo=?, stoneName=?, qty=?, wt_in_grms=?, wt_in_cts=?, gold_in_grms=?, gold_in_cts=?, grossWt=?, dia_stone_pcs=?, size=?, comments=?, timestamp=? where id=?");
-            $stmt->bind_param("ssssssssssssssss", $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), $data['id'] );
+            $stmt = $mysqli->prepare("UPDATE `manufacturing` SET other_metal_grm=?, type=?, mewarCode=?, vendorCode=?, lotNo=?, stoneName=?, qty=?, wt_in_grms=?, wt_in_cts=?, gold_in_grms=?, gold_in_cts=?, grossWt=?, dia_stone_pcs=?, size=?, comments=?, timestamp=?, d_or_s=? where id=?");
+            $stmt->bind_param("ssssssssssssssssss", $data['other_metal_grm'], $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']), $data['id'] );
             $stmt->execute();
             $stmt->close();
         }
         else{
-            $stmt = $mysqli->prepare("INSERT INTO `manufacturing` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, null, ?)");
-            $stmt->bind_param("sssssssssssssss", $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s") );
+            $stmt = $mysqli->prepare("INSERT INTO `manufacturing` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, null, ?, ?)");
+            $stmt->bind_param("sssssssssssssssss", $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['other_metal_grm'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']) );
             $stmt->execute();
             $stmt->close();
         }
@@ -109,12 +109,28 @@ function moveToInvoice(){
     $count=0;
     foreach ($_GET['data'] as $data){
         $stmt = $mysqli->prepare("INSERT INTO `pl-items` VALUES (null, ?, ?, ?, ?, ?, ?, null, ?)");
-        $stmt->bind_param("sssssss", $_GET['packing'], $data['vendorCode'], $data['mewarCode'], $data['qty'], $data['size'], substr($data['type'],0,3), $data['comments'] );
+        $stmt->bind_param("sssssss", $_GET['packing'], $data['vendorCode'], $data['mewarCode'], $data['qty'], $data['size'], strtoupper(substr($data['type'],0,3)), $data['comments'] );
         $stmt->execute();
+        $itemId = $mysqli->insert_id;
         $stmt->close();
+        $mysqli1 = getConn();
 
-        $stmt = $mysqli->prepare("UPDATE `manufacturing` SET invoice_id=? where id=?");
-        $stmt->bind_param("ss", $_GET['packing'], $data['id'] );
+        foreach ($data['stones'] as $stone){
+            $stmt1 = $mysqli1->prepare("INSERT INTO `pl-stone` VALUES (null, ?, ?, ?, ?, null, null, ?, ?, null,null)");
+            $stmt1->bind_param("ssssss", $_GET['packing'], $itemId, $stone['lotNo'], $stone['stoneName'], $stone['dia_stone_pcs'], $stone['wt_in_cts'] );
+            $stmt1->execute();
+            $stmt1->close();
+        }
+
+        foreach ($data['diamonds'] as $diamond){
+            $stmt1 = $mysqli1->prepare("INSERT INTO `pl-diamond` VALUES (null, ?, ?, ?, null, null, null, ?, ?, null, null)");
+            $stmt1->bind_param("sssss", $_GET['packing'], $itemId, $diamond['lotNo'], $diamond['dia_stone_pcs'], $diamond['wt_in_cts'] );
+            $stmt1->execute();
+            $stmt1->close();
+        }
+        $mysqli1->close();
+        $stmt = $mysqli->prepare("UPDATE `manufacturing` SET invoice_id=? where vendorCode=?");
+        $stmt->bind_param("ss", $_GET['packing'], $data['vendorCode'] );
         $stmt->execute();
         $stmt->close();
 
