@@ -11,13 +11,15 @@ var gridOptions_PL = {
 			headerCheckboxSelectionFilteredOnly: true,
 			checkboxSelection: true,
 			editable: false,
+			pinned: 'left',
 		},
 		{
 			headerName: "Name",
 			field: "name",
 			width: 150,
+			pinned: 'left',
 		},
-		{ headerName: "Date", field: "dt", width: 60, filter: "agDateColumnFilter" },
+		{ headerName: "Date", field: "dt", filter: "agDateColumnFilter", pinned: 'left' },
 		{ headerName: "Exchange", field: "exchangeRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Silver", field: "silverRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Gold", field: "goldRt", filter: "agNumberColumnFilter" },
@@ -25,10 +27,13 @@ var gridOptions_PL = {
 		{ headerName: "G Labour", field: "goldLabourRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Plating", field: "platingRt", filter: "agNumberColumnFilter" },
 		{ headerName: "Findings", field: "findingsRt", filter: "agNumberColumnFilter" },
-		{ headerName: "Micro Dia", field: "microDiaSettingRt", hide: true },
-		{ headerName: "Prong Dia", field: "prongDiaSettingRt", hide: true },
-		{ headerName: "Baguette Dia", field: "baguetteDiaSettingRt", hide: true },
-		{ headerName: "Round Stone", field: "roundStoneSettingRt", hide: true },
+		{ headerName: "Micro Dia", field: "microDiaSettingRt" },
+		{ headerName: "Prong Dia", field: "prongDiaSettingRt" },
+		{ headerName: "Baguette Dia", field: "baguetteDiaSettingRt", width: 140 },
+		{ headerName: "Round Stone", field: "roundStoneSettingRt", width: 140 },
+		{ headerName: "Status", field: "status" },
+		{ headerName: "Lock TS", field: "lock_date", width: 160 },
+		{ headerName: "Finalize TS", field: "finalise_date", width: 160 },
 		{
 			headerName: "Edit",
 			field: "id",
@@ -39,55 +44,56 @@ var gridOptions_PL = {
 				clicked: function (field) {
 					currentPL = field;
 					var currentRow=gridOptions_PL.api.getRowNode(currentPL);
+					if(currentRow.data.status>0)
+						hideDeleteOptions = true;
+					else
+						hideDeleteOptions = false;
+
 					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.goldLabourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt, vendorProfit);
 					console.log(PackingListRates);
 					$("#packingListItemsModal").modal("show");
 				},
 			},
-			width: 20,
+			width: 70,
 			resizable: false,
+			pinned: 'right',
 		},
 		{
-			headerName: "Delete",
+			headerName: "Actions",
 			field: "id",
 			filter: false,
 			sortable: false,
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
-					showLoader();
-					$.ajax({
-						dataType: "json",
-						url: url + "../src/scripts/packingList_d.php",
-						data: {
-							func: "deletePackingList",
-							id: field,
-						},
-					}).done(function (data) {
-						hideLoader();
-						getPackingLists();
-					});
+					$("#pid").val(field);
+					$("#packingListActionModal").modal("show");
 				},
 			},
-			width: 20,
+			width: 70,
 			resizable: false,
+			pinned: 'right',
 		},
 	],
 	defaultColDef: {
-		flex: 1,
-		width: 40,
+		width: 100,
+		wrapText: true,
+		autoHeight: true,
 		resizable: true,
 		editable: true,
 		filter: true,
 		sortable: true,
 		type: "leftAligned",
 		enableCellChangeFlash: true,
+		cellStyle: { "white-space": "normal" },
 	},
 	animateRows: true,
 	suppressRowClickSelection: true,
 	rowSelection: "multiple",
 	undoRedoCellEditing: true,
 	enableFillHandle: true,
+	onColumnResized: onColumnResized,
+	onColumnVisible: onColumnVisible,
 	// restricts the number of undo / redo steps to 5
 	undoRedoCellEditingLimit: 10,
 	stopEditingWhenGridLosesFocus: true,
@@ -101,6 +107,107 @@ var gridOptions_PL = {
 		gridOptions_PL.api.flashCells({ rowNodes: [event.rowIndex] });
 	},
 };
+var hideDeleteOptions=false;
+$("#packingListActionModal").on("shown.bs.modal", () => {
+	var pid = $("#pid").val();
+	var currentRow=gridOptions_PL.api.getRowNode(pid);
+	if(currentRow.data.status=="0")
+	{
+		$("#lockAction").show();
+		$("#unlockAction").hide();
+		$("#finalizeAction").hide();
+	}
+	else if(currentRow.data.status=="1"){
+		$("#lockAction").hide();
+		$("#unlockAction").show();
+		$("#finalizeAction").show();
+	}
+
+});
+
+function deletePackingList(){
+	showLoader();
+	var field=$("#pid").val();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_d.php",
+		data: {
+			func: "deletePackingList",
+			id: field,
+		},
+	}).done(function (data) {
+		hideLoader();
+		$("#packingListActionModal").modal("hide");
+		$("#pid").val(0);
+		getPackingLists();
+	});
+}
+
+function lockPackingList(){
+	showLoader();
+	var field=$("#pid").val();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_u.php",
+		data: {
+			func: "lock",
+			id: field,
+		},
+	}).done(function (data) {
+		hideLoader();
+		if(data.error)
+			toastr['error'](data.error);
+		else
+			getPackingLists();
+		$("#packingListActionModal").modal("hide");
+		$("#pid").val(0);
+	});
+}
+
+function unlockPackingList(){
+	showLoader();
+	var field=$("#pid").val();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_u.php",
+		data: {
+			func: "unlock",
+			id: field,
+		},
+	}).done(function (data) {
+		hideLoader();
+		getPackingLists();
+		$("#packingListActionModal").modal("hide");
+		$("#pid").val(0);
+	});
+}
+
+
+function finalizePackingList(){
+	showLoader();
+	var field=$("#pid").val();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_u.php",
+		data: {
+			func: "finalize",
+			id: field,
+		},
+	}).done(function (data) {
+		hideLoader();
+		$("#packingListActionModal").modal("hide");
+		$("#pid").val(0);
+		getPackingLists();
+	});
+}
+
+function onColumnResized(params) {
+	params.api.resetRowHeights();
+}
+
+function onColumnVisible(params) {
+	params.api.resetRowHeights();
+}
 var currentPL, currentItem;
 var myCellRenderer = function () {
 	return '<span style="color: black">Edit</span>';
@@ -170,6 +277,7 @@ function createPackingList() {
 
 function getPackingLists() {
 	showLoader();
+	getPackingListsCount();
 	$.ajax({
 		dataType: "json",
 		url: url + "../src/scripts/packingList_r.php",
@@ -181,9 +289,43 @@ function getPackingLists() {
 		BindPackingLists(data.data);
 	});
 }
+
+function getPackingListsCount(){
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/packingList_r.php",
+		data: {
+			func: "getPackingListCounts",
+		},
+	}).done(function (data) {
+		hideLoader();
+		$("#totalDiamonds").html(data.data.dia_total.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+		$("#totalStones").html(data.data.stone_total.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+		$("#totalMetal").html(data.data.metal_total.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+		$("#totalNetWorth").html("INR "+abbreviateNumber(Number(data.data.item_total)));
+	});
+}
+
+function abbreviateNumber(value) {
+    var newValue = value;
+    if (value >= 1000) {
+        var suffixes = ["", "K", "M", "B","T"];
+        var suffixNum = Math.floor( (""+value).length/3 );
+        var shortValue = '';
+        for (var precision = 3; precision >= 1; precision--) {
+            shortValue = parseFloat( (suffixNum != 0 ? (value / Math.pow(1000,suffixNum) ) : value).toPrecision(precision));
+            var dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g,'');
+            if (dotLessShortValue.length <= 3) { break; }
+        }
+        if (shortValue % 1 != 0)  shortValue = shortValue.toFixed(2);
+        newValue = shortValue+suffixes[suffixNum];
+    }
+    return newValue;
+}
+
 function BindPackingLists(data) {
 	gridOptions_PL.api.setRowData(data);
-	gridOptions_PL.api.sizeColumnsToFit();
+	// gridOptions_PL.api.sizeColumnsToFit();
 }
 
 //#endregion
@@ -206,7 +348,8 @@ var gridOptions_PL_Items = {
 		{ headerName: "Ring Size", field: "ringsize" },
 		{ headerName: "M Type", field: "metaltype" },
 		{ headerName: "M Color", field: "metalcolor" },
-		{ headerName: "Description", field: "description", width: 150 },
+		{ headerName: "Total", field: "total" },
+		{ headerName: "Description", field: "description", width: 130 },
 		{
 			headerName: "Edit",
 			field: "id",
@@ -229,7 +372,7 @@ var gridOptions_PL_Items = {
 						resetPLItem();
 						hideLoader();
 						$("#PL-Items .form-control").addClass("active");
-
+						$('#metalDetails-tab').tab('show');
 						$("#itemid").val(response.data.id);
 						$("#itemcode").val(response.data.itemcode).change();
 						$("#mewarcode").val(response.data.mewarcode).change();
@@ -244,6 +387,16 @@ var gridOptions_PL_Items = {
 						stoneGridOptions.api.setRowData(response.data.stone);
 						otherCostGridOptions.api.setRowData(response.data.others);
 						isEditingItem=true;
+						if(hideDeleteOptions)
+							$("#PL_Items_Create").hide();
+						else
+							$("#PL_Items_Create").show();
+						
+						metalGridOptions.columnApi.setColumnVisible('delete', !hideDeleteOptions);
+						diamondGridOptions.columnApi.setColumnVisible('delete', !hideDeleteOptions);
+						stoneGridOptions.columnApi.setColumnVisible('delete', !hideDeleteOptions);
+						otherCostGridOptions.columnApi.setColumnVisible('delete', !hideDeleteOptions);
+
 					});
 				},
 			},
@@ -253,8 +406,10 @@ var gridOptions_PL_Items = {
 		{
 			headerName: "Delete",
 			field: "id",
+			colId: "delete",
 			filter: false,
 			sortable: false,
+			hide: hideDeleteOptions,
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
@@ -277,6 +432,7 @@ var gridOptions_PL_Items = {
 			resizable: false,
 		},
 	],
+	
 	defaultColDef: {
 		flex: 1,
 		width: 40,
@@ -335,6 +491,7 @@ function InitPLItemsForm() {
 	gridOptions_PL_Items.getRowNodeId = d => {
 		return d.id; // return the property you want set as the id.
 	};
+	gridOptions_PL_Items.columnApi.setColumnVisible('delete', !hideDeleteOptions);
 }
 
 function getPLItems(packingListId) {
@@ -365,6 +522,7 @@ $("#PL-Items").on('submit', (function (e) {
 		funcType='updatePLItem';
 		urlEnd='packingList_u.php';
 	}
+	formData.append('total', allTotalGridData[0].fac_ppc*Number($("#qty").val(),0));
 	formData.append('func', funcType);
 	formData.append('pid', currentPL);
 	formData.append('metals', JSON.stringify(metalGridData));
@@ -405,6 +563,8 @@ function resetPLItem(){
 	InitPLItemDetailsForm();
 	$("#metalDetails-tab").click();
 	isEditingItem=false;
+	$("#PL_Items_Create").show();
+	$('#metalDetails-tab').tab('show');
 }
 function BindPL_Items(data) {
 	gridOptions_PL_Items.api.setRowData(data);
@@ -424,6 +584,7 @@ var metalDetailsColDef = [
 	{
 		headerName: "Delete",
 		field: "sno",
+		colId: "delete",
 		filter: false,
 		sortable: false,
 		editable: false,
@@ -475,6 +636,7 @@ var diamondDetailsColDef = [
 	{
 		headerName: "Delete",
 		field: "sno",
+		colId: "delete",
 		filter: false,
 		sortable: false,
 		editable: false,
@@ -519,6 +681,7 @@ var stoneDetailsColDef = [
 	{
 		headerName: "Delete",
 		field: "sno",
+		colId: "delete",
 		filter: false,
 		sortable: false,
 		editable: false,
@@ -557,6 +720,7 @@ var otherCostsDetailsColDef = [
 	{
 		headerName: "Delete",
 		field: "sno",
+		colId: "delete",
 		filter: false,
 		sortable: false,
 		editable: false,
@@ -624,7 +788,7 @@ var allDetailsColDef = [
 		children: [
 			{ headerName: "Pcs", field: "stone_qty", width: 75 },
 			{ headerName: "Ctw.", field: "stone_wt", width: 75 },
-			{ headerName: "Amt", field: "stone_amt" }
+			{ headerName: "Amt", field: "stone_amt", filter: "agNumberColumnFilter" }
 		],
 	},
 	{
@@ -777,7 +941,7 @@ function InitPLItemDetailsForm() {
 	metalGridOptions.onCellValueChanged = function(event){
 		if(event.data.wt && event.data.loss && ( event.column.colId === "wt" ||  event.column.colId === "loss")){
 			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('price', Math.round(getStoneMultiplier(event.data.loss)*100)/100);
-			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Math.round(getStoneMultiplier(event.data.loss) * event.data.wt));
+			metalGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Number.parseFloat(getStoneMultiplier(event.data.loss) * event.data.wt).toFixed(2));
 		}
 	}
 
@@ -790,7 +954,7 @@ function InitPLItemDetailsForm() {
 	diamondGridOptions.onCellValueChanged = function(event){
 		console.log(event);
 		if(event.data.wt && event.data.rate && ( event.column.colId === "wt" ||  event.column.colId === "rate")){
-			diamondGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Math.round(event.data.wt * event.data.rate));
+			diamondGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Number.parseFloat(event.data.wt * event.data.rate).toFixed(2));
 		}
 		if(event.colDef.field=="lot_id"){
 			currentStoneSno = event.data.sno;
@@ -808,7 +972,7 @@ function InitPLItemDetailsForm() {
 	stoneGridOptions.api.setColumnDefs(stoneDetailsColDef);
 	stoneGridOptions.onCellValueChanged = function(event){
 		if(event.data.wt && event.data.rate && ( event.column.colId === "wt" ||  event.column.colId === "rate")){
-			stoneGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Math.round(event.data.wt * event.data.rate));
+			stoneGridOptions.api.getRowNode(event.data.sno).setDataValue('amt', Number.parseFloat(event.data.wt * event.data.rate).toFixed(2));
 		}
 		if(event.colDef.field=="lot_id"){
 			currentStoneSno = event.data.sno;
@@ -866,7 +1030,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 	for(var i=0;i<metalGridData.length;i++){
 		if(metalGridData[i].wt){
 			allTotalGridData[0].metal_wt+= Number(metalGridData[i].wt);
-			allTotalGridData[0].metal_amt+= Math.round(Number(metalGridData[i].wt) * getStoneMultiplier(metalGridData[i].loss));
+			allTotalGridData[0].metal_amt+= Number(Number.parseFloat(Number(metalGridData[i].wt) * getStoneMultiplier(metalGridData[i].loss)).toFixed(2));
 			let labourRt = PackingListRates.labour;
 			let platingRt = 0;
 
@@ -878,6 +1042,8 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 			allTotalGridData[0].labour_plating+= (Number(metalGridData[i].wt) * platingRt);
 		}
 	}
+	allTotalGridData[0].labour_cpf = Number(Number.parseFloat(allTotalGridData[0].labour_cpf).toFixed(2));
+	allTotalGridData[0].labour_plating = Number(Number.parseFloat(allTotalGridData[0].labour_plating).toFixed(2));
 
 	for(var i=0;i<diamondGridData.length;i++){
 		if(diamondGridData[i].lot_id){
@@ -887,7 +1053,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 			else if(diamondGridData[i].setting=="Baguette")	settingRate = PackingListRates.baguetteDiamondSetting;
 			allTotalGridData[0].dia_qty+= Number(diamondGridData[i].qty);
 			allTotalGridData[0].dia_wt+= Number(diamondGridData[i].wt);
-			allTotalGridData[0].dia_amt+= (Math.round(Number(diamondGridData[i].wt) * Number(diamondGridData[i].rate)));
+			allTotalGridData[0].dia_amt+= Number(Number.parseFloat(Number(diamondGridData[i].wt) * Number(diamondGridData[i].rate)).toFixed(2));
 			allTotalGridData[0].labour_setting+=Number(diamondGridData[i].qty)*settingRate;
 		}
 	}
@@ -895,7 +1061,7 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 		if(stoneGridData[i].lot_id){
 			allTotalGridData[0].stone_qty+= Number(stoneGridData[i].qty);
 			allTotalGridData[0].stone_wt+= Number(stoneGridData[i].wt);
-			allTotalGridData[0].stone_amt+= Math.round(Number(stoneGridData[i].wt) * Number(stoneGridData[i].rate));
+			allTotalGridData[0].stone_amt+= Number(Number.parseFloat(Number(stoneGridData[i].wt) * Number(stoneGridData[i].rate)).toFixed(2));
 			allTotalGridData[0].labour_setting+=Number(stoneGridData[i].qty)*PackingListRates.roundStoneSetting;
 		}
 	}
@@ -906,7 +1072,9 @@ function AllDetailsTabClicked(ignoreEmpty=false){
 			allTotalGridData[0].labour_findings+= Number(otherCostGridData[i].amt);
 	}
 	allTotalGridData[0].labour_total = allTotalGridData[0].labour_cpf + allTotalGridData[0].labour_setting + allTotalGridData[0].labour_plating + allTotalGridData[0].labour_findings;
-	allTotalGridData[0].gross_wt = allTotalGridData[0].metal_wt + (allTotalGridData[0].dia_wt + allTotalGridData[0].stone_wt)*0.2;
+	allTotalGridData[0].labour_total = Number(Number.parseFloat(allTotalGridData[0].labour_total).toFixed(2));
+
+	allTotalGridData[0].gross_wt = Number.parseFloat(allTotalGridData[0].metal_wt + (allTotalGridData[0].dia_wt + allTotalGridData[0].stone_wt)*0.2).toFixed(3);
 	allTotalGridData[0].fac_ppc = Math.round(allTotalGridData[0].metal_amt + allTotalGridData[0].labour_total + allTotalGridData[0].dia_amt + allTotalGridData[0].stone_amt + allTotalGridData[0].other_amt)/Number($("#qty").val(),0);
 	var factoryProfitIncludedPPC =allTotalGridData[0].fac_ppc + (allTotalGridData[0].fac_ppc*PackingListRates.factoryProfit*.01);
 	var priceInUSD = factoryProfitIncludedPPC / PackingListRates.exchange;

@@ -71,7 +71,7 @@ if ($_SESSION['usertype'] >= 1)
 				<div class="mb-2 row">
 					<div class="col-5 start">
 						<button type="button" class="btn btn-sm btn-outline-danger" data-mdb-ripple-color="dark" onclick="resetSoldFilters()">Reset Filters</button>
-						<button type="button" class="btn btn-sm btn-outline-danger" data-mdb-ripple-color="dark" onclick="uploadMetalSaveData()">Save Data</button>
+						<button type="button" class="btn btn-sm btn-outline-danger" data-mdb-ripple-color="dark" id="metalSaveDataButton" style="display: none;" onclick="uploadMetalSaveData()">Save Data</button>
 					</div>
 					<div class="col-3">
 						<span class="center"><b>Used Metal</b></span>
@@ -451,6 +451,7 @@ if ($_SESSION['usertype'] >= 1)
 			<script src="del-btn-cell-renderer.js"></script>
 			<script src="main.js"></script>
 			<script>
+				Init();
 				$('.mdb-select').materialSelect();
 
 				$('input[name="dates"]').daterangepicker();

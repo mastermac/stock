@@ -2,6 +2,11 @@
 require 'db_config.php';
 session_start();
 
+function checkUserType(){
+    if ($_SESSION['usertype'] > 1) return ' WHERE userid=' . $_SESSION['userid'];
+    return '';
+}
+
 function getSettings()
 {
     $mysqli = getConn();
@@ -17,7 +22,7 @@ function getSettings()
 
 function getPackingLists(){
     $mysqli = getConn();
-    $sql = "SELECT * from packinglist order by id desc ";
+    $sql = "SELECT * from packinglist ".checkUserType()." order by id desc ";
     $result = $mysqli->query($sql);
     $json = array();
     $sno=0;
@@ -26,7 +31,6 @@ function getPackingLists(){
         $json[$sno]['sno']=$sno+1;
         $sno++;
     }
-
     returnData($json,$sql,$result);
 }
 
@@ -127,6 +131,33 @@ function getStoneById(){
     returnData($json,$sql,$result);
 }
 
+function getPackingListCounts(){
+    $mysqli = getConn();
+    $sql = "SELECT SUM(wt) as total FROM `pl-diamond` where pl_id in (SELECT id FROM packinglist ".checkUserType().")";
+    $result = $mysqli->query($sql);
+    $json = array();
+    $sno=0;
+    while ($row = $result->fetch_assoc())
+        $json['dia_total'] = (float)$row['total'];
+
+    $sql = "SELECT SUM(wt) as total FROM `pl-metal` where pl_id in (SELECT id FROM packinglist ".checkUserType().")";
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc())
+        $json['metal_total'] = (float)$row['total'];
+
+    $sql = "SELECT SUM(wt) as total FROM `pl-stone` where pl_id in (SELECT id FROM packinglist ".checkUserType().")";
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc())
+        $json['stone_total'] = (float)$row['total'];
+
+    $sql = "SELECT SUM(total) as total FROM `pl-items` where pid in (SELECT id FROM packinglist ".checkUserType().")";
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc())
+        $json['item_total'] = (float)$row['total'];
+
+    returnData($json,$sql,$result);
+}
+
 function returnData($json,$sql,$result){
     $data['data'] = $json;
     $data['sql'] = $sql;
@@ -138,6 +169,8 @@ switch($_GET["func"]){
     case "getSettings": getSettings();
         break;
     case "getPackingLists": getPackingLists();
+        break;
+    case "getPackingListCounts": getPackingListCounts();
         break;
     case "getPackingListItems": getPackingListItems();
         break;

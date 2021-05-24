@@ -87,14 +87,14 @@ function upsertData()
     $mysqli = getConn();
     foreach ($_GET['data'] as $data){
         if(isset($data['id'])){
-            $stmt = $mysqli->prepare("UPDATE `manufacturing` SET other_metal_grm=?, type=?, mewarCode=?, vendorCode=?, lotNo=?, stoneName=?, qty=?, wt_in_grms=?, wt_in_cts=?, gold_in_grms=?, gold_in_cts=?, grossWt=?, dia_stone_pcs=?, size=?, comments=?, timestamp=?, d_or_s=? where id=?");
-            $stmt->bind_param("ssssssssssssssssss", $data['other_metal_grm'], $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']), $data['id'] );
+            $stmt = $mysqli->prepare("UPDATE `manufacturing` SET other_metal_grm=?, type=?, mewarCode=?, vendorCode=?, lotNo=?, stoneName=?, qty=?, wt_in_grms=?, wt_in_cts=?, gold_in_grms=?, gold_in_cts=?, grossWt=?, dia_stone_pcs=?, size=?, comments=?, timestamp=?, d_or_s=?, po=? where id=?");
+            $stmt->bind_param("sssssssssssssssssss", $data['other_metal_grm'], $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']), $data['po'], $data['id'] );
             $stmt->execute();
             $stmt->close();
         }
         else{
-            $stmt = $mysqli->prepare("INSERT INTO `manufacturing` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, null, ?, ?)");
-            $stmt->bind_param("sssssssssssssssss", $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['other_metal_grm'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']) );
+            $stmt = $mysqli->prepare("INSERT INTO `manufacturing` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, null, ?, ?, ?)");
+            $stmt->bind_param("ssssssssssssssssss", $data['type'], $data['mewarCode'], $data['vendorCode'], $data['lotNo'], $data['stoneName'], $data['qty'], $data['wt_in_grms'], $data['wt_in_cts'], $data['other_metal_grm'], $data['gold_in_grms'], $data['gold_in_cts'], $data['grossWt'], $data['dia_stone_pcs'], $data['size'], $data['comments'], date("Y-m-d H:i:s"), strtoupper($data['d_or_s']), $data['po'] );
             $stmt->execute();
             $stmt->close();
         }

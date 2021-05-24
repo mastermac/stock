@@ -11,10 +11,12 @@ function updateSettings()
     echo json_encode($data);
 }
 
+
+
 function updatePLItem(){
     $mysqli = getConn();
-    $stmt = $mysqli->prepare("UPDATE `pl-items` SET itemcode=?, mewarcode=?, qty=?, ringsize=?, metaltype=?, metalcolor=?, description=? where id=?");
-    $stmt->bind_param("ssssssss", $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description'], $_POST['itemid']);
+    $stmt = $mysqli->prepare("UPDATE `pl-items` SET itemcode=?, mewarcode=?, qty=?, ringsize=?, metaltype=?, metalcolor=?, description=?, total=? where id=?");
+    $stmt->bind_param("sssssssss", $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description'], $_POST['total'], $_POST['itemid']);
     $stmt->execute();
     $stmt->close();
     $mysqli->close();
@@ -114,6 +116,131 @@ function updatePLItem(){
     echo json_encode($data);
 }
 
+function lockPackingList()
+{
+    $data['error']=validatePackingList();
+    if($data['error']==""){
+        $data['sql']=updateStoneDiamondQty("-");
+        updateSoldMetal("enter");
+        $mysqli = getConn();
+        $c0=0; $c1=1;
+        $stmt = $mysqli->prepare("UPDATE packinglist set finalise_date=null, status=?, lock_date=? where id=? and status=?");
+        $stmt->bind_param("ssss", $c1, date("Y-m-d H:i:s"), $_GET['id'], $c0 );
+        $stmt->execute();
+        $stmt->close();
+        $mysqli->close();
+    }
+    $data['result']="Done";
+    echo json_encode($data);
+}
+
+function unlockPackingList()
+{
+    $data['sql']=updateStoneDiamondQty("+");
+    updateSoldMetal("delete");
+    $mysqli = getConn();
+    $c0=0; $c1=1;
+    $stmt = $mysqli->prepare("UPDATE packinglist set finalise_date=null, lock_date=null, status=? where id=? and status=?");
+    $stmt->bind_param("sss", $c0, $_GET['id'], $c1 );
+    $stmt->execute();
+    $stmt->close();
+    $mysqli->close();
+    $data['result']="Done";
+    echo json_encode($data);
+}
+
+function validatePackingList(){
+    $mysqli = getConn();
+    $mysqli1 = getConn();
+    $sql = "SELECT * from `pl-stone` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc()){
+        $sql1 = "SELECT * from `stone-inventory` where lot_no=".$row['lot_id']." AND current_qty>=".$row['qty']." AND current_wt>=".$row['wt'];
+        $result1 = mysqli_query($mysqli1, $sql1);
+        $totRows = mysqli_num_rows($result1);
+        if ($totRows < 1)
+            return "Validation Error for Stone #".$row['lot_id'];
+    }
+
+    $sql = "SELECT * from `pl-diamond` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc()){
+        $sql1 = "SELECT * from `stone-inventory` where lot_no=".$row['lot_id']." AND current_qty>=".$row['qty']." AND current_wt>=".$row['wt'];
+        $result1 = mysqli_query($mysqli1, $sql1);
+        $totRows = mysqli_num_rows($result1);
+        if ($totRows < 1)
+            return "Validation Error for Diamond #".$row['lot_id'];
+    }
+
+    return "";
+}
+
+function updateStoneDiamondQty($op="-"){
+    $mysqli = getConn();
+    $mysqli1 = getConn();
+    $sql = "SELECT * from `pl-stone` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    $lotids="";
+    while ($row = $result->fetch_assoc()){
+        $sql1 = "UPDATE `stone-inventory` SET current_qty=current_qty".$op.$row['qty'].", current_wt=current_wt".$op.$row['wt']." where lot_no=".$row['lot_id'];
+        $result1 = $mysqli1->query($sql1);
+        $sql1 = "UPDATE `stone-inventory` SET current_value=current_wt*cost where lot_no = ".$row['lot_id'];
+        $result1 = $mysqli1->query($sql1);
+    }
+
+    $sql = "SELECT * from `pl-diamond` where pl_id=".$_GET['id'];
+    $result = $mysqli->query($sql);
+    while ($row = $result->fetch_assoc()){
+        $sql1 = "UPDATE `stone-inventory` SET current_qty=current_qty".$op.$row['qty'].", current_wt=current_wt".$op.$row['wt']." where lot_no=".$row['lot_id'];
+        $result1 = $mysqli1->query($sql1);
+        $sql1 = "UPDATE `stone-inventory` SET current_value=current_wt*cost where lot_no = ".$row['lot_id'];
+        $result1 = $mysqli1->query($sql1);
+    }
+    return "";
+}
+
+function updateSoldMetal($op="enter"){
+    $mysqli = getConn();
+    if($op=="enter"){
+        $mysqli1 = getConn();
+        $sql = "SELECT packinglist.name, metaltype, metalcolor, SUM(wt) as qty FROM `pl-items`,`pl-metal`,packinglist WHERE `pl-metal`.item_id=`pl-items`.id and `pl-items`.pid=packinglist.id AND pl_id=".$_GET['id']." GROUP BY metaltype";
+        $result = $mysqli->query($sql);
+        $lotids="";
+        while ($row = $result->fetch_assoc()){
+            $stmt = $mysqli->prepare("INSERT INTO `metal-sold-inventory` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssss", $_SESSION['userid'], date("Y-m-d"), $row['name'], getMetalType(strtoupper($row['metaltype'])), strtoupper($row['metaltype']), $row['qty'], date("Y-m-d H:i:s"), $_GET['id'] );
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
+    else if($op=="delete"){
+        $sql = "DELETE from `metal-sold-inventory` where pl_id=".$_GET['id'];
+        $result = $mysqli->query($sql);
+    }
+}
+function getMetalType($purity){
+    if($purity=="10K" || $purity=="14K" || $purity=="18K" )
+        return "G";
+    else if($purity=="925")
+        return "S";
+    else
+        return "O";
+}
+function finalizePackingList()
+{
+
+    $mysqli = getConn();
+    $c1=1; $c2=2;
+    $stmt = $mysqli->prepare("UPDATE packinglist set status=?, finalise_date=? where id=? and status=?");
+    $stmt->bind_param("ssss", $c2, date("Y-m-d H:i:s"), $_GET['id'], $c1 );
+    $stmt->execute();
+    $stmt->close();
+    $mysqli->close();
+    $data['result']="Done";
+    echo json_encode($data);
+}
+
+
 $functionType=$_GET['func'];
 if(empty($functionType))
     $functionType=$_POST['func'];
@@ -122,6 +249,13 @@ switch($functionType){
     case "updateSettings": updateSettings();
         break;
     case "updatePLItem": updatePLItem();
+        break;
+    case "lock": lockPackingList();
+        break;
+    case "unlock": unlockPackingList();
+        break;
+    case "finalize": finalizePackingList();
+        break;
 }
 
 ?>

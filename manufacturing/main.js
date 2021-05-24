@@ -46,6 +46,7 @@ var manufacturingInventory = {
 		{ headerName: "Dia/St Pcs", field: "dia_stone_pcs", filter: "agNumberColumnFilter", width: 120 },
 		{ headerName: "Img", field: "img", hide: true },
 		{ headerName: "Size", field: "size", width: 90 },
+		{ headerName: "PO #", field: "po", width: 90 },
 		{ headerName: "Last Updated", editable: false, field: "timestamp", width: 150, filter: "agDateColumnFilter" },
 		{
 			headerName: "PL #",
@@ -119,7 +120,7 @@ var manufacturingInventory = {
 
 function exportData() {
 	let params = {
-		columnKeys: ['sno', 'lot_no', 'name', 'size', 'shape', 'seller', 'purchased_qty', 'purchased_wt', 'unit', 'current_qty', 'current_wt', 'box', 'cost', 'less', 'rate', 'total_amount', 'current_value', 'description']
+		columnKeys: ['sno', 'lot_no', 'name', 'size', 'shape', 'seller', 'purchased_qty', 'purchased_wt', 'unit', 'current_qty', 'current_wt', 'box', 'cost', 'less', 'rate', 'total_amount', 'current_value', 'description','po']
 	};
 
 	let selectedRows = manufacturingInventory.api.getSelectedNodes();
@@ -127,7 +128,7 @@ function exportData() {
 	if (selectedRows.length > 0) {
 		params = {
 			onlySelected: true,
-			columnKeys: ['sno', 'lot_no', 'name', 'size', 'shape', 'seller', 'purchased_qty', 'purchased_wt', 'unit', 'current_qty', 'current_wt', 'box', 'cost', 'less', 'rate', 'total_amount', 'current_value', 'description']
+			columnKeys: ['sno', 'lot_no', 'name', 'size', 'shape', 'seller', 'purchased_qty', 'purchased_wt', 'unit', 'current_qty', 'current_wt', 'box', 'cost', 'less', 'rate', 'total_amount', 'current_value', 'description','po']
 		}
 	}
 	manufacturingInventory.api.exportDataAsCsv(params);
@@ -268,6 +269,7 @@ function uploadData() {
 			var firstOccurance = getFirstOccuranceOfItem(rowNode.data.vendorCode);
 			if (firstOccurance.sno != rowNode.data.sno) {
 				rowNode.data.type = firstOccurance.type;
+				rowNode.data.comments = firstOccurance.comments;
 				rowNode.data.grossWt = 0;
 			}
 			if (rowNode.data.id)
@@ -280,7 +282,7 @@ function uploadData() {
 			}
 		}
 	});
-	console.log(manuInventory);
+	manuInventory = cleanUploadList(manuInventory);
 	showLoader();
 	$.ajax({
 		dataType: "json",
@@ -297,6 +299,22 @@ function uploadData() {
 		getManufacturingList();
 		$("#stoneFormModal").modal("hide");
 	});
+}
+var numKeys = ["dia_stone_pcs", "gold_in_grms", "gold_in_cts", "grossWt", "other_metal_grm", "qty", "wt_in_cts", "wt_in_grms"];
+function cleanUploadList(inventory){
+	let list = [];
+	inventory.forEach(function(row, index){
+		for (const [key, value] of Object.entries(row)) {
+			if(!value){
+				if(numKeys.indexOf(key)>=0)
+					row[key]=0;
+				else
+					row[key]="";
+			}
+		}
+		list.push(row);
+	});
+	return list;
 }
 
 var currentPL, currentItem;
@@ -321,33 +339,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	manufacturingInventory.onCellValueChanged = function (event) {
 		if (!(String(event.oldValue) === event.newValue)) changedRows.push(event.data.sno);
+		var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
+		pushDependentRows(event.data.sno, event.data.vendorCode);
 
 		if (event.data.wt_in_grms && event.column.colId === "wt_in_grms") {
 			console.log(manufacturingInventory.api.getRowNode(event.data.sno));
-			manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('wt_in_cts', Math.round(Number(event.data.wt_in_grms) * 5 * 1000) / 1000);
-
-			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
-			var goldWt = Math.round(Number(firstOccurance.grossWt) - Number(getAllWeightInfoForItem(firstOccurance.vendorCode)));
+			manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('wt_in_cts', Math.round(Number(cleanNum(event.data.wt_in_grms)) * 5 * 1000) / 1000);
+			
+			var goldWt = Math.round(Number(cleanNum(firstOccurance.grossWt)) - Number(cleanNum(getAllWeightInfoForItem(firstOccurance.vendorCode))));
+			if(goldWt==-1)	goldWt=0;
 			manufacturingInventory.api.getRowNode(firstOccurance.sno).setDataValue('gold_in_grms', goldWt);
 		}
 		if (event.data.other_metal_grm && event.column.colId === "other_metal_grm") {
-			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
-			var goldWt = Math.round(Number(firstOccurance.grossWt) - Number(getAllWeightInfoForItem(firstOccurance.vendorCode)));
+			var goldWt = Math.round(Number(cleanNum(firstOccurance.grossWt)) - Number(cleanNum(getAllWeightInfoForItem(firstOccurance.vendorCode))));
+			if(goldWt==-1)	goldWt=0;
 			manufacturingInventory.api.getRowNode(firstOccurance.sno).setDataValue('gold_in_grms', goldWt);
 		}
 		if (event.data.lotNo && event.column.colId === "lotNo") {
 			setStoneDetails(event.data.lotNo, event.data.sno);
 		}
-
 		if (event.data.grossWt && (event.column.colId === "grossWt" || event.column.colId === "wt_in_grms" || event.column.colId === "other_metal_grm")) {
-			var firstOccurance = getFirstOccuranceOfItem(event.data.vendorCode);
 			if (event.data.sno == firstOccurance.sno) {
-				var goldWt = Math.round(Number(event.data.grossWt) - Number(event.data.wt_in_grms) - Number(event.data.other_metal_grm) - getWeightInfoForItem(event.data.vendorCode, event.data.sno))
+				var goldWt = Math.round(Number(cleanNum(event.data.grossWt)) - Number(cleanNum(event.data.wt_in_grms)) - Number(cleanNum(event.data.other_metal_grm)) - getWeightInfoForItem(event.data.vendorCode, event.data.sno))
+				if(goldWt==-1)	goldWt=0;
 				manufacturingInventory.api.getRowNode(event.data.sno).setDataValue('gold_in_grms', goldWt);
 			}
 		}
 	}
 });
+
+function pushDependentRows(sno, vendorCode){
+	manufacturingInventory.api.forEachNode(function (rowNode, index) {
+		if (rowNode.data.vendorCode == vendorCode && rowNode.data.sno!=sno)
+			changedRows.push(rowNode.data.sno);
+	});
+}
+
+function cleanNum(value){
+	if(value)
+		return value;
+	else
+		return 0;
+}
 
 function setStoneDetails(lotid, sno) {
 	showLoader();
@@ -381,7 +414,7 @@ function getWeightInfoForItem(vendorCode, sno) {
 	var wt = 0;
 	manufacturingInventory.api.forEachNode(function (rowNode, index) {
 		if (rowNode.data.sno != sno && rowNode.data.vendorCode == vendorCode)
-			wt += Number(rowNode.data.wt_in_grms) + Number(rowNode.data.other_metal_grm);
+			wt += Number(cleanNum(rowNode.data.wt_in_grms)) + Number(cleanNum(rowNode.data.other_metal_grm));
 	});
 	return wt;
 }
@@ -389,7 +422,7 @@ function getAllWeightInfoForItem(vendorCode) {
 	var wt = 0;
 	manufacturingInventory.api.forEachNode(function (rowNode, index) {
 		if (rowNode.data.vendorCode == vendorCode)
-			wt += Number(rowNode.data.wt_in_grms) + Number(rowNode.data.other_metal_grm);
+			wt += Number(cleanNum(rowNode.data.wt_in_grms)) + Number(cleanNum(rowNode.data.other_metal_grm));
 	});
 	return wt;
 }

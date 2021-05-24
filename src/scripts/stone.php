@@ -25,15 +25,15 @@ function getStoneLists(){
         $json[] = $row;
         $json[$sno]['sno']=$sno+1;
         $json[$sno]['lot_no']=(int)$row['lot_no'];
-        $json[$sno]['cost']=(int)$row['cost'];
-        $json[$sno]['current_qty']=(int)$row['current_qty'];
-        $json[$sno]['current_value']=(int)$row['current_value'];
-        $json[$sno]['current_wt']=(int)$row['current_wt'];
-        $json[$sno]['less']=(int)$row['less'];
-        $json[$sno]['purchased_qty']=(int)$row['purchased_qty'];
-        $json[$sno]['purchased_wt']=(int)$row['purchased_wt'];
-        $json[$sno]['rate']=(int)$row['rate'];
-        $json[$sno]['total_amount']=(int)$row['total_amount'];
+        $json[$sno]['cost']=(float)$row['cost'];
+        $json[$sno]['current_qty']=(float)$row['current_qty'];
+        $json[$sno]['current_value']=(float)$row['current_value'];
+        $json[$sno]['current_wt']=(float)$row['current_wt'];
+        $json[$sno]['less']=(float)$row['less'];
+        $json[$sno]['purchased_qty']=(float)$row['purchased_qty'];
+        $json[$sno]['purchased_wt']=(float)$row['purchased_wt'];
+        $json[$sno]['rate']=(float)$row['rate'];
+        $json[$sno]['total_amount']=(float)$row['total_amount'];
         $json[$sno]['userid']=(int)$row['userid'];
         $sno++;
     }

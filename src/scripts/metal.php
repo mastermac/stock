@@ -92,7 +92,7 @@ function upsertSoldData()
             $stmt->close();
         }
         else{
-            $stmt = $mysqli->prepare("INSERT INTO `metal-sold-inventory` VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $mysqli->prepare("INSERT INTO `metal-sold-inventory` VALUES (null, ?, ?, ?, ?, ?, ?, ?, null)");
             $stmt->bind_param("sssssss", $_SESSION['userid'], $data['dt'], $data['description'], strtoupper($data['type']), strtoupper($data['purity']), $data['qty'], date("Y-m-d H:i:s") );
             $stmt->execute();
             $stmt->close();
@@ -149,6 +149,15 @@ function delete(){
     echo json_encode($data);
 }
 
+function delete_save(){
+    $mysqli = getConn();
+    $sql="DELETE from `metal-sold-inventory` where id='".$_GET['id']."';";
+    $result = $mysqli->query($sql);
+
+    $data['sql'] = $sql;
+    echo json_encode($data);
+}
+
 function returnData($json,$sql,$result){
     $data['data'] = $json;
     $data['sql'] = $sql;
@@ -197,6 +206,8 @@ switch($_GET["func"]){
     case "getSoldMetalList": getSoldMetalList();
         break;
     case "delete": delete();
+        break;
+    case "delete_save": delete_save();
         break;
     case "upsertData": upsertData();
         break;

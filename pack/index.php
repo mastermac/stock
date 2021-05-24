@@ -52,13 +52,49 @@ if ($_SESSION['usertype'] >= 1)
 			<div class="col-4">
 				<span class="center"><b>Packing Lists</b></span>
 			</div>
+			<input type="hidden" id="pid" name="pid" value="0">
+
 			<!-- <div class="col-4">
 				<button type="button" class="btn btn-sm btn-outline-success" data-mdb-ripple-color="dark" onclick="moveToInvoice()">Move to Packing List</button>
 			</div> -->
 		</div>
 
 		<div id="packingLists" class="ag-theme-balham mx-auto" style="height: 500px;width: 95%;text-align:left!important;"></div>
+
+		<div class="row mt-2" style="font-size: 14px;">
+			<div class="col float-start">
+				Dia: <b id="totalDiamonds"></b>&emsp;&emsp;&emsp;
+				Stone: <b id="totalStones"></b>&emsp;&emsp;&emsp;
+				Metal: <b id="totalMetal"></b>&emsp;&emsp;&emsp;
+				Net Worth: <b id="totalNetWorth"></b>
+			</div>
+		</div>
+
 		<!--Table-->
+	</div>
+
+	<!--Modal: Packing List Actions-->
+	<div class="modal fade" id="packingListActionModal" tabindex="-1" data-mdb-backdrop="static" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered cascading-modal modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="padding-bottom: 0px; border-bottom: 0px;">
+					<h5 class="modal-title">Select an Action</h5>
+					<button type="button" class="close" data-mdb-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="newPackingList" name="newPackingList" enctype="multipart/form-data" method="GET">
+						<div class="row">
+							<button onclick="deletePackingList()" type="button" class="btn btn-outline-danger my-1" data-mdb-ripple-color="dark">Delete</button>
+							<button onclick="lockPackingList()" id="lockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Lock</button>
+							<button onclick="unlockPackingList()" id="unlockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Un-Lock</button>
+							<button onclick="finalizePackingList()" id="finalizeAction" type="button" class="btn btn-outline-success my-1" style="display: none;" data-mdb-ripple-color="dark">Finalise</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!--Modal: Create/Edit Packing List-->

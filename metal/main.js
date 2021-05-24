@@ -92,6 +92,14 @@ var metalInv = {
 	},
 };
 
+var allowRowEdit=true;
+
+if(usertype==0)
+	$("#metalSaveDataButton").show();
+else
+	allowRowEdit=false;
+
+
 var metalSoldInv = {
 	columnDefs: [
 		{
@@ -104,7 +112,7 @@ var metalSoldInv = {
 			filter: false,
 			width: 90
 		},
-		{ headerName: "Date", editable: true, field: "dt", width: 100, filter: "agDateColumnFilter" },
+		{ headerName: "Date", field: "dt", width: 100, filter: "agDateColumnFilter" },
 		{ headerName: "Description", field: "description", width: 200 },
 		{ headerName: "G/S?", field: "type", width: 90 },
 		{
@@ -115,6 +123,7 @@ var metalSoldInv = {
 			},
 		},
 		{ headerName: "Qty", field: "qty", filter: "agNumberColumnFilter", width: 90 },
+		{ headerName: "PL #", field: "pl_id", width: 90,  editable: false },
 		{ headerName: "Rate", field: "rate", width: 90, hide: true },
 		{ headerName: "Amt", field: "amount", width: 100, hide: true, editable: false },
 		{
@@ -123,16 +132,16 @@ var metalSoldInv = {
 			filter: false,
 			sortable: false,
 			editable: false,
-			hide: true,
+			hide: !allowRowEdit,
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
 					showLoader();
 					$.ajax({
 						dataType: "json",
-						url: url + "../src/scripts/manufacturing.php",
+						url: url + "../src/scripts/metal.php",
 						data: {
-							func: "delete",
+							func: "delete_save",
 							id: field,
 						},
 					}).done(function (data) {
@@ -141,9 +150,9 @@ var metalSoldInv = {
 					});
 				},
 			},
+			pinned: 'right',
 			resizable: false,
 			width: 100,
-			pinned: 'right'
 		},
 	],
 	defaultColDef: {
@@ -151,7 +160,7 @@ var metalSoldInv = {
 		wrapText: true,
 		autoHeight: true,
 		resizable: true,
-		editable: true,
+		editable: allowRowEdit,
 		filter: true,
 		sortable: true,
 		type: "leftAligned",
@@ -190,6 +199,9 @@ var metalSoldInv = {
 function Init() {
 
 }
+
+
+
 
 function exportData() {
 	let params = {

@@ -7,10 +7,11 @@ function createPackingList()
     $mysqli = getConn();
     $sql = "SELECT * FROM settings LIMIT 1";
     $result = $mysqli->query($sql);
+    $a=0;
     while ($row = $result->fetch_assoc()){
         $mysqli1 = getConn();
-        $stmt = $mysqli1->prepare("INSERT INTO packinglist VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-        $stmt->bind_param("ssssssssssssss", $_GET['date'], $_GET['name'], $row['exchangeRt'], $row['silverRt'], $row['goldRt'], $row['labourRt'], $row['platingRt'], $row['findingsRt'], $_SESSION['userid'], $row['microDiaSettingRt'], $row['prongDiaSettingRt'], $row['baguetteDiaSettingRt'], $row['roundStoneSettingRt'], $row['goldLabourRt']);
+        $stmt = $mysqli1->prepare("INSERT INTO packinglist VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, null)");
+        $stmt->bind_param("ssssssssssssssi", $_GET['date'], $_GET['name'], $row['exchangeRt'], $row['silverRt'], $row['goldRt'], $row['labourRt'], $row['platingRt'], $row['findingsRt'], $_SESSION['userid'], $row['microDiaSettingRt'], $row['prongDiaSettingRt'], $row['baguetteDiaSettingRt'], $row['roundStoneSettingRt'], $row['goldLabourRt'], $a);
         $stmt->execute();
         $stmt->close();
         $mysqli1->close();
@@ -22,8 +23,8 @@ function createPackingList()
 function createPLItem(){
     
     $mysqli = getConn();
-    $stmt = $mysqli->prepare("INSERT INTO `pl-items` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ississss", $_POST['pid'], $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description']);
+    $stmt = $mysqli->prepare("INSERT INTO `pl-items` VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ississsss", $_POST['pid'], $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description'], $_POST['total']);
     $stmt->execute();
     $stmt->close();
     $mysqli->close();

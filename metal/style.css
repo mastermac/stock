@@ -13,9 +13,11 @@ legend {
     float: none;
     margin-bottom: 0px !important;
 }
-.nav-pills .nav-link{
+
+.nav-pills .nav-link {
     padding: 10px 22px 9px;
 }
+
 fieldset {
     min-width: initial !important;
     padding: 15px !important;
@@ -69,29 +71,67 @@ fieldset .md-form {
     padding: 0px !important;
 }
 
-.select-wrapper + label{
+.select-wrapper+label {
     top: 0.65rem !important;
     font-size: 1rem !important;
 }
-.select-wrapper + label{
+
+.select-wrapper+label {
     top: 0.65rem !important;
     font-size: 1rem !important;
 }
-.select-wrapper + label.active{
+
+.select-wrapper+label.active {
     font-size: 0.8rem !important;
 }
+
 #PL-Items .md-form {
     margin-bottom: 1rem !important;
 }
 
-.ag-theme-balham .ag-row-odd{
+.ag-theme-balham .ag-row-odd {
     background-color: #f2f2f2;
 }
 
-.ag-theme-balham .ag-header-row{
+.ag-theme-balham .ag-header-row {
     color: black;
 }
 
-.ag-theme-balham{
+.ag-theme-balham {
     font-size: 13px;
 }
+
+.dropbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
