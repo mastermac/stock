@@ -86,7 +86,7 @@ if ($_SESSION['usertype'] >= 1)
 				<div class="modal-body">
 					<form id="newPackingList" name="newPackingList" enctype="multipart/form-data" method="GET">
 						<div class="row">
-							<button onclick="deletePackingList()" type="button" class="btn btn-outline-danger my-1" data-mdb-ripple-color="dark">Delete</button>
+							<button onclick="deletePackingList()" id="deleteAction" type="button" class="btn btn-outline-danger my-1" data-mdb-ripple-color="dark">Delete</button>
 							<button onclick="lockPackingList()" id="lockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Lock</button>
 							<button onclick="unlockPackingList()" id="unlockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Un-Lock</button>
 							<button onclick="finalizePackingList()" id="finalizeAction" type="button" class="btn btn-outline-success my-1" style="display: none;" data-mdb-ripple-color="dark">Finalise</button>

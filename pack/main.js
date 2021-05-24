@@ -122,10 +122,19 @@ $("#packingListActionModal").on("shown.bs.modal", () => {
 		$("#unlockAction").show();
 		$("#finalizeAction").show();
 	}
-
+	else if(currentRow.data.status=="2"){
+		$("#deleteAction").hide();
+		$("#lockAction").hide();
+		$("#unlockAction").hide();
+		$("#finalizeAction").hide();
+	}
 });
 
 function deletePackingList(){
+	var r = confirm("Sure about DELETING?");
+	if (r == false)
+		return;
+
 	showLoader();
 	var field=$("#pid").val();
 	$.ajax({
@@ -144,6 +153,10 @@ function deletePackingList(){
 }
 
 function lockPackingList(){
+	var r = confirm("Sure about LOCKING the packing list? \n\nOnce It is locked, you won't be able to edit/delete any item details within the given packing list.");
+	if (r == false)
+		return;
+
 	showLoader();
 	var field=$("#pid").val();
 	$.ajax({
@@ -165,6 +178,9 @@ function lockPackingList(){
 }
 
 function unlockPackingList(){
+	var r = confirm("Sure about UN-LOCKING the packing list? \n\nOnce It is un-locked, your respective metal, diamond and stone inventories will be restored and You will be able to edit/delete any item details within the given packing list.");
+	if (r == false)
+		return;
 	showLoader();
 	var field=$("#pid").val();
 	$.ajax({
@@ -184,6 +200,9 @@ function unlockPackingList(){
 
 
 function finalizePackingList(){
+	var r = confirm("Sure about FINALIZING the packing list? \n\nOnce It is done, Stock Panel's Inventory will be updated and You won't be able to edit/delete any details within the given packing list.");
+	if (r == false)
+		return;
 	showLoader();
 	var field=$("#pid").val();
 	$.ajax({
@@ -413,6 +432,10 @@ var gridOptions_PL_Items = {
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
+					var r = confirm("Sure about DELETING?");
+					if (r == false)
+						return;
+								
 					showLoader();
 					$.ajax({
 						dataType: "json",
@@ -591,6 +614,10 @@ var metalDetailsColDef = [
 		cellRenderer: "delButton",
 		cellRendererParams: {
 			clicked: function (field) {
+				var r = confirm("Sure about DELETING?");
+				if (r == false)
+					return;
+			
 				showLoader();
 				var data=[];
 				metalGridOptions.api.forEachNode(function(rowNode, index) {
@@ -643,6 +670,10 @@ var diamondDetailsColDef = [
 		cellRenderer: "delButton",
 		cellRendererParams: {
 			clicked: function (field) {
+				var r = confirm("Sure about DELETING?");
+				if (r == false)
+					return;
+			
 				showLoader();
 				var data=[];
 				diamondGridOptions.api.forEachNode(function(rowNode, index) {
@@ -688,6 +719,10 @@ var stoneDetailsColDef = [
 		cellRenderer: "delButton",
 		cellRendererParams: {
 			clicked: function (field) {
+				var r = confirm("Sure about DELETING?");
+				if (r == false)
+					return;
+			
 				showLoader();
 				var data=[];
 				stoneGridOptions.api.forEachNode(function(rowNode, index) {
@@ -727,6 +762,10 @@ var otherCostsDetailsColDef = [
 		cellRenderer: "delButton",
 		cellRendererParams: {
 			clicked: function (field) {
+				var r = confirm("Sure about DELETING?");
+				if (r == false)
+					return;
+			
 				showLoader();
 				var data=[];
 				otherCostGridOptions.api.forEachNode(function(rowNode, index) {

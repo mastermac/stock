@@ -65,6 +65,10 @@ var manufacturingInventory = {
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
+					var r = confirm("Sure about DELETING?");
+					if (r == false)
+						return;
+								
 					showLoader();
 					$.ajax({
 						dataType: "json",

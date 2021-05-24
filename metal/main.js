@@ -33,6 +33,10 @@ var metalInv = {
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
+					var r = confirm("Sure about DELETING?");
+					if (r == false)
+						return;
+				
 					showLoader();
 					$.ajax({
 						dataType: "json",
@@ -136,6 +140,10 @@ var metalSoldInv = {
 			cellRenderer: "delButton",
 			cellRendererParams: {
 				clicked: function (field) {
+					var r = confirm("Sure about DELETING?");
+					if (r == false)
+						return;
+				
 					showLoader();
 					$.ajax({
 						dataType: "json",
@@ -648,90 +656,6 @@ function BindMetalLists(data, Inv) {
 
 //#region PL-Items
 
-var gridOptions_PL_Items = {
-	columnDefs: [
-		{
-			headerName: "S.No",
-			field: "sno",
-			headerCheckboxSelection: true,
-			headerCheckboxSelectionFilteredOnly: true,
-			checkboxSelection: true,
-			editable: false,
-		},
-		{ headerName: "Item #", field: "itemcode" },
-		{ headerName: "Mewar #", field: "mewarcode" },
-		{ headerName: "Qty", field: "qty", width: 15, filter: "agNumberColumnFilter" },
-		{ headerName: "Ring Size", field: "ringsize" },
-		{ headerName: "M Type", field: "metaltype" },
-		{ headerName: "M Color", field: "metalcolor" },
-		{ headerName: "Description", field: "description", width: 150 },
-		{
-			headerName: "Edit",
-			field: "id",
-			filter: false,
-			sortable: false,
-			cellRenderer: "editButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					currentItem = field;
-					$("#itemDetailModal").modal("show");
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-		{
-			headerName: "Delete",
-			field: "id",
-			filter: false,
-			sortable: false,
-			cellRenderer: "delButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					showLoader();
-					$.ajax({
-						dataType: "json",
-						url: url + "../src/scripts/packingList_d.php",
-						data: {
-							func: "deletePLItem",
-							id: field,
-						},
-					}).done(function (data) {
-						hideLoader();
-						getPLItems(currentPL);
-					});
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-	],
-	defaultColDef: {
-		flex: 1,
-		width: 40,
-		resizable: true,
-		editable: true,
-		filter: true,
-		sortable: true,
-		type: "leftAligned",
-		enableCellChangeFlash: true,
-	},
-	animateRows: true,
-	suppressRowClickSelection: true,
-	rowSelection: "multiple",
-	undoRedoCellEditing: true,
-	enableFillHandle: true,
-	undoRedoCellEditingLimit: 10,
-	stopEditingWhenGridLosesFocus: true,
-	components: {
-		editButton: EditBtnCellRenderer,
-		delButton: DelBtnCellRenderer,
-	},
-	onCellValueChanged: function (event) {
-		newData.push(event.data);
-		metalInv.api.flashCells({ rowNodes: [event.rowIndex] });
-	},
-};
 
 $("#packingListItemsModal").on("show.bs.modal", () => {
 	InitPLItemsForm();
@@ -808,164 +732,6 @@ function BindPL_Items(data) {
 //#endregion
 
 //#region Edit Item Details
-var metalDetailsColDef = [
-	{ headerName: "S.No", field: "metal_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false, filter: false },
-	{ headerName: "Metal Wt", field: "metal_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "metal_amt", editable: false },
-	{
-		headerName: "Delete",
-		field: "metal_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				metalGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.metal_sno = node.metal_sno - 1;
-						data.push(node);
-					}
-				});
-				metalGridOptions.api.setRowData(data);
-				metalGridOptions.getRowNodeId = d => {
-					return d.metal_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var diamondDetailsColDef = [
-	{ headerName: "S.No", field: "dia_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Lot No", field: "dia_lot_id", filter: "agNumberColumnFilter" },
-	{ headerName: "Shape/Color/Cut", field: "dia_shape", editable: false },
-	{ headerName: "Size", field: "dia_size", editable: false },
-	{ headerName: "# Pcs", field: "dia_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Ct Wt", field: "dia_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Rate/ct", field: "dia_rate", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "dia_amt", editable: false },
-	{
-		headerName: "Delete",
-		field: "dia_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				diamondGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.dia_sno = node.dia_sno - 1;
-						data.push(node);
-					}
-				});
-				diamondGridOptions.api.setRowData(data);
-				diamondGridOptions.getRowNodeId = d => {
-					return d.dia_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var stoneDetailsColDef = [
-	{ headerName: "S.No", field: "stone_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Lot No", field: "stone_lot_id", filter: "agNumberColumnFilter" },
-	{ headerName: "Name", field: "stone_name", editable: false },
-	{ headerName: "Shape", field: "stone_shape", editable: false },
-	{ headerName: "Size", field: "stone_size", editable: false },
-	{ headerName: "Pcs", field: "stone_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Ctw.", field: "stone_wt", filter: "agNumberColumnFilter" },
-	{ headerName: "Rs/ct", field: "stone_rate", filter: "agNumberColumnFilter" },
-	{ headerName: "Amount", field: "stone_amt", filter: "agNumberColumnFilter", editable: false },
-	{
-		headerName: "Delete",
-		field: "stone_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				stoneGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.stone_sno = node.stone_sno - 1;
-						data.push(node);
-					}
-				});
-				stoneGridOptions.api.setRowData(data);
-				stoneGridOptions.getRowNodeId = d => {
-					return d.stone_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
-
-var otherCostsDetailsColDef = [
-	{ headerName: "S.No", field: "other_sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
-	{ headerName: "Description", field: "other_desc", width: 200 },
-	{ headerName: "Amount", field: "other_amt", filter: "agNumberColumnFilter" },
-	{
-		headerName: "Delete",
-		field: "other_sno",
-		filter: false,
-		sortable: false,
-		editable: false,
-		cellRenderer: "delButton",
-		cellRendererParams: {
-			clicked: function (field) {
-				showLoader();
-				var data = [];
-				otherCostGridOptions.api.forEachNode(function (rowNode, index) {
-					if (index < field - 1) {
-						data.push(rowNode.data);
-					}
-					else if (index > field - 1) {
-						var node = rowNode.data;
-						node.other_sno = node.other_sno - 1;
-						data.push(node);
-					}
-				});
-				otherCostGridOptions.api.setRowData(data);
-				otherCostGridOptions.getRowNodeId = d => {
-					return d.other_sno;
-				};
-				hideLoader();
-			},
-		},
-		width: 20,
-		resizable: false,
-	},
-];
 
 var LabourDetailsColDef = [
 	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
