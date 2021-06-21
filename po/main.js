@@ -455,7 +455,7 @@ function BindPL_Items(data) {
 
 //#region Edit Item Details
 var poDetailsColDef = [
-	{ headerName: "S.No", field: "sno", headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true, editable: false },
+	{ headerName: "S.No", field: "sno", editable: false, width: 90 },
 	{ headerName: "Id", field: "id", hide: true },
 	{ headerName: "Item No", field: "itemNo"},
 	{ headerName: "In Stk", field: "curStock", filter: "agNumberColumnFilter", editable: false },
@@ -522,21 +522,25 @@ var allDetailsGO={
 var commonGridOptions = {
 	defaultColDef: {
 		width: 120,
+		wrapText: true,
+	    autoHeight: true,
 		resizable: true,
 		editable: true,
 		filter: true,
 		sortable: true,
 		type: "leftAligned",
 		enableCellChangeFlash: true,
+		cellStyle: { "white-space": "normal" },
 	},
 	immutableData: false,
 	animateRows: true,
 	suppressRowClickSelection: true,
-	rowSelection: "multiple",
 	undoRedoCellEditing: true,
 	enableFillHandle: true,
 	undoRedoCellEditingLimit: 10,
 	stopEditingWhenGridLosesFocus: true,
+	onColumnResized: onColumnResized,
+	onColumnVisible: onColumnVisible,
 	components: {
 		editButton: EditBtnCellRenderer,
 		delButton: DelBtnCellRenderer,
@@ -545,6 +549,14 @@ var commonGridOptions = {
 		newData.push(event.data);
 	},
 };
+
+function onColumnResized(params) {
+	params.api.resetRowHeights();
+}
+  
+function onColumnVisible(params) {
+	params.api.resetRowHeights();
+}
 
 $("#itemDetailModal").on("show.bs.modal", InitPLItemDetailsForm);
 $("#itemDetailModal").on("hide.bs.modal", () => {
@@ -620,16 +632,16 @@ function getStockDetails(){
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('discount', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', null);
 		}
+		hideLoader();
 		if(currentStoneSno==1){
 			currentImageNo = currentStoneSno;
 			$("#galleryId").html(currentStoneLotId);
 			$("#galleryDiv").attr("src","../pics/"+currentStoneLotId+".jpg");
 		}
-
 		currentDiaSno=0;
 		currentDiaLotId=0;
 		currentStoneType="";
-		hideLoader();
+		poGridOptions.api.resetRowHeights();
 	});
 }
 
