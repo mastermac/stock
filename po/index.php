@@ -341,28 +341,23 @@ if ($_SESSION['usertype'] >= 1)
 								</div>
 								<div class="col-1">
 
-									<div class="mb-3 pe-0" style="margin-top: 48px;">
-										<img src="../pics/noImage.jpeg" height="100px" style="border: 1px dashed;">
+									<div class="pe-0" style="margin-top: 48px;">
+										<img src="../pics/noImage.jpeg" id="galleryDiv" onerror="this.src='../pics/noImage.jpeg';" height="100px" style="border: 1px dashed;">
+										<div id="galleryId" style="font-size: 14px;"></div>
 									</div>
-									<div class="mb-3 ps-2 pe-2" style="height: 40px;">
-										<img src="pics/arrow.png" height="24px" style="float: left;">
-										<img src="pics/arrow.png" height="24px" style="float: right; transform: rotate(180deg);">
-									</div>
-
-									<div class="mt-4 mb-3 pe-0">
-										<div class="form-outline"><input type="number" id="itemcode" name="itemcode" class="form-control" disabled/>
-											<label class="form-label" for="itemcode">Sub Total</label>
-										</div>
+									<div class="mb-4 ps-2 pe-2" style="height: 40px;">
+										<img src="pics/arrow.png" height="24px" style="float: left;" onclick="loadImage(-1)">
+										<img src="pics/arrow.png" height="24px" style="float: right; transform: rotate(180deg);" onclick="loadImage(1)">
 									</div>
 
-									<div class="mb-3 pe-0">
-										<div class="form-outline"><input type="number" id="itemcode" name="itemcode" class="form-control"/>
-											<label class="form-label" for="itemcode">Discount %</label>
+									<div class="mt-4 pt-4 mb-3 pe-0">
+										<div class="form-outline"><input type="number" id="discount" name="discount" class="form-control" min=0/>
+											<label class="form-label" for="discount">Discount %</label>
 										</div>
 									</div>
 									<div class="mb-3 pe-0">
-										<div class="form-outline"><input type="number" id="itemcode" name="itemcode" class="form-control" disabled/>
-											<label class="form-label" for="itemcode">Total</label>
+										<div class="form-outline"><input type="number" id="poTotal" name="poTotal" class="form-control" disabled/>
+											<label class="form-label" for="poTotal">Total</label>
 										</div>
 									</div>
 

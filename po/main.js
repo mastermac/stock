@@ -344,132 +344,7 @@ function BindPurchaseOrders(data) {
 
 //#region PL-Items
 
-var gridOptions_PL_Items = {
-	columnDefs: [
-		{
-			headerName: "S.No",
-			field: "sno",
-			headerCheckboxSelection: true,
-			headerCheckboxSelectionFilteredOnly: true,
-			checkboxSelection: true,
-		},
-		{ headerName: "Item #", field: "itemcode" },
-		{ headerName: "Pic", field: "itemcode", cellRenderer: 'imgCell' },
-		{ headerName: "Mewar #", field: "mewarcode" },
-		{ headerName: "Qty", field: "qty", width: 15, filter: "agNumberColumnFilter" },
-		{ headerName: "Ring Size", field: "ringsize" },
-		{ headerName: "M Type", field: "metaltype" },
-		{ headerName: "M Color", field: "metalcolor" },
-		{ headerName: "Total", field: "total" },
-		{ headerName: "Description", field: "description", width: 130 },
-		{
-			headerName: "Edit",
-			field: "id",
-			filter: false,
-			sortable: false,
-			cellRenderer: "editButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					showLoader();
-					currentItem = field;
-					$.ajax({
-						dataType: "json",
-						url: url + "../src/scripts/packingList_r.php",
-						data: {
-							func: "getPackingListItemById",
-							id: currentPL,
-							itemId: currentItem
-						},
-					}).done(function (response) {
-						resetPLItem();
-						hideLoader();
-						$("#UpsertPurchaseOrder .form-control").addClass("active");
-						$('#metalDetails-tab').tab('show');
-						$("#itemid").val(response.data.id);
-						$("#itemcode").val(response.data.itemcode).change();
-						$("#mewarcode").val(response.data.mewarcode).change();
-						$("#qty").val(response.data.qty).change();
-						$("#ringsize").val(response.data.ringsize).change();
-						$("#metaltype").val(response.data.metaltype).change();
-						$("#metalcolor").val(response.data.metalcolor).change();
-						$("#description").val(response.data.description).change();
-			
-						poGridOptions.api.setRowData(response.data.diamond);
-						isEditingItem=true;
-						if(hideDeleteOptions)
-							$("#PL_Items_Create").hide();
-						else
-							$("#PL_Items_Create").show();
-						
-						poGridOptions.columnApi.setColumnVisible('delete', !hideDeleteOptions);
-					});
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-		{
-			headerName: "Delete",
-			field: "id",
-			colId: "delete",
-			filter: false,
-			sortable: false,
-			hide: hideDeleteOptions,
-			cellRenderer: "delButton",
-			cellRendererParams: {
-				clicked: function (field) {
-					var r = confirm("Sure about DELETING?");
-					if (r == false)
-						return;
-								
-					showLoader();
-					$.ajax({
-						dataType: "json",
-						url: url + "../src/scripts/packingList_d.php",
-						data: {
-							func: "deletePLItem",
-							id: field,
-						},
-					}).done(function (data) {
-						hideLoader();
-						resetPLItem();
-						getPLItems(currentPL);
-					});
-				},
-			},
-			width: 20,
-			resizable: false,
-		},
-	],
-	
-	defaultColDef: {
-		flex: 1,
-		width: 40,
-		resizable: true,
-		editable: false,
-		filter: true,
-		sortable: true,
-		type: "leftAligned",
-		enableCellChangeFlash: true,
-	},
-	rowHeight: 80,
-	animateRows: true,
-	suppressRowClickSelection: true,
-	rowSelection: "multiple",
-	undoRedoCellEditing: true,
-	enableFillHandle: true,
-	undoRedoCellEditingLimit: 10,
-	stopEditingWhenGridLosesFocus: true,
-	components: {
-		editButton: EditBtnCellRenderer,
-		delButton: DelBtnCellRenderer,
-		imgCell: ImageCellRenderer
-	},
-	onCellValueChanged: function (event) {
-		newData.push(event.data);
-		gridOptions_PL.api.flashCells({ rowNodes: [event.rowIndex] });
-	},
-};
+
 var isEditingItem=false;
 $("#packingListItemsModal").on("show.bs.modal", ()=>{
 	// InitPLItemsForm();
@@ -586,11 +461,11 @@ var poDetailsColDef = [
 	{ headerName: "In Stk", field: "curStock", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "On Ordr", field: "onOrder", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Qty", field: "po_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Price", field: "costPrice", filter: "agNumberColumnFilter", editable: false },
+	{ headerName: "Price", field: "sellPrice", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Discount", field: "discount", filter: "agNumberColumnFilter" },
 	{ headerName: "Unit Price", field: "unit_price", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Note", field: "note", width: 250 },
-	{ headerName: "DESC", field: "description", editable: false, width: 250 },
+	{ headerName: "DESC", field: "description", width: 250 },
 	{
 		headerName: "Del",
 		field: "sno",
@@ -691,6 +566,31 @@ function getStoneMultiplier(loss){
 	return multiplier;
 }
 
+const debounce = (func, delay) => {
+    let debounceTimer
+    return function() {
+        const context = this
+        const args = arguments
+            clearTimeout(debounceTimer)
+                debounceTimer
+            = setTimeout(() => func.apply(context, args), delay)
+    }
+}
+
+document.getElementById("discount").addEventListener('keyup', debounce(function() {
+	let globalDiscount = Number.parseFloat($("#discount").val());
+	if(isNaN(globalDiscount)) globalDiscount = 0;
+
+	poGridOptions.api.forEachNode(function(rowNode, index) {
+		if(rowNode.data.itemNo){
+			poGridOptions.api.getRowNode(rowNode.data.sno).setDataValue('discount', Number.parseFloat(globalDiscount));
+			if(rowNode.data.po_qty)
+				poGridOptions.api.getRowNode(rowNode.data.sno).setDataValue('unit_price', Number.parseFloat(rowNode.data.sellPrice * (1 - (globalDiscount*0.01))).toFixed(2));
+		}
+	});
+	calculateTotal();
+}, 750));
+var currentImageNo=0;
 function getStockDetails(){
 	showLoader();
 	$.ajax({
@@ -703,28 +603,55 @@ function getStockDetails(){
 	}).done(function (data) {
 		if(data.data.itemNo){
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('curStock', data.data.curStock);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('costPrice', data.data.costPrice);
+			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('sellPrice', data.data.sellPrice);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('description', data.data.description);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('onOrder', data.data.onOrder);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('po_qty', 1);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('discount', 0);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', data.data.costPrice);
+			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', data.data.sellPrice);
 		}
 		else{
 			toastr['error']("No Record found with Lot Id");
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('curStock', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('costPrice', null);
+			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('sellPrice', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('description', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('onOrder', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('po_qty', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('discount', null);
 			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', null);
 		}
+		if(currentStoneSno==1){
+			currentImageNo = currentStoneSno;
+			$("#galleryId").html(currentStoneLotId);
+			$("#galleryDiv").attr("src","../pics/"+currentStoneLotId+".jpg");
+		}
+
 		currentDiaSno=0;
 		currentDiaLotId=0;
 		currentStoneType="";
 		hideLoader();
 	});
+}
+
+function loadImage(delta){
+	if(currentImageNo+delta >= 1){
+		let row = poGridOptions.api.getRowNode(currentImageNo+delta).data;
+		if(row.itemNo){
+			currentImageNo = row.sno;
+			$("#galleryId").html(row.itemNo);
+			$("#galleryDiv").attr("src","../pics/"+row.itemNo+".jpg");
+		}
+	}
+}
+
+function calculateTotal(){
+	let total = 0;
+	poGridOptions.api.forEachNode(function(rowNode, index) {
+		if(rowNode.data.itemNo && rowNode.data.po_qty && rowNode.data.curStock)
+			total += Number.parseFloat(rowNode.data.po_qty * rowNode.data.unit_price);
+	});
+	$("#poTotal").val(total).change();
+	$("#poTotal").addClass("active");
 }
 
 var currentStoneSno=0;
@@ -742,9 +669,9 @@ function InitPLItemDetailsForm() {
 	poGridOptions.api.setRowData([{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},{sno: 8},{sno: 9},{sno: 10},{sno: 11},{sno: 12},]);
 	poGridOptions.api.setColumnDefs(poDetailsColDef);
 	poGridOptions.onCellValueChanged = function(event){
-		console.log(event);
-		if(event.data.po_qty && event.data.discount && ( event.column.colId === "po_qty" ||  event.column.colId === "discount")){
-			poGridOptions.api.getRowNode(event.data.sno).setDataValue('unit_price', Number.parseFloat(event.data.costPrice * (1 - (event.data.discount*0.01))).toFixed(2));
+		if(event.data.po_qty && ( event.column.colId === "po_qty" ||  event.column.colId === "discount")){
+			poGridOptions.api.getRowNode(event.data.sno).setDataValue('unit_price', Number.parseFloat(event.data.sellPrice * (1 - (event.data.discount*0.01))).toFixed(2));
+			calculateTotal();
 		}
 		if(event.colDef.field=="itemNo"){
 			currentStoneSno = event.data.sno;
