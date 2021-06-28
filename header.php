@@ -31,9 +31,9 @@
 				<li class="nav-item">
 					<a class="nav-link" href="/stock/">Stock</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/stock/po/">PO</a>
-				</li>
+				<?php if ($_SESSION['usertype'] <= 1)
+					echo '<li class="nav-item"><a class="nav-link" href="/stock/po/">PO</a></li>';
+				?>
 				<li class="nav-item">
 					<a class="nav-link" id="logout" href="#" name="logout">Logout</a>
 				</li>

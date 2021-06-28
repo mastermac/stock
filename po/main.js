@@ -1,4 +1,5 @@
-var PackingListRates;
+var selectedPO;
+
 toastr.options = {
 	"positionClass": "toast-bottom-right",
 };
@@ -26,8 +27,9 @@ var gridOptions_PL = {
 		{ headerName: "Ship", field: "ship_date", filter: "agDateColumnFilter" },
 		{ headerName: "Cancel", field: "cancel_date", filter: "agDateColumnFilter" },
 		{ headerName: "Note", field: "note", width: 300 },
-		{ headerName: "Total Items", field: "item_count", width: 130, filter: "agNumberColumnFilter" },
+		{ headerName: "Items", field: "item_count", filter: "agNumberColumnFilter" },
 		{ headerName: "Total", field: "total", filter: "agNumberColumnFilter" },
+		{ headerName: "Discount", field: "discount", filter: "agNumberColumnFilter", hide: true },
 		{ headerName: "Last Modified", field: "last_modified_date", filter:"agDateColumnFilter", width: 150 },		
 		{
 			headerName: "Edit",
@@ -43,9 +45,14 @@ var gridOptions_PL = {
 						hideDeleteOptions = true;
 					else
 						hideDeleteOptions = false;
-
-					PackingListRates=new PL_Rates(currentRow.data.exchangeRt,currentRow.data.silverRt, currentRow.data.goldRt, currentRow.data.labourRt, currentRow.data.goldLabourRt, currentRow.data.platingRt, currentRow.data.findingsRt, currentRow.data.microDiaSettingRt, currentRow.data.prongDiaSettingRt, currentRow.data.baguetteDiaSettingRt, currentRow.data.roundStoneSettingRt, vendorProfit);
-					console.log(PackingListRates);
+					isEditingItem = true;
+					let custCode=currentRow.cust_code;
+					if(currentRow.cust_code==0)
+						custCode = "";
+					let disc = currentRow.discount;
+					if(currentRow.discount==0)
+						disc = "";
+					selectedPO=new PO(currentRow.data.id,custCode, currentRow.data.entry_date, currentRow.data.order_date, currentRow.data.ship_date, currentRow.data.cancel_date, currentRow.data.type, currentRow.data.note, currentRow.data.total, disc);
 					$("#packingListItemsModal").modal("show");
 				},
 			},
@@ -333,7 +340,7 @@ function abbreviateNumber(value) {
 
 function BindPurchaseOrders(data) {
 	if(data)
-		nextPurchaseOrder = data[data.length-1].id+1;
+		nextPurchaseOrder = parseInt(data[data.length-1].id)+1;
 	else
 		nextPurchaseOrder = 1001;
 	gridOptions_PL.api.setRowData(data);
@@ -347,11 +354,7 @@ function BindPurchaseOrders(data) {
 
 var isEditingItem=false;
 $("#packingListItemsModal").on("show.bs.modal", ()=>{
-	// InitPLItemsForm();
-
 	InitPLItemDetailsForm();
-	$("#metalDetails-tab").click();
-	$("#po_id").val(nextPurchaseOrder).change();
 	$(".datepick").daterangepicker(
 		{
 			singleDatePicker: true,
@@ -361,8 +364,44 @@ $("#packingListItemsModal").on("show.bs.modal", ()=>{
 			window.start = start.format("YYYY-MM-DD");
 		}
 	);
+
+	if(isEditingItem){
+		getPOItems(selectedPO.po_id);
+		$("#id").val(selectedPO.po_id);
+		$("#po_id").val(selectedPO.po_id).change();
+		$("#cust_code").val(selectedPO.cust_code).change();
+
+		$('#entry_date').data('daterangepicker').setStartDate(formatDate(selectedPO.entry_date));
+		$('#entry_date').data('daterangepicker').setEndDate(formatDate(selectedPO.entry_date));
+
+		$('#order_date').data('daterangepicker').setStartDate(formatDate(selectedPO.order_date));
+		$('#order_date').data('daterangepicker').setEndDate(formatDate(selectedPO.order_date));
+
+		$('#ship_date').data('daterangepicker').setStartDate(formatDate(selectedPO.ship_date));
+		$('#ship_date').data('daterangepicker').setEndDate(formatDate(selectedPO.ship_date));
+
+		$('#cancel_date').data('daterangepicker').setStartDate(formatDate(selectedPO.cancel_date));
+		$('#cancel_date').data('daterangepicker').setEndDate(formatDate(selectedPO.cancel_date));
+
+		$("#type").val(selectedPO.type).change();
+		$("#note").val(selectedPO.note).change();
+		$("#poTotal").val(selectedPO.total).change();
+		$("#discount").val(selectedPO.discount).change();
+		$("#SavePurchaseOrder").html("Update");
+	}
+	else{
+		$("#id").val(nextPurchaseOrder);
+		$("#po_id").val(nextPurchaseOrder).change();
+		$("#SavePurchaseOrder").html("Save");
+	}
+
 });
+function formatDate(date){
+	let splitArr = date.split("-");
+	return splitArr[1]+"/"+splitArr[2]+"/"+splitArr[0];
+}
 $("#packingListItemsModal").on("hidden.bs.modal", () => {
+	isEditingItem = false;
 	poGridOptions.api.destroy();
 });
 
@@ -382,18 +421,25 @@ function InitPLItemsForm() {
 	gridOptions_PL_Items.columnApi.setColumnVisible('delete', !hideDeleteOptions);
 }
 
-function getPLItems(packingListId) {
+function getPOItems(Id) {
 	showLoader();
 	$.ajax({
 		dataType: "json",
-		url: url + "../src/scripts/packingList_r.php",
+		url: url + "../src/scripts/po.php",
 		data: {
-			func: "getPackingListItems",
-			id: packingListId,
+			func: "getPurchaseOrderItems",
+			po_id: Id,
 		},
 	}).done(function (data) {
 		hideLoader();
-		BindPL_Items(data.data);
+		BindPOItems(data.data);
+		if(data.data.length){
+			currentStockSno = 1;
+			currentImageNo = currentStockSno;
+			currentStockId = data.data[0].itemNo;
+			$("#galleryId").html(currentStockId);
+			$("#galleryDiv").attr("src","../pics/"+currentStockId+".JPG");
+		}
 	});
 }
 
@@ -401,40 +447,32 @@ $("#UpsertPurchaseOrder").on('submit', (function (e) {
 	e.preventDefault();
 	showLoader();
 	var formData = new FormData(this);
-	var form_action = $("#create-item").find("form").attr("action");
 	$('.ajax-loader').css("visibility", "visible");
 	AllDetailsTabClicked(true);
-	let funcType='createPLItem';
-	let urlEnd='packingList_c.php';
-	if(isEditingItem){
-		funcType='updatePLItem';
-		urlEnd='packingList_u.php';
-	}
+	let funcType='createPurchaseOrder';
+	if(isEditingItem)
+		funcType='updatePurchaseOrder';
 	formData.append('func', funcType);
 	formData.append('pid', currentPL);
-	formData.append('diamonds', JSON.stringify(poItemsGridData));
+	formData.append('total', poTotal);
+	formData.append('items', JSON.stringify(poItemsGridData));
 	console.log(formData);
 	$.ajax({
 		type: 'POST',
 		dataType: "json",
-		url: url + "../src/scripts/"+urlEnd,
+		url: url + "../src/scripts/po.php",
 		data: formData,
 		contentType: false,
 		processData: false,
 	}).done(function (data) {
 		hideLoader();
 		if(isEditingItem)
-			toastr['success']("Item updated successfully.");
+			toastr['success']("PO updated successfully.");
 		else
-			toastr['success']("Item added successfully.");
-		updateStoneInventory();
+			toastr['success']("PO added successfully.");
 		resetPLItem();
 	});
 }));
-
-function updateStoneInventory(){
-
-}
 
 function resetPLItem(){
 	gridOptions_PL_Items.api.destroy();
@@ -443,12 +481,14 @@ function resetPLItem(){
 	InitPLItemDetailsForm();
 	$("#metalDetails-tab").click();
 	isEditingItem=false;
-	$("#PL_Items_Create").show();
+	$("#SavePurchaseOrder").show();
 	$('#metalDetails-tab').tab('show');
 }
-function BindPL_Items(data) {
-	gridOptions_PL_Items.api.setRowData(data);
-	gridOptions_PL_Items.api.sizeColumnsToFit();
+function BindPOItems(data) {
+	poGridOptions.api.setRowData(data);
+	setTimeout(function(){
+		poGridOptions.api.resetRowHeights();
+	}, 500);
 }
 
 //#endregion
@@ -461,11 +501,47 @@ var poDetailsColDef = [
 	{ headerName: "In Stk", field: "curStock", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "On Ordr", field: "onOrder", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Qty", field: "po_qty", filter: "agNumberColumnFilter" },
-	{ headerName: "Price", field: "sellPrice", filter: "agNumberColumnFilter", editable: false },
+	{ headerName: "Price", field: "sellPrice", filter: "agNumberColumnFilter" },
 	{ headerName: "Discount", field: "discount", filter: "agNumberColumnFilter" },
 	{ headerName: "Unit Price", field: "unit_price", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Note", field: "note", width: 250 },
 	{ headerName: "DESC", field: "description", width: 250 },
+	{
+		headerName: "Img",
+		field: "sno",
+		colId: "changeImg",
+		width: 60,
+		filter: false,
+		sortable: false,
+		editable: false,
+		cellRenderer: "editButton",
+		cellRendererParams: {
+			clicked: function (field) {
+				// var r = confirm("Sure about DELETING?");
+				// if (r == false)
+				// 	return;
+			
+				// showLoader();
+				// var data=[];
+				// poGridOptions.api.forEachNode(function(rowNode, index) {
+				// 	if(index<field-1){
+				// 		data.push(rowNode.data);
+				// 	}
+				// 	else if(index>field-1){
+				// 		var node=rowNode.data;
+				// 		node.sno=node.sno-1;
+				// 		data.push(node);
+				// 	}
+				// });
+				// poGridOptions.api.setRowData(data);
+				// poGridOptions.getRowNodeId = d => {
+				// 	return d.sno;
+				// };
+				// hideLoader();
+			},
+		},
+		resizable: false,
+	},
 	{
 		headerName: "Del",
 		field: "sno",
@@ -566,18 +642,6 @@ $("#itemDetailModal").on("hide.bs.modal", () => {
 var poGridOptions = Object.create(commonGridOptions);
 var dummyData=[{sno: 1},{sno: 2},{sno: 3},{sno: 4},{sno: 5},{sno: 6},{sno: 7},];
 
-function getStoneMultiplier(loss){
-	let multiplier = 1;
-	switch($("#metaltype").val().toLowerCase()){
-		case "14k": multiplier = 0.59 * (1+(loss*.01)) * PackingListRates.gold; break;
-		case "18k": multiplier = 0.76 * (1+(loss*.01)) * PackingListRates.gold; break;
-		case "10k": multiplier = 0.42 * (1+(loss*.01)) * PackingListRates.gold; break;
-		case "925": multiplier = 1 * PackingListRates.silver; break;
-		case "other": multiplier = 1; break;
-	}
-	return multiplier;
-}
-
 const debounce = (func, delay) => {
     let debounceTimer
     return function() {
@@ -610,37 +674,43 @@ function getStockDetails(){
 		url: url + "../src/scripts/po.php",
 		data: {
 			func: "getStockById",
-			itemNo: currentStoneLotId
+			itemNo: currentStockId
 		},
 	}).done(function (data) {
 		if(data.data.itemNo){
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('curStock', data.data.curStock);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('sellPrice', data.data.sellPrice);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('description', data.data.description);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('onOrder', data.data.onOrder);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('po_qty', 1);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('discount', 0);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', data.data.sellPrice);
+			if(isModifiedStockItem){
+				poGridOptions.api.getRowNode(currentStockSno).setDataValue('curStock', null);
+				poGridOptions.api.getRowNode(currentStockSno).setDataValue('onOrder', null);
+			}
+			else{
+				poGridOptions.api.getRowNode(currentStockSno).setDataValue('curStock', data.data.curStock);
+				poGridOptions.api.getRowNode(currentStockSno).setDataValue('onOrder', data.data.onOrder);
+			}
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('sellPrice', data.data.sellPrice);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('description', data.data.description);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('po_qty', 1);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('discount', 0);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('unit_price', data.data.sellPrice);
 		}
 		else{
 			toastr['error']("No Record found with Lot Id");
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('curStock', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('sellPrice', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('description', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('onOrder', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('po_qty', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('discount', null);
-			poGridOptions.api.getRowNode(currentStoneSno).setDataValue('unit_price', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('curStock', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('sellPrice', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('description', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('onOrder', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('po_qty', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('discount', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('unit_price', null);
 		}
 		hideLoader();
-		if(currentStoneSno==1){
-			currentImageNo = currentStoneSno;
-			$("#galleryId").html(currentStoneLotId);
-			$("#galleryDiv").attr("src","../pics/"+currentStoneLotId+".jpg");
+		if(currentStockSno==1){
+			currentImageNo = currentStockSno;
+			$("#galleryId").html(currentStockId);
+			$("#galleryDiv").attr("src","../pics/"+currentStockId+".JPG");
 		}
 		currentDiaSno=0;
 		currentDiaLotId=0;
-		currentStoneType="";
+		isModifiedStockItem=false;
 		poGridOptions.api.resetRowHeights();
 	});
 }
@@ -651,24 +721,24 @@ function loadImage(delta){
 		if(row.itemNo){
 			currentImageNo = row.sno;
 			$("#galleryId").html(row.itemNo);
-			$("#galleryDiv").attr("src","../pics/"+row.itemNo+".jpg");
+			$("#galleryDiv").attr("src","../pics/"+row.itemNo+".JPG");
 		}
 	}
 }
-
+var poTotal = 0;
 function calculateTotal(){
-	let total = 0;
+	poTotal = 0;
 	poGridOptions.api.forEachNode(function(rowNode, index) {
-		if(rowNode.data.itemNo && rowNode.data.po_qty && rowNode.data.curStock)
-			total += Number.parseFloat(rowNode.data.po_qty * rowNode.data.unit_price);
+		if(rowNode.data.itemNo && rowNode.data.po_qty)
+			poTotal += Number.parseFloat(rowNode.data.po_qty * rowNode.data.unit_price);
 	});
-	$("#poTotal").val(total).change();
+	$("#poTotal").val(poTotal).change();
 	$("#poTotal").addClass("active");
 }
 
-var currentStoneSno=0;
-var currentStoneLotId=0;
-var currentStoneType="";
+var currentStockSno=0;
+var currentStockId=0;
+var isModifiedStockItem=false;
 
 function InitPLItemDetailsForm() {
 	$("#UpsertPurchaseOrder").trigger("reset");
@@ -686,8 +756,13 @@ function InitPLItemDetailsForm() {
 			calculateTotal();
 		}
 		if(event.colDef.field=="itemNo"){
-			currentStoneSno = event.data.sno;
-			currentStoneLotId = event.data.itemNo;
+			currentStockSno = event.data.sno;
+			currentStockId = event.data.itemNo
+			let _index = event.data.itemNo.indexOf("_");
+			if(_index>=0){
+				isModifiedStockItem = true;
+				currentStockId = event.data.itemNo.substring(0, _index);
+			}
 			getStockDetails();
 		}
 	}
@@ -697,12 +772,13 @@ var poItemsGridData=[];
 
 function AllDetailsTabClicked(ignoreEmpty=false){
 	GetAllGridData(ignoreEmpty);
+	poTotal = 0;
 	for(var i=0;i<poItemsGridData.length;i++){
-		if(poItemsGridData[i].lot_id){
-			let settingRate=10;
-			if(poItemsGridData[i].setting=="Micro")	settingRate = PackingListRates.microDiamondSetting;
-			else if(poItemsGridData[i].setting=="Prong")	settingRate = PackingListRates.prongDiamondSetting;
-			else if(poItemsGridData[i].setting=="Baguette")	settingRate = PackingListRates.baguetteDiamondSetting;
+		if(poItemsGridData[i].itemNo && poItemsGridData[i].po_qty){
+			let discount = 0;
+			if(poItemsGridData[i].discount)	discount = poItemsGridData[i].discount;
+			poItemsGridData[i].unit_price = Number.parseFloat(poItemsGridData[i].sellPrice * (1 - (poItemsGridData[i].discount*0.01))).toFixed(2);
+			poTotal += poItemsGridData[i].unit_price * poItemsGridData[i].po_qty;
 		}
 	}
 }
@@ -714,7 +790,9 @@ function AddMoreRows(){
 function GetAllGridData(ignoreEmpty=false){
 	poItemsGridData=[];
 	poGridOptions.api.forEachNode(function(rowNode, index) {
-		if((ignoreEmpty && rowNode.data.lot_id) || !ignoreEmpty)
+		if(ignoreEmpty && rowNode.data.itemNo)
+			poItemsGridData.push(rowNode.data);		
+		else if (!ignoreEmpty)
 			poItemsGridData.push(rowNode.data);		
 	});
 }

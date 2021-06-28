@@ -236,25 +236,25 @@ if ($_SESSION['usertype'] >= 1)
 		<div class="modal-dialog cascading-modal modal-fluid" role="document" style="max-width: 95%;">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Add/Modify PO Details</h5>
+					<h5 class="modal-title">Add/Modify Sales Order Details</h5>
 					<button type="button" class="close" data-mdb-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 
 				<div class="modal-body">
-					<form id="UpsertPurchaseOrder" name="UpsertPurchaseOrder" method="POST" enctype="multipart/form-data">
+					<form id="UpsertPurchaseOrder" name="UpsertPurchaseOrder" method="GET">
 						<div class="row">
-							<input type="hidden" id="itemid" name="itemid" />
+							<input type="hidden" id="id" name="id" />
 							<div class="col-1 pe-0">
 								<div class="form-outline">
 									<input type="text" id="po_id" name="po_id" class="form-control" disabled />
-									<label class="form-label" class="active" for="po_id">PO Code<span class="text-danger">*</span></label>
+									<label class="form-label" class="active" for="po_id">S.O. Code<span class="text-danger">*</span></label>
 								</div>
 							</div>
 							<div class="col-1 mb-3 pe-0">
-								<div class="form-outline"><input type="text" id="itemcode" name="itemcode" class="form-control" />
-									<label class="form-label" for="itemcode">Cust Code</label>
+								<div class="form-outline"><input type="text" id="cust_code" name="cust_code" class="form-control" />
+									<label class="form-label" for="cust_code">Cust Code</label>
 								</div>
 							</div>
 							<div class="col pe-0">
@@ -296,8 +296,8 @@ if ($_SESSION['usertype'] >= 1)
 								</fieldset>
 							</div>
 							<div class="col-3">
-								<div class="form-outline"> <input required type="text" id="description" name="description" class="form-control" />
-									<label class="form-label" for="description">PO Note</label>
+								<div class="form-outline"> <input type="text" id="note" name="note" class="form-control" />
+									<label class="form-label" for="note">Note</label>
 								</div>
 							</div>
 						</div>
@@ -366,7 +366,7 @@ if ($_SESSION['usertype'] >= 1)
 							<div class="mt-2">
 								<button type="button" onclick="AddMoreRows()" class="btn btn-sm btn-outline-info" data-mdb-ripple-color="dark" style="float: left;">Add More Rows</button>
 								<button type="button" name="PL_Items_Reset" id="PL_Items_Reset" onclick="resetPLItem()" class="btn btn-sm btn-outline-danger" data-mdb-ripple-color="dark" style="float: right;">Reset</button>
-								<button type="submit" name="PL_Items_Create" id="PL_Items_Create" class="btn btn-sm btn-outline-success" data-mdb-ripple-color="dark" style="float: right;margin-right: 1rem;">Save</button>
+								<button type="submit" name="SavePurchaseOrder" id="SavePurchaseOrder" class="btn btn-sm btn-outline-success" data-mdb-ripple-color="dark" style="float: right;margin-right: 1rem;">Save</button>
 							</div>
 
 						</div>

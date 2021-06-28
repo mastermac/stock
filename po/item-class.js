@@ -46,18 +46,15 @@ function ItemOtherDetails(){
     this.amt=0;
 }
 
-function PL_Rates(exchangeRt, silverRt, goldRt, labourRt, goldLabourRt, platingRt, findingRt, micro, prong, baguette, round, factoryProfit){
-    this.exchange=Number(exchangeRt) || 0;
-    this.silver=Number(silverRt) || 0; 
-    this.gold=Number(goldRt) || 0;
-    this.labour=Number(labourRt) || 0;
-    this.goldLabour=Number(goldLabourRt) || 0;
-    this.plating=Number(platingRt) || 0;
-    this.findings=Number(findingRt) || 0;
-    this.microDiamondSetting = Number(micro) || 0;
-    this.prongDiamondSetting = Number(prong) || 0;
-    this.baguetteDiamondSetting = Number(baguette) || 0;
-    this.roundStoneSetting = Number(round) || 0;
-    this.factoryProfit = factoryProfit || 10;
-
+function PO(po_id, cust_code, entry_date, order_date, ship_date, cancel_date, type, note, total, discount){
+    this.po_id = Number(po_id) || 0;
+    this.cust_code = cust_code || "";
+    this.entry_date = entry_date;
+    this.order_date = order_date;
+    this.ship_date = ship_date;
+    this.cancel_date = cancel_date;
+    this.type = type;
+    this.note = note;
+    this.total = total;
+    this.discount = discount || "";
 }
