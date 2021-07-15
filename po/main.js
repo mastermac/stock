@@ -1,5 +1,6 @@
 var selectedPO;
-
+var currentRowIndex, currentRowItem;
+var preventSubmission = false;
 toastr.options = {
 	"positionClass": "toast-bottom-right",
 };
@@ -30,6 +31,9 @@ var gridOptions_PL = {
 		{ headerName: "Items", field: "item_count", filter: "agNumberColumnFilter" },
 		{ headerName: "Total", field: "total", filter: "agNumberColumnFilter" },
 		{ headerName: "Discount", field: "discount", filter: "agNumberColumnFilter", hide: true },
+		{ headerName: "Entered By", field: "entered_by", filter: "agNumberColumnFilter", hide: true },
+		{ headerName: "Ship Via", field: "ship_via", filter: "agNumberColumnFilter", hide: true },
+		{ headerName: "Customer Ref", field: "customer_ref", filter: "agNumberColumnFilter", hide: true },
 		{ headerName: "Last Modified", field: "last_modified_date", filter:"agDateColumnFilter", width: 150 },		
 		{
 			headerName: "Edit",
@@ -46,13 +50,13 @@ var gridOptions_PL = {
 					else
 						hideDeleteOptions = false;
 					isEditingItem = true;
-					let custCode=currentRow.cust_code;
-					if(currentRow.cust_code==0)
+					let custCode=parseInt(currentRow.data.cust_code);
+					if(custCode==0)
 						custCode = "";
-					let disc = currentRow.discount;
-					if(currentRow.discount==0)
+					let disc = currentRow.data.discount;
+					if(disc==0)
 						disc = "";
-					selectedPO=new PO(currentRow.data.id,custCode, currentRow.data.entry_date, currentRow.data.order_date, currentRow.data.ship_date, currentRow.data.cancel_date, currentRow.data.type, currentRow.data.note, currentRow.data.total, disc);
+					selectedPO=new PO(currentRow.data.id,custCode, currentRow.data.entry_date, currentRow.data.order_date, currentRow.data.ship_date, currentRow.data.cancel_date, currentRow.data.type, currentRow.data.note, currentRow.data.total, disc, currentRow.data.entered_by, currentRow.data.ship_via, currentRow.data.customer_ref);
 					$("#packingListItemsModal").modal("show");
 				},
 			},
@@ -202,24 +206,50 @@ function unlockPackingList(){
 }
 
 
-function finalizePackingList(){
-	var r = confirm("Sure about FINALIZING the packing list? \n\nOnce It is done, Stock Panel's Inventory will be updated and You won't be able to edit/delete any details within the given packing list.");
-	if (r == false)
-		return;
+function generateSalesOrder(){
 	showLoader();
 	var field=$("#pid").val();
 	$.ajax({
 		dataType: "json",
-		url: url + "../src/scripts/packingList_u.php",
+		url: url + "../src/scripts/po.php",
 		data: {
-			func: "finalize",
+			func: "generateSO",
 			id: field,
 		},
 	}).done(function (data) {
 		hideLoader();
 		$("#packingListActionModal").modal("hide");
 		$("#pid").val(0);
-		getPurchaseOrders();
+		var resp = JSON.parse(JSON.stringify(data));
+		window.open('../src/scripts/' + resp['filename']);
+	});
+}
+
+function generatePurchaseOrder(){
+	showLoader();
+	var field=$("#pid").val();
+	$.ajax({
+		dataType: "json",
+		url: url + "../src/scripts/po.php",
+		data: {
+			func: "generatePO",
+			id: field,
+		},
+	}).done(function (data) {
+		hideLoader();
+		$("#packingListActionModal").modal("hide");
+		$("#pid").val(0);
+		var resp = JSON.parse(JSON.stringify(data));
+		var arr = resp['filename'].split(",");
+		var count = 1;
+		arr.forEach((entry) => {
+			if(entry){
+				window.open('../src/scripts/' + entry, "Window "+count);
+				// setTimeout(function(){
+				// }, 500*count);
+				count++;
+			}
+		});
 	});
 }
 
@@ -340,7 +370,7 @@ function abbreviateNumber(value) {
 
 function BindPurchaseOrders(data) {
 	if(data)
-		nextPurchaseOrder = parseInt(data[data.length-1].id)+1;
+		nextPurchaseOrder = parseInt(data[0].id)+1;
 	else
 		nextPurchaseOrder = 1001;
 	gridOptions_PL.api.setRowData(data);
@@ -370,6 +400,9 @@ $("#packingListItemsModal").on("show.bs.modal", ()=>{
 		$("#id").val(selectedPO.po_id);
 		$("#po_id").val(selectedPO.po_id).change();
 		$("#cust_code").val(selectedPO.cust_code).change();
+		$("#entered_by").val(selectedPO.entered_by).change();
+		$("#ship_via").val(selectedPO.ship_via).change();
+		$("#customer_ref").val(selectedPO.customer_ref).change();
 
 		$('#entry_date').data('daterangepicker').setStartDate(formatDate(selectedPO.entry_date));
 		$('#entry_date').data('daterangepicker').setEndDate(formatDate(selectedPO.entry_date));
@@ -394,7 +427,6 @@ $("#packingListItemsModal").on("show.bs.modal", ()=>{
 		$("#po_id").val(nextPurchaseOrder).change();
 		$("#SavePurchaseOrder").html("Save");
 	}
-
 });
 function formatDate(date){
 	let splitArr = date.split("-");
@@ -445,6 +477,11 @@ function getPOItems(Id) {
 
 $("#UpsertPurchaseOrder").on('submit', (function (e) {
 	e.preventDefault();
+	// if(preventSubmission)
+	// {
+	// 	preventSubmission = false;
+	// 	return;
+	// }
 	showLoader();
 	var formData = new FormData(this);
 	$('.ajax-loader').css("visibility", "visible");
@@ -492,12 +529,11 @@ function BindPOItems(data) {
 }
 
 //#endregion
-
 //#region Edit Item Details
 var poDetailsColDef = [
 	{ headerName: "S.No", field: "sno", editable: false, width: 90 },
 	{ headerName: "Id", field: "id", hide: true },
-	{ headerName: "Item No", field: "itemNo"},
+	{ headerName: "Item No", field: "itemNo", colId:"poItemId", editable: true},
 	{ headerName: "In Stk", field: "curStock", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "On Ordr", field: "onOrder", filter: "agNumberColumnFilter", editable: false },
 	{ headerName: "Qty", field: "po_qty", filter: "agNumberColumnFilter" },
@@ -517,27 +553,12 @@ var poDetailsColDef = [
 		cellRenderer: "editButton",
 		cellRendererParams: {
 			clicked: function (field) {
-				// var r = confirm("Sure about DELETING?");
-				// if (r == false)
-				// 	return;
-			
-				// showLoader();
-				// var data=[];
-				// poGridOptions.api.forEachNode(function(rowNode, index) {
-				// 	if(index<field-1){
-				// 		data.push(rowNode.data);
-				// 	}
-				// 	else if(index>field-1){
-				// 		var node=rowNode.data;
-				// 		node.sno=node.sno-1;
-				// 		data.push(node);
-				// 	}
-				// });
-				// poGridOptions.api.setRowData(data);
-				// poGridOptions.getRowNodeId = d => {
-				// 	return d.sno;
-				// };
-				// hideLoader();
+				preventSubmission = true;
+				var currentRow=poGridOptions.api.getRowNode(field);
+				currentRowIndex = field;
+				currentRowItem = currentRow.data['itemNo'];
+				console.log(currentRow);
+				$("#changeItemPic").click();
 			},
 		},
 		resizable: false,
@@ -553,6 +574,7 @@ var poDetailsColDef = [
 		cellRenderer: "delButton",
 		cellRendererParams: {
 			clicked: function (field) {
+				preventSubmission = true;
 				var r = confirm("Sure about DELETING?");
 				if (r == false)
 					return;
@@ -691,6 +713,7 @@ function getStockDetails(){
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('po_qty', 1);
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('discount', 0);
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('unit_price', data.data.sellPrice);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('note', null);
 		}
 		else{
 			toastr['error']("No Record found with Lot Id");
@@ -701,6 +724,7 @@ function getStockDetails(){
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('po_qty', null);
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('discount', null);
 			poGridOptions.api.getRowNode(currentStockSno).setDataValue('unit_price', null);
+			poGridOptions.api.getRowNode(currentStockSno).setDataValue('note', null);
 		}
 		hideLoader();
 		if(currentStockSno==1){
@@ -715,15 +739,58 @@ function getStockDetails(){
 	});
 }
 
+$("#changeItemPic").change(function() {
+	$("#changePicForm").submit();
+});
+
+$("#changePicForm").on('submit', (function (e) {
+	e.preventDefault();
+	var formData = new FormData(this);
+	formData.append('func', 'updateItemPic');
+	formData.append('itemNo', currentRowItem);
+	
+	$.ajax({
+		url: url + "../src/scripts/po.php",
+		type: "POST",
+		data: formData,
+		contentType: false,
+		cache: false,
+		processData: false,
+		success: function (data) {
+			console.log(data);
+			$('#changePicForm')[0].reset();
+		}
+	});
+}));
+var boolVal = false;
 function loadImage(delta){
 	if(currentImageNo+delta >= 1){
 		let row = poGridOptions.api.getRowNode(currentImageNo+delta).data;
 		if(row.itemNo){
 			currentImageNo = row.sno;
 			$("#galleryId").html(row.itemNo);
-			$("#galleryDiv").attr("src","../pics/"+row.itemNo+".JPG");
+			isFileExists("../pics/"+row.itemNo+".JPG");
+			if(boolVal)
+				$("#galleryDiv").attr("src","../pics/"+row.itemNo+".JPG");
+			else
+				$("#galleryDiv").attr("src","../pics/po/"+row.itemNo+".JPG");
 		}
 	}
+}
+function isFileExists(uri){
+	$.ajax({
+		async: false,
+		url: uri,
+		type:'HEAD',
+		error: function()
+		{
+			boolVal = false;
+		},
+		success: function()
+		{
+			boolVal = true;
+		}
+	});
 }
 var poTotal = 0;
 function calculateTotal(){
@@ -766,6 +833,14 @@ function InitPLItemDetailsForm() {
 			getStockDetails();
 		}
 	}
+
+	let columnDefs = poGridOptions.columnApi.columnController.columnDefs;
+	// columnDefs.forEach(function (colDef) {
+	//   if (colDef.field === 'itemNo')
+	// 		colDef.editable = !isEditingItem;
+	// });
+	poGridOptions.api.setColumnDefs(columnDefs);
+
 }
 
 var poItemsGridData=[];

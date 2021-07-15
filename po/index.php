@@ -22,6 +22,18 @@ if ($_SESSION['usertype'] >= 1)
 	<script src="ag-grid-community.min.js"></script>
 	<script src="item-class.js"></script>
 	<link rel="stylesheet" href="../metal/style.css" />
+	<style>
+		.specialControl{
+			float: left;
+	    	margin-left: 1rem;
+    		width: 10%;
+    		line-height: 20px;
+    		font-size: 12px;
+		}
+		.specialText{
+			padding: .14em .75em !important;
+		}
+	</style>
 	<script type="text/javascript">
 		//var url = "http://silvercityonline.com/silvercity/";
 		var main = "<?php echo $_SERVER['DOCUMENT_ROOT'] ?>";
@@ -87,10 +99,8 @@ if ($_SESSION['usertype'] >= 1)
 				<div class="modal-body">
 					<form id="newPackingList" name="newPackingList" enctype="multipart/form-data" method="GET">
 						<div class="row">
-							<button onclick="deletePackingList()" id="deleteAction" type="button" class="btn btn-outline-danger my-1" data-mdb-ripple-color="dark">Delete</button>
-							<button onclick="lockPackingList()" id="lockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Lock</button>
-							<button onclick="unlockPackingList()" id="unlockAction" type="button" class="btn btn-outline-warning my-1" style="display: none;" data-mdb-ripple-color="dark">Un-Lock</button>
-							<button onclick="finalizePackingList()" id="finalizeAction" type="button" class="btn btn-outline-success my-1" style="display: none;" data-mdb-ripple-color="dark">Finalise</button>
+							<button onclick="generateSalesOrder()" id="finalizeAction" type="button" class="btn btn-outline-success my-1" data-mdb-ripple-color="dark">Generate SalesOrder</button>
+							<button onclick="generatePurchaseOrder()" id="finalizeAction" type="button" class="btn btn-outline-success my-1" data-mdb-ripple-color="dark">Generate PO</button>
 						</div>
 					</form>
 				</div>
@@ -305,38 +315,14 @@ if ($_SESSION['usertype'] >= 1)
 							<div class="row">
 								<div class="col-11 pe-0">
 									<ul class="nav nav-pills" id="pills-tab" role="tablist">
-										<!-- <li class="nav-item">
-										<a class="nav-link active" id="metalDetails-tab" data-mdb-toggle="pill" href="#metalDetails" role="tab" aria-controls="metalDetails" aria-selected="true">Metal Details</a>
-									</li> -->
 										<li class="nav-item">
 											<a class="nav-link active" id="diamondDetails-tab" data-mdb-toggle="pill" href="#diamondDetails" role="tab" aria-controls="diamondDetails" aria-selected="true">Item Details</a>
 										</li>
-										<!-- <li class="nav-item">
-										<a class="nav-link" id="stoneDetails-tab" data-mdb-toggle="pill" href="#stoneDetails" role="tab" aria-controls="stoneDetails" aria-selected="false">Stone Details</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" id="otherDetails-tab" data-mdb-toggle="pill" href="#otherDetails" role="tab" aria-controls="otherDetails" aria-selected="false">Other Costs Details</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" id="allDetails-tab" data-mdb-toggle="pill" href="#allDetails" role="tab" aria-controls="allDetails" aria-selected="false" onclick="AllDetailsTabClicked(false)">All Totals</a>
-									</li> -->
 									</ul>
 									<div class="tab-content" id="pills-tabContent">
-										<!-- <div class="tab-pane fade show active" id="metalDetails" role="tabpanel" aria-labelledby="metalDetails-tab">
-										<div id="MetalDetailsGrid" class="ag-theme-balham mx-auto" style="height: 200px;width: 100%;text-align:left!important;"></div>
-									</div> -->
 										<div class="tab-pane fade show active" id="diamondDetails" role="tabpanel" aria-labelledby="diamondDetails-tab">
 											<div id="DiamondDetailsGrid" class="ag-theme-balham mx-auto" style="height: 350px;width: 100%;text-align:left!important;"></div>
 										</div>
-										<!-- <div class="tab-pane fade" id="stoneDetails" role="tabpanel" aria-labelledby="stoneDetails-tab">
-										<div id="StoneDetailsGrid" class="ag-theme-balham mx-auto" style="height: 200px;width: 100%;text-align:left!important;"></div>
-									</div>
-									<div class="tab-pane fade" id="otherDetails" role="tabpanel" aria-labelledby="otherDetails-tab">
-										<div id="OtherCostsDetailsGrid" class="ag-theme-balham mx-auto" style="height: 200px;width: 100%;text-align:left!important;"></div>
-									</div>
-									<div class="tab-pane fade" id="allDetails" role="tabpanel" aria-labelledby="allDetails-tab">
-										<div id="AllDetailsGrid" class="ag-theme-balham mx-auto" style="height: 200px;width: 100%;text-align:left!important;"></div>
-									</div> -->
 									</div>
 								</div>
 								<div class="col-1">
@@ -363,15 +349,28 @@ if ($_SESSION['usertype'] >= 1)
 
 								</div>
 							</div>
-							<div class="mt-2">
-								<button type="button" onclick="AddMoreRows()" class="btn btn-sm btn-outline-info" data-mdb-ripple-color="dark" style="float: left;">Add More Rows</button>
+							<div class="mt-3">
+								<div class="form-outline specialControl" style="margin-left: 0px;">
+									<input type="text" id="entered_by" name="entered_by" class="form-control specialText" />
+									<label class="form-label" for="entered_by">Entered By</label>
+								</div>
+								<div class="form-outline specialControl">
+									<input type="text" id="ship_via" name="ship_via" class="form-control specialText" />
+									<label class="form-label" for="ship_via">Ship Via</label>
+								</div>
+								<div class="form-outline specialControl">
+									<input type="text" id="customer_ref" name="customer_ref" class="form-control specialText" />
+									<label class="form-label" for="customer_ref">Customer Ref</label>
+								</div>
 								<button type="button" name="PL_Items_Reset" id="PL_Items_Reset" onclick="resetPLItem()" class="btn btn-sm btn-outline-danger" data-mdb-ripple-color="dark" style="float: right;">Reset</button>
 								<button type="submit" name="SavePurchaseOrder" id="SavePurchaseOrder" class="btn btn-sm btn-outline-success" data-mdb-ripple-color="dark" style="float: right;margin-right: 1rem;">Save</button>
+								<button type="button" onclick="AddMoreRows()" class="btn btn-sm btn-outline-info" data-mdb-ripple-color="dark" style="float: right;margin-right: 1rem;">Add More Rows</button>
 							</div>
-
 						</div>
 					</form>
-
+					<form method="PUT" enctype="multipart/form-data" id="changePicForm" name="changePicForm">
+						<input type="file" id="changeItemPic" name="changeItemPic" style="display: none;" accept="image/*"/>
+					</form>
 				</div>
 
 				<!-- <div id="PL_Items_Grid" class="ag-theme-balham mx-auto" style="margin-top: 15px; margin-bottom: 10px; height: 260px;width: 98%;text-align:left!important;"></div> -->

@@ -46,7 +46,7 @@ function ItemOtherDetails(){
     this.amt=0;
 }
 
-function PO(po_id, cust_code, entry_date, order_date, ship_date, cancel_date, type, note, total, discount){
+function PO(po_id, cust_code, entry_date, order_date, ship_date, cancel_date, type, note, total, discount, entered_by, ship_via, customer_ref){
     this.po_id = Number(po_id) || 0;
     this.cust_code = cust_code || "";
     this.entry_date = entry_date;
@@ -57,4 +57,7 @@ function PO(po_id, cust_code, entry_date, order_date, ship_date, cancel_date, ty
     this.note = note;
     this.total = total;
     this.discount = discount || "";
+    this.entered_by = entered_by;
+    this.ship_via = ship_via;
+    this.customer_ref = customer_ref;
 }
