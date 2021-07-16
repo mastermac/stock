@@ -24,10 +24,10 @@ if ($_SESSION['usertype'] >= 1)
     .modal-content {
       z-index: 1051;
     }
+
     .tooltip-inner {
-    white-space: pre-wrap;
-   }
-    
+      white-space: pre-wrap;
+    }
   </style>
   <script type="text/javascript" src="src/js/jquery.min.js"></script>
   <script src="src/js/jquery-ui.min.js"></script>
@@ -238,13 +238,16 @@ if ($_SESSION['usertype'] >= 1)
       z-index: 100;
       opacity: 0.8;
     }
-    input[button]{
+
+    input[button] {
       cursor: pointer;
     }
-    #usernameHeader{
+
+    #usernameHeader {
       margin-left: auto;
     }
-    #linksHeader{
+
+    #linksHeader {
       margin-left: auto;
     }
   </style>
@@ -273,13 +276,23 @@ if ($_SESSION['usertype'] >= 1)
 
           ?>
           <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#importModal">Import Data</button>
-          <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#importPics">Upload Pics</button>
+          <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#importPics">Upload Pics</button> -->
+          <div class="dropdown">
+            <button class="btn btn-outline-warning dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-radius: 0px;">
+            Upload Pics
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <button class="dropdown-item" type="button" data-toggle="modal" data-target="#importPics" onclick="setUploadPicType('Default');">Default Pics</button>
+              <button class="dropdown-item" type="button" data-toggle="modal" data-target="#importPics" onclick="setUploadPicType('Type 1');">Type 1 Pics</button>
+              <button class="dropdown-item" type="button" data-toggle="modal" data-target="#importPics" onclick="setUploadPicType('Type 2');">Type 2 Pics</button>
+            </div>
+          </div>
           <?php
-          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0||$_SESSION['usertype'] == 1))
+          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0 || $_SESSION['usertype'] == 1))
             echo '<button type="button" id="excelExport" name="excelExport" class="btn btn-outline-danger">Export</button>';
           ?>
           <?php
-          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0||$_SESSION['usertype'] == 1))
+          if ($_SESSION['canExport'] == 1 || ($_SESSION['usertype'] == 0 || $_SESSION['usertype'] == 1))
             echo '<button type="button" id="pdfExport" name="pdfExport" class="btn btn-outline-danger">PDF Export</button>';
           ?>
           <button type="button" id="lastCodesButton" name="lastCodesButton" class="btn btn-outline-danger">Last Codes</button>
@@ -297,32 +310,34 @@ if ($_SESSION['usertype'] >= 1)
         </div>
       </div>
     </div>
-    <div >
-        <form method="POST" id="filterForm">
+    <div>
+      <form method="POST" id="filterForm">
         <input type="hidden" value="0" name="totalData" id="totalData">
-          <div class="row">
-        <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 15px;padding-right: 5px;">
-          <label for="itemId">Item Id&nbsp;</label><?php if($_SESSION['usertype']==0){ echo '<a class="multiId" style="cursor: pointer; color: blue;">( Multi? )</a>'; }
-           ?>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemId" name="s_itemId"/>
-        </div>
-        <div class="form-group col-md-1" style="min-width: 6%;max-width: 6%;padding-left: 5px;padding-right: 5px;">
-          <label for="vendor">V Id:</label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendor" name="s_vendor"/>
-        </div>
-        <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 5px;padding-right: 5px;">
-          <label for="itemId">vCode:</label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendorCode" name="s_vendorCode"/>
-        </div>
-        <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
-          <label for="itemId">Description:</label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_description" name="s_description"/>
-        </div>
-        <div class="form-group col-md-1" style="min-width: 10%;max-width: 15%;padding-left: 5px;padding-right: 5px;display:none;">
-          <label for="itemId">Item Type:</label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemTypeCode" name="s_itemTypeCode"/>
-        </div>
-        <!-- <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 5px;">
+        <div class="row">
+          <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 15px;padding-right: 5px;">
+            <label for="itemId">Item Id&nbsp;</label><?php if ($_SESSION['usertype'] == 0) {
+                                                        echo '<a class="multiId" style="cursor: pointer; color: blue;">( Multi? )</a>';
+                                                      }
+                                                      ?>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemId" name="s_itemId" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 6%;max-width: 6%;padding-left: 5px;padding-right: 5px;">
+            <label for="vendor">V Id:</label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendor" name="s_vendor" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 9%;max-width: 9%;padding-left: 5px;padding-right: 5px;">
+            <label for="itemId">vCode:</label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_vendorCode" name="s_vendorCode" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
+            <label for="itemId">Description:</label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_description" name="s_description" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 10%;max-width: 15%;padding-left: 5px;padding-right: 5px;display:none;">
+            <label for="itemId">Item Type:</label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemTypeCode" name="s_itemTypeCode" />
+          </div>
+          <!-- <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 5px;">
           <label for="itemId">G.W.</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_grossWt" name="s_grossWt"/>
         </div>
@@ -350,29 +365,29 @@ if ($_SESSION['usertype'] >= 1)
           <label for="itemId">Size:</label>
           <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_ringSize" name="s_ringSize"/>
         </div> -->
-        <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 5px;">
-          <label for="itemId">Style:</label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_styleCode" name="s_styleCode"/>
+          <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 5px;">
+            <label for="itemId">Style:</label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_styleCode" name="s_styleCode" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
+            <label for="itemId">Date:</label>
+            <input type="text" autocomplete="off" class="form-control searchField" id="s_daterange" id="s_daterange" style="padding: .375rem .15rem;" value="01/01/2015 - 01/31/2015" />
+          </div>
+          <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 15px;">
+            <label for="itemId">&nbsp;</label>
+            <button type="button" class="btn btn-xs btn-outline-danger reset-item" id="resetFilter" name="resetFilter">RESET</button>
+          </div>
+          <div class="form-group col-md-2" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 15px;">
+            <label for="itemId">&nbsp;</label>
+            <button type="button" class="btn btn-outline-info" id="filter" name="filter" data-toggle="modal" data-target="#filterModal">More Filters</button>
+          </div>
+          <div class="form-group col-md-12 extention" style="min-width: 94.5%;max-width: 94.5%;padding-left: 15px;padding-right: 5px;">
+            <label for="itemIdExt">Enter Multiple Item IDs here separated by <b>comma ,</b></label>
+            <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemIdExt" name="s_itemIdExt" />
+          </div>
         </div>
-        <div class="form-group col-md-1" style="min-width: 15%;max-width: 15%;padding-left: 5px;padding-right: 5px;">
-          <label for="itemId">Date:</label>
-          <input type="text" autocomplete="off" class="form-control searchField" id="s_daterange" id="s_daterange" style="padding: .375rem .15rem;"  value="01/01/2015 - 01/31/2015" />
-        </div>
-        <div class="form-group col-md-1" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 15px;">
-          <label for="itemId">&nbsp;</label>
-          <button type="button" class="btn btn-xs btn-outline-danger reset-item" id="resetFilter" name="resetFilter">RESET</button>
-        </div>
-        <div class="form-group col-md-2" style="min-width: 5%;max-width: 5%;padding-left: 5px;padding-right: 15px;">
-          <label for="itemId">&nbsp;</label>
-          <button type="button" class="btn btn-outline-info" id="filter" name="filter" data-toggle="modal" data-target="#filterModal">More Filters</button>
-        </div>
-        <div class="form-group col-md-12 extention" style="min-width: 94.5%;max-width: 94.5%;padding-left: 15px;padding-right: 5px;">
-          <label for="itemIdExt">Enter Multiple Item IDs here separated by <b>comma ,</b></label>
-          <input type="text" class="form-control searchField" style="padding: .375rem .15rem;" id="s_itemIdExt" name="s_itemIdExt"/>
-        </div>
-      </div>
       </form>
-      </div>
+    </div>
 
     <table class="table sticky-header productTable table-sm table-bordered table-hover table-striped" width="100%" cellspacing="0" id="myTable">
       <thead>
@@ -497,7 +512,7 @@ if ($_SESSION['usertype'] >= 1)
                     <span class="custom-control-description">Create an Account?</span>
                   </label>
                 </div>
-                <div class="form-group col-md-2" ></div>
+                <div class="form-group col-md-2"></div>
                 <div class="form-group col-md-4 newUser">
                   <label for="itemId">Email:</label>
                   <input type="Email" class="form-control" id="vendorEmail" name="vendorEmail" />
@@ -617,7 +632,7 @@ if ($_SESSION['usertype'] >= 1)
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Import Pics of Products</h5>
+            <h5 class="modal-title" id="importPicModalTitle">Import Pics of Products</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -679,8 +694,6 @@ if ($_SESSION['usertype'] >= 1)
                 </div>
 
                 <div class="form-group col-md-4">
-                  <label for="itemPic" class="control-label">Item Pic:</label>
-                  <input type="file" class="form-control-file" id="itemPic" name="itemPic">
                 </div>
                 <div class="form-group col-md-6">
                   <label for="description" class="control-label">Description</label>
@@ -769,7 +782,18 @@ if ($_SESSION['usertype'] >= 1)
                   <label for="silverPrice" class="control-label">Silver Price</label>
                   <input type="text" class="form-control" id="silverPrice" name="silverPrice" />
                 </div>
-
+                <div class="form-group col-md-4">
+                  <label for="itemPic" class="control-label">Item Pic (Default):</label>
+                  <input type="file" class="form-control-file" id="itemPic" name="itemPic">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="itemPic1" class="control-label">Item Pic (Type 1):</label>
+                  <input type="file" class="form-control-file" id="itemPic1" name="itemPic1">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="itemPic2" class="control-label">Item Pic (Type 2):</label>
+                  <input type="file" class="form-control-file" id="itemPic2" name="itemPic2">
+                </div>
               </div>
           </div>
           <div class="modal-footer">
@@ -811,8 +835,6 @@ if ($_SESSION['usertype'] >= 1)
               </div>
 
               <div class="form-group col-md-4">
-                <label for="edit_itemPic" class="control-label">Item Pic:</label>
-                <input type="file" class="form-control-file" id="edit_itemPic" name="edit_itemPic">
               </div>
               <div class="form-group col-md-6">
                 <label for="edit_description" class="control-label">Description</label>
@@ -890,7 +912,18 @@ if ($_SESSION['usertype'] >= 1)
                 <label for="edit_silverPrice" class="control-label">Silver Price</label>
                 <input type="text" class="form-control" id="edit_silverPrice" name="edit_silverPrice" />
               </div>
-
+              <div class="form-group col-md-4">
+                <label for="edit_itemPic" class="control-label">Item Pic (Default):</label>
+                <input type="file" class="form-control-file" id="edit_itemPic" name="edit_itemPic">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="edit_itemPic1" class="control-label">Item Pic (Type 1):</label>
+                <input type="file" class="form-control-file" id="edit_itemPic1" name="edit_itemPic1">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="edit_itemPic2" class="control-label">Item Pic (Type 2):</label>
+                <input type="file" class="form-control-file" id="edit_itemPic2" name="edit_itemPic2">
+              </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -976,14 +1009,14 @@ if ($_SESSION['usertype'] >= 1)
               </div>
               <div class="w-100"></div>
               <div class="form-group col-2" style="padding-right: 0rem;">
-                <input oninput="fromInputTf(this)" type="text" id="from_grossWt" name="from_grossWt" data-slider="grossWt" value="" style="width: 100%;font-size: 0.8rem;"/>
-                <input type="hidden" id="s_grossWt" name="s_grossWt" value=""/>
+                <input oninput="fromInputTf(this)" type="text" id="from_grossWt" name="from_grossWt" data-slider="grossWt" value="" style="width: 100%;font-size: 0.8rem;" />
+                <input type="hidden" id="s_grossWt" name="s_grossWt" value="" />
               </div>
               <div class="form-group col-8" style="padding: 0rem 0.5rem;margin-top: -1.5rem;">
-                <input type="text" class="js-range-slider" id="grossWtSlider" name="grossWtSlider" value=""/>
+                <input type="text" class="js-range-slider" id="grossWtSlider" name="grossWtSlider" value="" />
               </div>
               <div class="form-group col-2" style="padding-left: 0rem;">
-                <input oninput="toInputTf(this)" type="text" id="to_grossWt" name="to_grossWt" data-slider="grossWt" value="" style="width: 100%;font-size: 0.8rem;"/>
+                <input oninput="toInputTf(this)" type="text" id="to_grossWt" name="to_grossWt" data-slider="grossWt" value="" style="width: 100%;font-size: 0.8rem;" />
               </div>
               <div class="w-100"></div>
               <div class="form-group col" style="margin-bottom: 0px;">
@@ -991,14 +1024,14 @@ if ($_SESSION['usertype'] >= 1)
               </div>
               <div class="w-100"></div>
               <div class="form-group col-2" style="padding-right: 0rem;">
-                <input oninput="fromInputTf(this)" type="text" id="from_sellPrice" name="from_sellPrice" data-slider="sellPrice" value="" style="width: 100%;font-size: 0.8rem;"/>
-                <input type="hidden" id="s_sellPrice" name="s_sellPrice" value=""/>
+                <input oninput="fromInputTf(this)" type="text" id="from_sellPrice" name="from_sellPrice" data-slider="sellPrice" value="" style="width: 100%;font-size: 0.8rem;" />
+                <input type="hidden" id="s_sellPrice" name="s_sellPrice" value="" />
               </div>
               <div class="form-group col-8" style="padding: 0rem 0.5rem;margin-top: -1.5rem;">
-                <input type="text" class="js-range-slider" id="sellPriceSlider" name="sellPriceSlider" value=""/>
+                <input type="text" class="js-range-slider" id="sellPriceSlider" name="sellPriceSlider" value="" />
               </div>
               <div class="form-group col-2" style="padding-left: 0rem;">
-                <input oninput="toInputTf(this)" type="text" id="to_sellPrice" name="to_sellPrice" data-slider="sellPrice" value="" style="width: 100%;font-size: 0.8rem;"/>
+                <input oninput="toInputTf(this)" type="text" id="to_sellPrice" name="to_sellPrice" data-slider="sellPrice" value="" style="width: 100%;font-size: 0.8rem;" />
               </div>
               <div class="w-100"></div>
               <div class="form-group col" style="margin-bottom: 0px;">
@@ -1006,14 +1039,14 @@ if ($_SESSION['usertype'] >= 1)
               </div>
               <div class="w-100"></div>
               <div class="form-group col-2" style="padding-right: 0rem;">
-                <input oninput="fromInputTf(this)" type="text" id="from_curStock" name="from_curStock" data-slider="curStock" value="" style="width: 100%;font-size: 0.8rem;"/>
-                <input type="hidden" id="s_curStock" name="s_curStock" value=""/>
+                <input oninput="fromInputTf(this)" type="text" id="from_curStock" name="from_curStock" data-slider="curStock" value="" style="width: 100%;font-size: 0.8rem;" />
+                <input type="hidden" id="s_curStock" name="s_curStock" value="" />
               </div>
               <div class="form-group col-8" style="padding: 0rem 0.5rem;margin-top: -1.5rem;">
-                <input type="text" class="js-range-slider" id="curStockSlider" name="curStockSlider" value=""/>
+                <input type="text" class="js-range-slider" id="curStockSlider" name="curStockSlider" value="" />
               </div>
               <div class="form-group col-2" style="padding-left: 0rem;">
-                <input oninput="toInputTf(this)" type="text" id="to_curStock" name="to_curStock" data-slider="curStock" value="" style="width: 100%;font-size: 0.8rem;"/>
+                <input oninput="toInputTf(this)" type="text" id="to_curStock" name="to_curStock" data-slider="curStock" value="" style="width: 100%;font-size: 0.8rem;" />
               </div>
             </div>
           </form>

@@ -15,8 +15,8 @@ function updateSettings()
 
 function updatePLItem(){
     $mysqli = getConn();
-    $stmt = $mysqli->prepare("UPDATE `pl-items` SET itemcode=?, mewarcode=?, qty=?, ringsize=?, metaltype=?, metalcolor=?, description=?, total=? where id=?");
-    $stmt->bind_param("sssssssss", $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description'], $_POST['total'], $_POST['itemid']);
+    $stmt = $mysqli->prepare("UPDATE `pl-items` SET itemcode=?, mewarcode=?, qty=?, ringsize=?, metaltype=?, metalcolor=?, description=?, total=?, dimensions=? where id=?");
+    $stmt->bind_param("ssssssssss", $_POST['itemcode'], $_POST['mewarcode'], $_POST['qty'], $_POST['ringsize'], $_POST['metaltype'], $_POST['metalcolor'], $_POST['description'], $_POST['total'], $_POST['dimensions'], $_POST['itemid']);
     $stmt->execute();
     $stmt->close();
     $mysqli->close();

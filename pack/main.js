@@ -363,12 +363,13 @@ var gridOptions_PL_Items = {
 		{ headerName: "Item #", field: "itemcode" },
 		{ headerName: "Pic", field: "itemcode", cellRenderer: 'imgCell' },
 		{ headerName: "Mewar #", field: "mewarcode" },
-		{ headerName: "Qty", field: "qty", width: 15, filter: "agNumberColumnFilter" },
+		{ headerName: "Qty", field: "qty", filter: "agNumberColumnFilter" },
 		{ headerName: "Ring Size", field: "ringsize" },
 		{ headerName: "M Type", field: "metaltype" },
 		{ headerName: "M Color", field: "metalcolor" },
 		{ headerName: "Total", field: "total" },
 		{ headerName: "Description", field: "description", width: 130 },
+		{ headerName: "Dimensions", field: "dimensions", width: 80 },
 		{
 			headerName: "Edit",
 			field: "id",
@@ -400,6 +401,7 @@ var gridOptions_PL_Items = {
 						$("#metaltype").val(response.data.metaltype).change();
 						$("#metalcolor").val(response.data.metalcolor).change();
 						$("#description").val(response.data.description).change();
+						$("#dimensions").val(response.data.dimensions).change();
 			
 						metalGridOptions.api.setRowData(response.data.metal);
 						diamondGridOptions.api.setRowData(response.data.diamond);
@@ -419,7 +421,7 @@ var gridOptions_PL_Items = {
 					});
 				},
 			},
-			width: 20,
+			width: 40,
 			resizable: false,
 		},
 		{
@@ -451,14 +453,14 @@ var gridOptions_PL_Items = {
 					});
 				},
 			},
-			width: 20,
+			width: 40,
 			resizable: false,
 		},
 	],
 	
 	defaultColDef: {
 		flex: 1,
-		width: 40,
+		width: 65,
 		resizable: true,
 		editable: false,
 		filter: true,

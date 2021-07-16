@@ -54,6 +54,64 @@ if ($totRows == 1) {
         imagedestroy($tmp);
         imagedestroy($src);
     }
+    if (!empty($_FILES['itemPic1']['name'])) {
+        $target_dir    = $_SERVER['DOCUMENT_ROOT'] . "/stock/pics/pic1/";
+        $imageFileType = pathinfo(basename($_FILES["itemPic1"]["name"]), PATHINFO_EXTENSION);
+        $target_file   = $target_dir . $post['itemId'] . '.' . $imageFileType;
+        $img           = $_FILES['itemPic1']['tmp_name'];
+        $dst           = $target_dir . $post['itemId'];
+        if (($img_info = getimagesize($img)) === FALSE)
+            die("Image not found or not an image");
+        $width  = $img_info[0];
+        $height = $img_info[1];
+        switch ($img_info[2]) {
+            case IMAGETYPE_GIF:
+                $src = imagecreatefromgif($img);
+                break;
+            case IMAGETYPE_JPEG:
+                $src = imagecreatefromjpeg($img);
+                break;
+            case IMAGETYPE_PNG:
+                $src = imagecreatefrompng($img);
+                break;
+            default:
+                die("Unknown filetype");
+        }
+        $tmp = imagecreatetruecolor(500, 500);
+        imagecopyresampled($tmp, $src, 0, 0, 0, 0, 500, 500, $width, $height);
+        imagejpeg($tmp, $dst . ".JPG",80);
+        imagedestroy($tmp);
+        imagedestroy($src);
+    }
+    if (!empty($_FILES['itemPic2']['name'])) {
+        $target_dir    = $_SERVER['DOCUMENT_ROOT'] . "/stock/pics/pic2/";
+        $imageFileType = pathinfo(basename($_FILES["itemPic2"]["name"]), PATHINFO_EXTENSION);
+        $target_file   = $target_dir . $post['itemId'] . '.' . $imageFileType;
+        $img           = $_FILES['itemPic2']['tmp_name'];
+        $dst           = $target_dir . $post['itemId'];
+        if (($img_info = getimagesize($img)) === FALSE)
+            die("Image not found or not an image");
+        $width  = $img_info[0];
+        $height = $img_info[1];
+        switch ($img_info[2]) {
+            case IMAGETYPE_GIF:
+                $src = imagecreatefromgif($img);
+                break;
+            case IMAGETYPE_JPEG:
+                $src = imagecreatefromjpeg($img);
+                break;
+            case IMAGETYPE_PNG:
+                $src = imagecreatefrompng($img);
+                break;
+            default:
+                die("Unknown filetype");
+        }
+        $tmp = imagecreatetruecolor(500, 500);
+        imagecopyresampled($tmp, $src, 0, 0, 0, 0, 500, 500, $width, $height);
+        imagejpeg($tmp, $dst . ".JPG",80);
+        imagedestroy($tmp);
+        imagedestroy($src);
+    }
     $res['success']=1;
     echo json_encode($res);
 } else {

@@ -31,6 +31,11 @@ if ($_SESSION['usertype'] >= 1)
 		var usertype = <?php echo $_SESSION['usertype'] ?>;
 		var userid = <?php echo $_SESSION['userid'] ?>;
 	</script>
+	<style>
+		.current-row{
+			background-color: #00b74a;
+		}
+	</style>
 </head>
 
 <body>

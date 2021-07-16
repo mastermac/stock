@@ -901,6 +901,12 @@ $(document).ready(function () {
         $("#uploadForm").on('submit', (function (e) {
             e.preventDefault();
             var formData = new FormData(this);
+            let subdir="";
+            if(uploadPicType=="Type 1")
+                subdir="pic1/";
+            else if(uploadPicType=="Type 2")
+                subdir="pic2/";
+            formData.append("subdir",subdir);
             $('.ajax-loader').css("visibility", "visible");
             $.ajax({
                 type: 'POST',
@@ -1260,6 +1266,11 @@ function openProductHistory(id) {
         bindProductHistory(data.data);
     });
 
+}
+var uploadPicType="Default";
+function setUploadPicType(type){
+    uploadPicType = type;
+    $("#importPicModalTitle").html("Import "+uploadPicType+" Pics of Products");
 }
 
 function bindProductHistory(data) {

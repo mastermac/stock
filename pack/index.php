@@ -54,9 +54,6 @@ if ($_SESSION['usertype'] >= 1)
 			</div>
 			<input type="hidden" id="pid" name="pid" value="0">
 
-			<!-- <div class="col-4">
-				<button type="button" class="btn btn-sm btn-outline-success" data-mdb-ripple-color="dark" onclick="moveToInvoice()">Move to Packing List</button>
-			</div> -->
 		</div>
 
 		<div id="packingLists" class="ag-theme-balham mx-auto" style="height: 500px;width: 95%;text-align:left!important;"></div>
@@ -110,10 +107,6 @@ if ($_SESSION['usertype'] >= 1)
 				<div class="modal-body">
 					<form id="newPackingList" name="newPackingList" enctype="multipart/form-data" method="GET">
 						<div class="row">
-							<!-- <div class="col-2 mb-0">
-										<input autocomplete=false required type="text" id="plId" name="plId" class="form-control" />
-										<label for="plId">ID <span class="text-danger">*</span></label>
-									</div> -->
 							<div class="col-6 pe-0">
 								<div class="form-outline">
 									<input autocomplete=false required type="text" id="plName" name="plName" class="form-control" />
@@ -247,12 +240,12 @@ if ($_SESSION['usertype'] >= 1)
 							<legend>Add More Items</legend>
 							<div class="row">
 								<input type="hidden" id="itemid" name="itemid" />
-								<div class="col mb-3 pe-0">
+								<div class="col-1 mb-3 pe-0">
 									<div class="form-outline"><input required type="text" id="itemcode" name="itemcode" class="form-control" />
 										<label class="form-label" for="itemcode">Item Code <span class="text-danger">*</span></label>
 									</div>
 								</div>
-								<div class="col pe-0">
+								<div class="col-1 pe-0">
 									<div class="form-outline">
 										<input required type="text" id="mewarcode" name="mewarcode" class="form-control" />
 										<label class="form-label" class="active" for="mewarcode">Mewar # <span class="text-danger">*</span></label>
@@ -266,6 +259,11 @@ if ($_SESSION['usertype'] >= 1)
 								<div class="col-1 pe-0">
 									<div class="form-outline"> <input type="text" id="ringsize" name="ringsize" class="form-control" />
 										<label class="form-label" for="ringsize">Ring Size</label>
+									</div>
+								</div>
+								<div class="col-1 pe-0">
+									<div class="form-outline"> <input type="text" id="dimensions" name="dimensions" class="form-control" />
+										<label class="form-label" for="dimensions">Dimensions</label>
 									</div>
 								</div>
 								<div class="col-1 pe-0">
@@ -290,7 +288,7 @@ if ($_SESSION['usertype'] >= 1)
 										<label class="form-label" for="description">Description <span class="text-danger">*</span></label>
 									</div>
 								</div>
-								<div class="col pe-0">
+								<div class="col-1 pe-0">
 									<fieldset style="padding: 0px !important;border: 0px solid !important; margin-top: -1rem !important;">
 										<legend style="font-size: small !important; ">Item Pic</legend>
 										<div class="custom-file">

@@ -34,6 +34,69 @@ if (!empty($_FILES['edit_itemPic']['name']))
    imagecopyresampled($tmp, $src, 0, 0, 0, 0, $width, $height, $width, $height);
    imagejpeg($tmp, $dst . ".JPG");
 }
+if (!empty($_FILES['edit_itemPic1']['name']))
+{
+   $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/stock/pics/pic1/";
+   $imageFileType = pathinfo(basename($_FILES["edit_itemPic1"]["name"]) , PATHINFO_EXTENSION);
+   $target_file = $target_dir . $post['edit_itemId'] . '.' . $imageFileType;
+   $img = $_FILES['edit_itemPic1']['tmp_name'];
+   $dst = $target_dir . $post['edit_itemId'];
+   if (($img_info = getimagesize($img)) === FALSE) die("Image not found or not an image");
+   $width = $img_info[0];
+   $height = $img_info[1];
+   switch ($img_info[2])
+   {
+   case IMAGETYPE_GIF:
+      $src = imagecreatefromgif($img);
+      break;
+
+   case IMAGETYPE_JPEG:
+      $src = imagecreatefromjpeg($img);
+      break;
+
+   case IMAGETYPE_PNG:
+      $src = imagecreatefrompng($img);
+      break;
+
+   default:
+      die("Unknown filetype");
+   }
+   $tmp = imagecreatetruecolor($width, $height);
+   imagecopyresampled($tmp, $src, 0, 0, 0, 0, $width, $height, $width, $height);
+   imagejpeg($tmp, $dst . ".JPG");
+}
+if (!empty($_FILES['edit_itemPic2']['name']))
+{
+   $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/stock/pics/pic2/";
+   $imageFileType = pathinfo(basename($_FILES["edit_itemPic2"]["name"]) , PATHINFO_EXTENSION);
+   $target_file = $target_dir . $post['edit_itemId'] . '.' . $imageFileType;
+   $img = $_FILES['edit_itemPic2']['tmp_name'];
+   $dst = $target_dir . $post['edit_itemId'];
+   if (($img_info = getimagesize($img)) === FALSE) die("Image not found or not an image");
+   $width = $img_info[0];
+   $height = $img_info[1];
+   switch ($img_info[2])
+   {
+   case IMAGETYPE_GIF:
+      $src = imagecreatefromgif($img);
+      break;
+
+   case IMAGETYPE_JPEG:
+      $src = imagecreatefromjpeg($img);
+      break;
+
+   case IMAGETYPE_PNG:
+      $src = imagecreatefrompng($img);
+      break;
+
+   default:
+      die("Unknown filetype");
+   }
+   $tmp = imagecreatetruecolor($width, $height);
+   imagecopyresampled($tmp, $src, 0, 0, 0, 0, $width, $height, $width, $height);
+   imagejpeg($tmp, $dst . ".JPG");
+}
+
 $previousData="";
 $newData="";
 $mysqli=getConn();
